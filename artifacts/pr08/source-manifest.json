@@ -1,0 +1,105 @@
+{
+  "schema_version": "economic-pr-source-manifest-1",
+  "pr": 8,
+  "generated_at": "2026-09-28T16:09:24.305794+00:00",
+  "files": [
+    {
+      "path": "src/economic_machine/signed_tx_validation.py",
+      "category": "code",
+      "sha256": "4f8424391b856311a260df0b91cbbd00b7ceea8c199803b2961dded7fc86e027",
+      "lines": 196,
+      "meaningful_lines": 177
+    },
+    {
+      "path": "src/economic_machine/tron_consumption_read.py",
+      "category": "code",
+      "sha256": "9bf04514120484dacecaa2738209efc8dd0d2ca451fdb563b8c5195c38c77089",
+      "lines": 276,
+      "meaningful_lines": 253
+    },
+    {
+      "path": "src/economic_machine/tron_execution.py",
+      "category": "code",
+      "sha256": "0d9e015531b4685f89150c870f83cbd6e96c6d3bb02ad094eba81334b649f77c",
+      "lines": 345,
+      "meaningful_lines": 318
+    },
+    {
+      "path": "src/economic_machine/position_reconciliation.py",
+      "category": "code",
+      "sha256": "8678d696d88ed8f9aadeb25d0c4b5c0b26473670bac99c7fb49c3f3d724d29c4",
+      "lines": 285,
+      "meaningful_lines": 254
+    },
+    {
+      "path": "src/economic_machine/performance.py",
+      "category": "code",
+      "sha256": "6204a9dcfde2d5cf6cffb060a354f0eefee91f6d0d7df68fcb28f00817e8f796",
+      "lines": 207,
+      "meaningful_lines": 187
+    },
+    {
+      "path": "src/economic_machine/execution_ledger.py",
+      "category": "code",
+      "sha256": "5dee07125fa8cc5a1b5023303088f67d6d409d6cc0f4375c001cd83205e8177e",
+      "lines": 259,
+      "meaningful_lines": 231
+    },
+    {
+      "path": "tests/test_economic_tron_consumption_read.py",
+      "category": "test",
+      "sha256": "32693ecfdc2ff3712adc0de64f28906c35d58b692b6c492a646b69eda31e6075",
+      "lines": 208,
+      "meaningful_lines": 191
+    },
+    {
+      "path": "tests/test_economic_tron_execution.py",
+      "category": "test",
+      "sha256": "b2eb9ed25678f8ffb631df7bd6cc301fbff526fda2e8ccf8e4ee68602d596b5a",
+      "lines": 237,
+      "meaningful_lines": 211
+    },
+    {
+      "path": "tests/test_economic_position_reconciliation.py",
+      "category": "test",
+      "sha256": "9b6042802000af9d127cf9222eff2fa9d8670d72cbefe21f11ad114db6db19af",
+      "lines": 169,
+      "meaningful_lines": 151
+    },
+    {
+      "path": "tests/test_economic_performance.py",
+      "category": "test",
+      "sha256": "77be9557ff5378bb36f515f862d21e335d96e99b5fe765eb36253b4573818574",
+      "lines": 110,
+      "meaningful_lines": 91
+    },
+    {
+      "path": "tests/test_economic_execution_ledger.py",
+      "category": "test",
+      "sha256": "08f2832e7c21770c83c779279abea4c8c15059f62977a10356e4e5953dc13006",
+      "lines": 104,
+      "meaningful_lines": 91
+    },
+    {
+      "path": "IMPLEMENTATION_PR08_20260929.md",
+      "category": "documentation",
+      "sha256": "9c7b1dea469ae616f45fdfa170e8fcbe8c8a1800b7ae0b6b2f52f5348e26e890",
+      "lines": 79,
+      "meaningful_lines": 54
+    },
+    {
+      "path": "TRON_FURIOSA_10PR_PLAN_20260928.md",
+      "category": "documentation",
+      "sha256": "505820bbebc5ff5fb182ef54a01e6b5408c3a52fb3b07beaa1510cb12417968d",
+      "lines": 202,
+      "meaningful_lines": 121
+    }
+  ],
+  "totals": {
+    "files": 13,
+    "lines": 2677,
+    "meaningful_lines": 2330,
+    "code_meaningful_lines": 1420,
+    "test_meaningful_lines": 735
+  }
+}

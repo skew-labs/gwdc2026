@@ -4,7 +4,7 @@
 
 기존 모듈을 지우고 새로 만드는 계획이 아니다. 기존 계산/검증 자산을 하나의 사용자 흐름으로 연결한다. 새 데이터셋·학습, NIC/FPGA 최적화, 외부 검증자 네트워크는 이 10개 PR의 범위 밖이다. ALPHA/VAULT/WATCH는 서버 안의 역할과 작업 기록이다.
 
-**2026-09-29 진행:** PR 01–06은 순서대로 구현·검증해 [GitHub 저장소](https://github.com/skew-labs/gwdc2026)에 검토 가능한 PR로 올렸다. 최신 경계는 [PR 06 거래 DAG/preflight](IMPLEMENTATION_PR06_20260928.md)이며, PR 07은 [승인·서명 payload·제한 Guard](IMPLEMENTATION_PR07_20260929.md)를 구현하고 있다. 각 단계는 변경 코드와 직접 연결만 Cherry에서 다시 검증하며 앞 PR의 무관한 전체 suite를 반복하지 않는다. 고객 서명·broadcast·배포·실자산 실행은 수행하지 않았고, PR 08–10은 계획 상태다.
+**2026-09-29 진행:** PR 01–07은 순서대로 구현·검증해 [GitHub 저장소](https://github.com/skew-labs/gwdc2026)에 검토 가능한 PR로 올렸다. PR 08의 [동일 txid 제출 상태·포지션 대조·성과 원장](IMPLEMENTATION_PR08_20260929.md)도 변경 경계 검증을 완료했다. 각 단계는 변경 코드와 직접 연결만 Cherry에서 다시 검증하며 앞 PR의 무관한 전체 suite를 반복하지 않는다. 고객 서명·broadcast·배포·실자산 실행은 수행하지 않았고, PR 09–10은 계획 상태다.
 
 ## 완료 기준과 공통 규칙
 
