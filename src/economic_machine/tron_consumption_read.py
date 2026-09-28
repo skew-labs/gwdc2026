@@ -12,7 +12,8 @@ from .tron_registry_read import _block, _hex, _http_transport, _node_url
 from .values import MachineError, digest, require_keys
 
 
-VERSION = "economic-tron-transaction-observation-1"
+VERSION = "economic-tron-transaction-observation-2"
+LEGACY_VERSION = "economic-tron-transaction-observation-1"
 CONFIG_VERSION = "economic-tron-transaction-reader-1"
 ASSESSMENT_VERSION = "economic-tron-basket-consumption-assessment-1"
 BASKET_CONSUMED_TOPIC = "b754d98b17d9d2e535bc3f0fcdb40c0949f5b1a251b024cb0ec22b057f71afd7"
@@ -85,6 +86,15 @@ def _raw_data_hex(body: dict, txid: str) -> str:
     if hashlib.sha256(bytes.fromhex(raw)).hexdigest() != txid:
         raise MachineError("TRON transaction ID does not hash raw bytes")
     return raw
+
+
+def _optional_nonnegative(raw, key):
+    value = raw.get(key)
+    if value is None:
+        return None
+    if type(value) is not int or value < 0:
+        raise MachineError("TRON receipt " + key + " is invalid")
+    return str(value)
 
 
 def read_tron_transaction(txid: str, config: dict, *, now_ms: int | None = None,
@@ -168,6 +178,13 @@ def read_tron_transaction(txid: str, config: dict, *, now_ms: int | None = None,
         details = {"block": block, "call_target_address": target,
                    "execution_success": execution_success,
                    "body_record_hash": digest(body), "receipt_record_hash": digest(info),
+                   "resource_receipt": {
+                       "total_fee_sun": _optional_nonnegative(info, "fee"),
+                       "energy_fee_sun": _optional_nonnegative(receipt, "energy_fee"),
+                       "bandwidth_fee_sun": _optional_nonnegative(receipt, "net_fee"),
+                       "energy_usage_total": _optional_nonnegative(
+                           receipt, "energy_usage_total"),
+                       "bandwidth_usage": _optional_nonnegative(receipt, "net_usage")},
                    "logs": [_log(item) for item in logs]}
 
     after = _tip(node)
@@ -194,7 +211,7 @@ def assess_basket_consumption(binding: dict, observation: dict) -> dict:
             or binding.get("schema_version") not in {"economic-basket-registry-binding-1",
                                                      "economic-basket-registry-binding-2"}
             or not isinstance(observation, dict)
-            or observation.get("schema_version") != VERSION):
+            or observation.get("schema_version") not in {VERSION, LEGACY_VERSION}):
         raise MachineError("typed binding and transaction observation required")
     recorded = dict(observation)
     claimed_hash = recorded.pop("observation_hash", None)

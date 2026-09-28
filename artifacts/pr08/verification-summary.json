@@ -1,0 +1,52 @@
+{
+  "schema_version": "economic-pr-verification-summary-1",
+  "pr": 8,
+  "status": "PASS",
+  "generated_at": "2026-09-28T16:09:24.341182+00:00",
+  "branch": "pr08-execution-reconciliation",
+  "remote_worktree": "/srv/skew/gwdc-financial-agent-20260924/cache/gwdc2026-publish-worktree-20260928",
+  "targeted_tests": {
+    "count": 32,
+    "status": "PASS",
+    "log": "artifacts/pr08/targeted-tests.log",
+    "scope": [
+      "signed protobuf and signer connection",
+      "exact txid submission and solidified reader",
+      "post-state position reconciliation",
+      "integer performance accounting",
+      "reservation-bound non-atomic execution ledger",
+      "modified v2 receipt extraction"
+    ]
+  },
+  "static_checks": [
+    {
+      "name": "PY_COMPILE_CHANGED_FILES",
+      "status": "PASS",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "GIT_DIFF_CHECK",
+      "status": "PASS",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "fixed_during_validation": [
+    "missing account fields no longer serialize as zero deltas",
+    "redeemUnderlying requires received balance plus underlying and share decreases",
+    "ledger start requires active exact-graph capital reservation evidence",
+    "solidified blocks and resource fields are structurally revalidated",
+    "reconciliation records must lie inside the accounting period",
+    "evidence writer shell quoting was corrected after one failed generation attempt"
+  ],
+  "authority_boundary": {
+    "customer_signatures": 0,
+    "broadcasts": 0,
+    "deployments": 0,
+    "asset_movements": 0
+  },
+  "manifest": "artifacts/pr08/source-manifest.json"
+}

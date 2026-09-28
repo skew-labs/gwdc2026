@@ -61,7 +61,9 @@ class TronConsumptionReadTests(unittest.TestCase):
         self.info = {
             "id": self.txid, "blockNumber": 500,
             "blockTimeStamp": self.block_time,
-            "receipt": {"result": "SUCCESS", "energy_usage_total": 13045},
+            "fee": 1000000,
+            "receipt": {"result": "SUCCESS", "energy_usage_total": 13045,
+                        "energy_fee": 800000, "net_fee": 200000, "net_usage": 345},
             "log": [self.event],
         }
         self.calls = []
@@ -96,6 +98,10 @@ class TronConsumptionReadTests(unittest.TestCase):
         self.assertEqual(assessment["settlement_status"], "NOT_VERIFIED")
         self.assertEqual(assessment["execution_authority"], "NONE")
         self.assertEqual(observation["status"], "SOLID_EXECUTED")
+        self.assertEqual(observation["details"]["resource_receipt"], {
+            "total_fee_sun": "1000000", "energy_fee_sun": "800000",
+            "bandwidth_fee_sun": "200000", "energy_usage_total": "13045",
+            "bandwidth_usage": "345"})
         self.assertEqual(len(self.calls), 6)
         self.assertEqual({call[1] for call in self.calls}, {
             "/walletsolidity/getnowblock", "/walletsolidity/getblockbynum",

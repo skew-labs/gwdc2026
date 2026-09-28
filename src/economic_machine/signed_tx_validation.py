@@ -186,6 +186,7 @@ def validate_signed_transaction(signed, request, session, used_commitments, *, a
         "action_hash": request["action_hash"], "nonce": request["nonce"],
         "execution_path": request["execution_path"], "txid": txid,
         "raw_data_hash": actual_txid, "signer_address": owner,
+        "wallet_request": deepcopy(request),
         "decoded_transaction": decoded,
         "signed_transaction": {"visible": False, "txID": txid,
             "raw_data_hex": raw_hex, "signature": list(signatures)},
