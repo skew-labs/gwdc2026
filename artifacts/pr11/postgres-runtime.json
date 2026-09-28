@@ -1,0 +1,17 @@
+{
+  "database": "isolated_pr11_verification",
+  "durability": {
+    "fsync": true,
+    "synchronous_commit": true
+  },
+  "installation": "EXTRACTED_DEBIAN_PACKAGES_NO_SYSTEM_INSTALL",
+  "login_roles": {
+    "api_superuser": false,
+    "worker_superuser": false
+  },
+  "postgresql_version": "16.15",
+  "port": 55432,
+  "public_listener": false,
+  "service_host": "CHERRY",
+  "system_postgresql_modified": false
+}

@@ -1,0 +1,15 @@
+{
+  "cross_scope_record_status_before_restart": 409,
+  "demo_story_status_before_restart": 200,
+  "job_count_before_restart": 1,
+  "job_count_after_restart": 1,
+  "job_lease_secret_exposed": false,
+  "record_body_after_restart": {
+    "value": "persisted"
+  },
+  "record_status_after_restart": 200,
+  "server_process_restarted": true,
+  "storage_backend_after_restart": "POSTGRESQL",
+  "storage_journal_integrity_after_restart": true,
+  "storage_worker_credential_loaded_after_restart": false
+}

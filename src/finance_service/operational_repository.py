@@ -189,6 +189,10 @@ class OperationalRepository:
                              "ORDER BY ordinal DESC LIMIT 1").fetchone()
         return "0" * 64 if row is None else row["event_hash"]
 
+    def health(self):
+        return {"backend": "SQLITE_REFERENCE",
+                "journal_integrity": self.verify_journal()}
+
     def put_record(self, scope, record_kind, record_id, body, *, expected_version, at):
         scope, scope_hash = _scope(scope)
         kind, record_id = ident(record_kind, "record kind"), ident(record_id, "record id")
