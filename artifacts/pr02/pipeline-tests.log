@@ -10,6 +10,6 @@ test_usdd_tron_collateral_numeric_zero_and_vault_risk (test_pipeline.PipelineTes
 test_zero_and_missing_remain_distinct (test_pipeline.PipelineTests.test_zero_and_missing_remain_distinct) ... ok
 
 ----------------------------------------------------------------------
-Ran 10 tests in 0.114s
+Ran 10 tests in 0.126s
 
 OK

@@ -68,7 +68,8 @@ def main():
         "unavailable": snapshot["unavailable"], "source_status": snapshot["source_status"],
         "sources": [{key: c[key] for key in ("source_id", "url", "received_at", "observed_at", "block", "raw_sha256", "error", "capture_hash")}
                     for c in snapshot["captures"]],
-        "rpc": {"error": rpc["error"], "capture_hash": rpc["capture_hash"], "records": len(rpc["records"]),
+        "rpc": {"error": rpc["error"], "failure": rpc["failure"], "strategy": rpc["strategy"],
+                "capture_hash": rpc["capture_hash"], "records": len(rpc["records"]),
                 "requests": [{"path": r["path"], "payload": r["payload"], "raw_sha256": r["raw_sha256"]} for r in rpc["records"]]},
         "comparisons": snapshot["comparisons"],
         "field_mappings": {path: {key: fact[key] for key in ("value", "unit", "quality", "source_id", "json_pointer", "block", "observed_at", "withheld_reasons")}

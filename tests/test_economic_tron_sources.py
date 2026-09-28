@@ -8,10 +8,13 @@ import unittest
 from datetime import datetime, timezone
 from decimal import localcontext
 from pathlib import Path
+from unittest.mock import Mock, patch
+from urllib.error import HTTPError
 
 from economic_machine.snapshot_assembly import SnapshotAssembler
 from economic_machine.tron_products import discover_products
-from economic_machine.tron_rpc_snapshot import capture_rpc, replay_rpc
+from economic_machine.tron_constant import SELECTORS, LEGACY_DELEGATORS, read_constant
+from economic_machine.tron_rpc_snapshot import capture_rpc, replay_rpc, http_reader
 from economic_machine.tron_sources import (address_base58, address_hex, capture_from_store,
     make_capture, parse_raw, source_url, validate_capture)
 from economic_machine.state import apply_delta
@@ -131,10 +134,13 @@ def rpc_fixture(products, *, wallet=False, mode="FIXTURE", changed_block=False, 
             "ilks(uint256)": [int.from_bytes(b"TRX-A".ljust(32, b"\0"), "big")],
             "urns(bytes32,address)": [500*10**18, 100*10**18],
             "ilks(bytes32)": [200*10**18, 101*10**25, 2*10**27, 1000000*10**45, 10**45]}
-        return json.dumps({"result": {"result": True}, "transaction": {"ret": [{"ret": "SUCCESS"}]},
+        return json.dumps({"result": {"result": True}, "transaction": {"ret": [{"ret": "SUCCESS"}],
+            "raw_data": {"contract": [{"type": "TriggerSmartContract", "parameter": {"value": {
+                "owner_address": payload["owner_address"], "contract_address": contract,
+                "data": SELECTORS[selector] + payload["parameter"]}}}]}},
             "constant_result": ["".join(f"{v:064x}" for v in mapping[selector])]}).encode()
     raw = capture_rpc(CONFIG, products, scope=SCOPE if wallet else None, vault_ids=[1] if wallet else [],
-                      mode=mode, transport=reader)
+                      mode=mode, transport=reader, atomic_public=False)
     raw["received_at"] = AT
     return rehash(raw)
 
@@ -395,8 +401,8 @@ class RpcSnapshotTests(unittest.TestCase):
             with self.subTest(kind=kind), self.assertRaises(MachineError):
                 replay_rpc(rehash(raw), CONFIG, self.products)
 
-    def test_missing_vm_result_and_extra_abi_words_are_not_success(self):
-        for edit in (lambda p: p["transaction"].update(ret=[{}]),
+    def test_missing_result_message_and_wrong_abi_width_are_not_success(self):
+        for edit in (lambda p: p["transaction"].update(ret=[]),
                      lambda p: p["constant_result"].__setitem__(0, p["constant_result"][0] + "0" * 64),
                      lambda p: p["transaction"].update(ret=[{"ret": "REVERT"}])):
             raw = rpc_fixture(self.products)
@@ -406,6 +412,60 @@ class RpcSnapshotTests(unittest.TestCase):
             record["raw_text"] = json.dumps(payload)
             record["raw_sha256"] = hashlib.sha256(record["raw_text"].encode()).hexdigest()
             with self.assertRaises(MachineError):
+                replay_rpc(rehash(raw), CONFIG, self.products)
+
+    def test_real_protobuf_success_and_legacy_padding_are_decoded(self):
+        raw = rpc_fixture(self.products)
+        for record in raw["records"]:
+            if record["path"].endswith("triggerconstantcontract"):
+                payload = json.loads(record["raw_text"])
+                payload["transaction"]["ret"] = [{}]
+                if record["payload"]["contract_address"] in LEGACY_DELEGATORS:
+                    payload["constant_result"][0] += "0" * 128
+                record["raw_text"] = json.dumps(payload)
+                record["raw_sha256"] = hashlib.sha256(record["raw_text"].encode()).hexdigest()
+        result = replay_rpc(rehash(raw), CONFIG, self.products)
+        self.assertEqual(result["observations"]["justlend.v1.jUSDT.available_cash"]["value"], "1000")
+
+    def test_protobuf_success_does_not_mask_failure_fields(self):
+        edits = [lambda p: p["result"].update(result=False), lambda p: p["result"].update(message="REVERT"),
+            lambda p: p["result"].update(code="CONTRACT_EXE_ERROR"), lambda p: p["transaction"].update(ret=[{"ret": "FAILED"}]),
+            lambda p: p["transaction"].update(ret=[{"ret": 1}]), lambda p: p["transaction"].update(ret=[{"ret": False}]),
+            lambda p: p["transaction"].update(ret=[{"contractRet": "REVERT"}]),
+            lambda p: p["transaction"].update(ret=[{"contractRet": "OUT_OF_ENERGY"}]),
+            lambda p: p["transaction"].update(ret=[{"contractRet": 0}]), lambda p: p.update(Error="upstream error")]
+        for edit in edits:
+            raw = rpc_fixture(self.products)
+            record = raw["records"][1]
+            payload = json.loads(record["raw_text"])
+            payload["transaction"]["ret"] = [{}]
+            edit(payload)
+            record["raw_text"] = json.dumps(payload)
+            record["raw_sha256"] = hashlib.sha256(record["raw_text"].encode()).hexdigest()
+            with self.assertRaises(MachineError):
+                replay_rpc(rehash(raw), CONFIG, self.products)
+
+    def test_response_must_echo_the_bound_request(self):
+        for field, value in (("owner_address", PROXY), ("contract_address", PROXY), ("data", "a9059cbb"),
+                             ("call_value", 1), ("call_value", False)):
+            raw = rpc_fixture(self.products)
+            record = raw["records"][1]
+            payload = json.loads(record["raw_text"])
+            payload["transaction"]["raw_data"]["contract"][0]["parameter"]["value"][field] = value
+            record["raw_text"] = json.dumps(payload)
+            record["raw_sha256"] = hashlib.sha256(record["raw_text"].encode()).hexdigest()
+            with self.subTest(field=field), self.assertRaises(MachineError):
+                replay_rpc(rehash(raw), CONFIG, self.products)
+
+    def test_padding_exception_does_not_extend_to_other_contracts_or_nonzero_tail(self):
+        for index, tail in ((1, "0"*127+"1"), (7, "0"*128), (1, "0"*64), (1, "0"*192)):
+            raw = rpc_fixture(self.products)
+            record = raw["records"][index]
+            payload = json.loads(record["raw_text"])
+            payload["constant_result"][0] += tail
+            record["raw_text"] = json.dumps(payload)
+            record["raw_sha256"] = hashlib.sha256(record["raw_text"].encode()).hexdigest()
+            with self.subTest(index=index), self.assertRaises(MachineError):
                 replay_rpc(rehash(raw), CONFIG, self.products)
 
     def test_changed_solid_block_and_fullnode_fields_are_withheld(self):
@@ -471,6 +531,38 @@ class RpcSnapshotTests(unittest.TestCase):
         with self.assertRaisesRegex(MachineError, "fixtures"):
             service.read(context)
         self.assertEqual(repo.scope, SCOPE)
+
+
+class RpcTransportTests(unittest.TestCase):
+    def test_transient_retry_is_bounded_and_each_attempt_counts(self):
+        store, opener, response = Mock(), Mock(), Mock()
+        response.status = 200
+        response.read.return_value = b'{}'
+        context = Mock()
+        context.__enter__ = Mock(return_value=response)
+        context.__exit__ = Mock(return_value=False)
+        opener.open.side_effect = [HTTPError('https://api.trongrid.io', 429, 'rate limited', {}, None), context]
+        with patch('economic_machine.tron_rpc_snapshot.build_opener', return_value=opener), patch('economic_machine.tron_rpc_snapshot.time.sleep'):
+            self.assertEqual(http_reader(store)('/walletsolidity/getnowblock', {}), b'{}')
+        self.assertEqual(opener.open.call_count, 2)
+        self.assertEqual(store.claim_request.call_count, 2)
+        self.assertEqual(opener.open.call_args.args[0].get_method(), 'POST')
+
+    def test_repeated_transient_failure_stops_and_nontransient_is_not_retried(self):
+        for status, attempts in ((429, 2), (503, 2), (400, 1), (401, 1)):
+            store, opener = Mock(), Mock()
+            opener.open.side_effect = HTTPError('https://api.trongrid.io', status, 'error', {}, None)
+            with patch('economic_machine.tron_rpc_snapshot.build_opener', return_value=opener), patch('economic_machine.tron_rpc_snapshot.time.sleep'):
+                with self.assertRaises(HTTPError):
+                    http_reader(store)('/walletsolidity/getnowblock', {})
+            self.assertEqual(opener.open.call_count, attempts)
+            self.assertEqual(store.claim_request.call_count, attempts)
+
+    def test_write_method_is_rejected_before_network_or_budget(self):
+        store = Mock()
+        with self.assertRaises(MachineError):
+            http_reader(store)('/wallet/broadcasttransaction', {})
+        store.claim_request.assert_not_called()
 
 
 if __name__ == "__main__":

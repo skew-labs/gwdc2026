@@ -220,10 +220,11 @@ class SnapshotAssembler:
         comparisons = []
         if rpc_result:
             before, after = rpc_result["block_before"], rpc_result["block_after"]
+            block = rpc_result["coherent_block"] or (before if before == after else None)
             # _block returns canonical height/hash/timestamp_ms fields.
-            observed = datetime.fromtimestamp(before["timestamp_ms"] / 1000, timezone.utc).isoformat()
+            observed = datetime.fromtimestamp((block or before)["timestamp_ms"] / 1000, timezone.utc).isoformat()
             reasons = []
-            if before != after:
+            if block is None:
                 reasons.append("SOLID_BLOCK_CHANGED")
             if not 0 <= (_time(as_of) - _time(observed)).total_seconds() <= self.config["max_age_seconds"]:
                 reasons.append("BLOCK_TIME_STALE_OR_FUTURE")
@@ -241,7 +242,7 @@ class SnapshotAssembler:
                     "source_id": "trongrid", "provider_group": "trongrid", "raw_sha256": None,
                     "capture_hash": rpc["capture_hash"], "json_pointer": None, "received_at": rpc["received_at"],
                     "observed_at": observed if item["solid_view"] else None,
-                    "block": before if item["solid_view"] and before == after else None,
+                    "block": block if item["solid_view"] else None,
                     "availability": "AVAILABLE", "state_eligible": not local_reasons and value is not None,
                     "withheld_reasons": sorted(local_reasons)}
                 if path in facts and facts[path]["value"] is not None and value is not None:

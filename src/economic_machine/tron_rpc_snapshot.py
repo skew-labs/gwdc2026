@@ -7,35 +7,51 @@ Full-node resource/fee observations retain an unknown observation block.
 
 import hashlib
 import json
+import time
 from datetime import datetime, timezone
+from urllib.error import HTTPError
 from urllib.request import Request, build_opener
 
 from .mandate import integer, normalize_scope
 from .tron_products import registry_config
-from .tron_registry_read import _NoRedirect, _block, _call, _word
+from .tron_registry_read import _NoRedirect, _block, _word
+from .tron_constant import read_constant
+from .tron_multicall import read_public_batch
 from .tron_sources import MAX_BYTES, address_hex, parse_raw
 from .values import MachineError, digest, require_keys, utc
 
 
-VERSION = "economic-tron-rpc-capture-1"
+VERSION = "economic-tron-rpc-capture-2"
 BASE_URL = "https://api.trongrid.io"
 PATHS = {"/walletsolidity/getnowblock", "/walletsolidity/triggerconstantcontract",
-         "/walletsolidity/getaccount", "/wallet/getaccountresource", "/wallet/getchainparameters"}
+         "/walletsolidity/getaccount", "/wallet/getaccountresource", "/wallet/getchainparameters",
+         "/walletsolidity/getblockbynum"}
 
 
 def http_reader(store):
+    last_request = 0.0
     def request(path, payload):
+        nonlocal last_request
         if path not in PATHS:
             raise MachineError("RPC method not in read allowlist")
-        store.claim_request(datetime.now(timezone.utc).date().isoformat(), 1000)
         req = Request(BASE_URL + path, data=json.dumps(payload).encode() if payload is not None else None,
                       headers={"Content-Type": "application/json", "User-Agent": "GWDC-Snapshot/1"})
-        with build_opener(_NoRedirect()).open(req, timeout=12) as response:
-            if response.status != 200:
-                raise MachineError("RPC HTTP failure")
-            raw = response.read(MAX_BYTES + 1)
-        parse_raw(raw)
-        return raw
+        for attempt in range(2):
+            time.sleep(max(0, 0.35 - (time.monotonic() - last_request)))
+            store.claim_request(datetime.now(timezone.utc).date().isoformat(), 1000)
+            last_request = time.monotonic()
+            try:
+                with build_opener(_NoRedirect()).open(req, timeout=12) as response:
+                    if response.status != 200:
+                        raise MachineError("RPC HTTP failure")
+                    raw = response.read(MAX_BYTES + 1)
+                parse_raw(raw)
+                return raw
+            except HTTPError as exc:
+                if attempt or exc.code not in {429, 502, 503, 504}:
+                    raise
+                # Bounded retry for transient transport failures only. No VM retry.
+                time.sleep(1)
     return request
 
 
@@ -57,16 +73,21 @@ def _scaled(value, places):
     return (text[:-places] + "." + text[-places:]).rstrip("0").rstrip(".") or "0"
 
 
-def _read(config, products, scope, vault_ids, request):
+def _read(config, products, scope, vault_ids, request, *, atomic_public=False, wait=None):
     """The request sequence is code-defined and replayed from raw bytes."""
     observations, unavailable = {}, []
-    before = _block(request("/walletsolidity/getnowblock", None))
+    # POST avoids a cached GET head being older than the constant-call state.
+    before = _block(request("/walletsolidity/getnowblock", {}))
     # A public constant call still requires an owner; no wallet secret is used.
     caller = scope["wallet"] if scope else products["justlend.v1.jUSDT"]["capability"]["contract"]
+    batch, coherent_block = read_public_batch(request, products, caller) if atomic_public else ({}, None)
 
     def call(contract, selector, parameter="", words=1):
-        return _call(lambda view, path, payload: request(path, payload), contract[2:], caller[2:],
-                     selector, parameter, words)
+        if atomic_public:
+            if parameter or words != 1 or (contract, selector) not in batch:
+                raise MachineError("getter not present in atomic public batch")
+            return [batch[(contract, selector)]]
+        return read_constant(request, contract, caller, selector, parameter, words)
 
     def fact(path, value, unit, *, solid=True):
         observations[path] = {"value": value, "unit": unit, "solid_view": solid}
@@ -184,12 +205,24 @@ def _read(config, products, scope, vault_ids, request):
         unavailable.extend(["VAULT_ENUMERATION_PARTIAL", "VAULT_DEBT_SINCE_LAST_RATE_UPDATE_UNKNOWN"])
     elif scope:
         unavailable.append("VAULT_IDS_NOT_PROVIDED")
-    after = _block(request("/walletsolidity/getnowblock", None))
+    after = _block(request("/walletsolidity/getnowblock", {}))
+    # Public RPC backends can report a solid head slightly behind the backend
+    # serving the atomic call. Preserve the call and wait for confirmation;
+    # never relabel its block or re-read values into the same commitment.
+    for _ in range(6):
+        if not coherent_block or (coherent_block["number"] <= after["number"]
+                                  and coherent_block["timestamp_ms"] <= after["timestamp_ms"]):
+            break
+        if wait is not None:
+            wait(1)
+        after = _block(request("/walletsolidity/getnowblock", {}))
+    if coherent_block and (coherent_block["number"] > after["number"] or coherent_block["timestamp_ms"] > after["timestamp_ms"]):
+        raise MachineError("atomic read is newer than solidified head")
     return {"block_before": before, "block_after": after, "observations": observations,
-            "vault_ownership": ownership, "unavailable": sorted(unavailable)}
+            "coherent_block": coherent_block, "vault_ownership": ownership, "unavailable": sorted(unavailable)}
 
 
-def capture_rpc(config, products, *, scope=None, vault_ids=(), mode="LIVE_READ", transport=None, store=None):
+def capture_rpc(config, products, *, scope=None, vault_ids=(), mode="LIVE_READ", transport=None, store=None, atomic_public=True):
     config = registry_config(config)
     scope = normalize_scope(scope) if scope is not None else None
     if scope is not None and scope["network"] != "tron-mainnet":
@@ -199,32 +232,41 @@ def capture_rpc(config, products, *, scope=None, vault_ids=(), mode="LIVE_READ",
     ids = sorted(integer(x, "vault id", 1, (1 << 64)-1) for x in vault_ids)
     if ids and scope is None:
         raise MachineError("vault reads require wallet scope")
+    if type(atomic_public) is not bool:
+        raise MachineError("atomic public flag must be boolean")
+    strategy = "ATOMIC_PUBLIC" if scope is None and atomic_public else "SEQUENTIAL_SCOPED"
     records = []
     reader = transport or http_reader(store)
 
+    pending_path = None
     def request(path, payload):
+        nonlocal pending_path
+        pending_path = path
         raw = reader(path, payload)
         parsed = parse_raw(raw)
         records.append({"path": path, "payload": payload, "raw_text": raw.decode("utf-8"),
                         "raw_sha256": hashlib.sha256(raw).hexdigest()})
         return parsed
-    error = None
+    error, failure = None, None
     try:
-        _read(config, products, scope, ids, request)
-    except Exception:
+        _read(config, products, scope, ids, request, atomic_public=strategy == "ATOMIC_PUBLIC",
+              wait=time.sleep if transport is None else None)
+    except Exception as exc:
         # An interrupted batch is deliberately not projected as partial balances.
         error = "INCOMPLETE_RPC_READ"
+        failure = {"record_index": len(records), "path": pending_path,
+                   "error_type": "HTTP_" + str(exc.code) if isinstance(exc, HTTPError) else type(exc).__name__}
     capture = {"schema_version": VERSION, "url": BASE_URL, "provider_group": "trongrid",
-               "network": "tron-mainnet", "scope": scope, "vault_ids": ids, "mode": mode,
+               "network": "tron-mainnet", "scope": scope, "vault_ids": ids, "mode": mode, "strategy": strategy,
                "received_at": datetime.now(timezone.utc).isoformat(), "records": records,
-               "error": error, "registry_hash": digest(config), "products_hash": digest(products)}
+               "error": error, "failure": failure, "registry_hash": digest(config), "products_hash": digest(products)}
     capture["capture_hash"] = digest(capture)
     return capture
 
 
 def replay_rpc(capture, config, products):
-    require_keys(capture, {"schema_version", "url", "provider_group", "network", "scope", "vault_ids", "mode",
-                          "received_at", "records", "error", "registry_hash", "products_hash", "capture_hash"}, "RPC capture")
+    require_keys(capture, {"schema_version", "url", "provider_group", "network", "scope", "vault_ids", "mode", "strategy",
+                          "received_at", "records", "error", "failure", "registry_hash", "products_hash", "capture_hash"}, "RPC capture")
     body = {k: v for k, v in capture.items() if k != "capture_hash"}
     if (digest(body) != capture["capture_hash"] or capture["schema_version"] != VERSION
         or capture["url"] != BASE_URL or capture["provider_group"] != "trongrid" or capture["network"] != "tron-mainnet"
@@ -235,6 +277,8 @@ def replay_rpc(capture, config, products):
     scope = normalize_scope(capture["scope"]) if capture["scope"] is not None else None
     if scope and scope["network"] != "tron-mainnet":
         raise MachineError("RPC scope network mismatch")
+    if capture["strategy"] not in {"ATOMIC_PUBLIC", "SEQUENTIAL_SCOPED"} or (scope and capture["strategy"] == "ATOMIC_PUBLIC"):
+        raise MachineError("RPC strategy/scope mismatch")
     ids = capture["vault_ids"]
     if (not isinstance(ids, list) or len(ids) > 8 or any(type(x) is not int or not 0 < x < 1 << 64 for x in ids)
         or ids != sorted(set(ids)) or (ids and scope is None)):
@@ -251,8 +295,12 @@ def replay_rpc(capture, config, products):
             raise MachineError("RPC raw hash mismatch")
         parse_raw(raw)
     if capture["error"] == "INCOMPLETE_RPC_READ":
+        require_keys(capture["failure"], {"record_index", "path", "error_type"}, "RPC failure")
+        if (capture["failure"]["record_index"] != len(records) or capture["failure"]["path"] not in PATHS
+            or not isinstance(capture["failure"]["error_type"], str)):
+            raise MachineError("invalid RPC failure boundary")
         return None
-    if capture["error"] is not None:
+    if capture["error"] is not None or capture["failure"] is not None:
         raise MachineError("unsupported RPC error")
     cursor = 0
 
@@ -265,7 +313,7 @@ def replay_rpc(capture, config, products):
         if record["path"] != path or record["payload"] != payload:
             raise MachineError("RPC transcript request/scope mismatch")
         return parse_raw(record["raw_text"].encode())
-    result = _read(config, products, scope, ids, request)
+    result = _read(config, products, scope, ids, request, atomic_public=capture["strategy"] == "ATOMIC_PUBLIC")
     if cursor != len(records):
         raise MachineError("RPC transcript has trailing requests")
     return result

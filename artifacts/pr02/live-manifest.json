@@ -1,20 +1,19 @@
 {
   "schema_version": "economic-tron-live-manifest-1",
-  "at": "2026-09-28T10:20:11.437879+00:00",
-  "replay_of": "data/verification/pr02-20260928/run-02/captures.json",
-  "snapshot_hash": "654e597a36cd7a98bd2fa6dcc897d6145bb4dd83f6e69b70f911432824c2c275",
+  "at": "2026-09-28T10:49:17.903850+00:00",
+  "replay_of": null,
+  "snapshot_hash": "3756e04d7320715f0cca9667193720db26693845d4c13dd9691ccd4f4f489d06",
   "mode": "LIVE_READ",
   "wallet_provided": false,
   "execution_enabled": false,
   "products": 9,
-  "facts": 76,
+  "facts": 87,
   "quality_counts": {
-    "VALID": 73,
+    "VALID": 84,
     "VALID_ZERO": 3
   },
-  "state_eligible_count": 0,
+  "state_eligible_count": 3,
   "unavailable": [
-    "RPC_READ_INCOMPLETE",
     "WALLET_NOT_PROVIDED"
   ],
   "source_status": {
@@ -32,118 +31,247 @@
     {
       "source_id": "justlend_contracts",
       "url": "https://docs.justlend.org/developers/contracts.json",
-      "received_at": "2026-09-28T10:18:16.154457+00:00",
+      "received_at": "2026-09-28T10:49:06.353393+00:00",
       "observed_at": null,
       "block": null,
       "raw_sha256": "e134f6fea60ae2a9264c56eb04c156d0d39a3ffa55ce4a8979aa713bbf6a7eba",
       "error": null,
-      "capture_hash": "51fb45cf2a70fdd0aa3851bd8e5cda682c841cc409629f24605dfa14c942b08e"
+      "capture_hash": "380fbd445ab9259c6c68143012281c8080d7a1c98a6cfe7da7071669e55544d0"
     },
     {
       "source_id": "justlend_markets_v1",
       "url": "https://openapi.just.network/lend/jtoken",
-      "received_at": "2026-09-28T10:18:17.228232+00:00",
+      "received_at": "2026-09-28T10:49:07.424179+00:00",
       "observed_at": null,
       "block": null,
-      "raw_sha256": "e62ff7e3a757a635dbb0f8d9fda8bd5f759655d10a4e402b9cd7d21366206368",
+      "raw_sha256": "5c0666bfc453cad030653223ddb652d9c9b49d62b1a4ea312e0eb3fd403ceba6",
       "error": null,
-      "capture_hash": "f6a841faec8e66177df08f5447b8aa5e54f6c3ce91df1c5e8d2e0ba5a9145d5c"
+      "capture_hash": "d1dd2306f898b1be3b5f5eabd74b21d33309f21a883745222128a82fed0cdc58"
     },
     {
       "source_id": "justlend_strx_v1",
       "url": "https://openapi.just.network/lend/strx",
-      "received_at": "2026-09-28T10:18:21.764498+00:00",
+      "received_at": "2026-09-28T10:49:11.916240+00:00",
       "observed_at": null,
       "block": null,
-      "raw_sha256": "a116255c2ea0e2c4f9fb58c76aec3e99fef2340b8bfbe98fb84bebdb7dd9bdcb",
+      "raw_sha256": "4022516eb32cbee93b7472f1967ac5caba95040daab1765bd0e9fd9e284a39ea",
       "error": null,
-      "capture_hash": "34944cf7af9ff39e87a5ed936f1eaf9bab4aca7bf429c1d198a6ffdf82cf17a6"
+      "capture_hash": "df2b2bbafc07e196f7d4717429b3318c128e39712ca71e9d0a637d33aac4ce0e"
     },
     {
       "source_id": "justlend_usdd_rewards_v1",
       "url": "https://openapi.just.network/mining/apy",
-      "received_at": "2026-09-28T10:18:18.322499+00:00",
+      "received_at": "2026-09-28T10:49:08.579134+00:00",
       "observed_at": null,
       "block": null,
-      "raw_sha256": "4ffa8d33c78f244f5c242d3a35f90e6e743b9ebaad4540979b6a32d037fde763",
+      "raw_sha256": "44b3774969019813d21bbdb92dd9a718c389c6c082a9b18c71719c1f2f589ad4",
       "error": null,
-      "capture_hash": "95ddfbd39eb1991e2fe84216b13868b715cdadc2ffa8315fa13d23e9f1e7282a"
+      "capture_hash": "de8f27cbd25e2fbb95a9871295fe5cbd9a9e917f606beb595d4faae42058ca6b"
     },
     {
       "source_id": "tron_chain_parameters",
       "url": "https://api.trongrid.io/wallet/getchainparameters",
-      "received_at": "2026-09-28T10:18:22.108629+00:00",
+      "received_at": "2026-09-28T10:49:12.257564+00:00",
       "observed_at": null,
       "block": null,
       "raw_sha256": "c36f9830aed426c3b3fcbbf85487b4c9da8777f8db5cd7b3c7f763713c95ae7a",
       "error": null,
-      "capture_hash": "57c802fcc83bcd6e86570f63263cea1a20af16bc3eed6fda3ea2d9ecff45e6db"
+      "capture_hash": "27b746997e70208a1d20cc30bf3531c783f92bea88b39c9d432aca088c8a5e29"
     },
     {
       "source_id": "usdd_earn_apy",
       "url": "https://openapi.usdd.io/api/v1/external/earn-apy",
-      "received_at": "2026-09-28T10:18:19.410965+00:00",
+      "received_at": "2026-09-28T10:49:09.668579+00:00",
       "observed_at": null,
       "block": null,
       "raw_sha256": "53eec3175db49777623fbae6b7451be939426441a6b130141085238b1f00baf6",
       "error": null,
-      "capture_hash": "12f15a846d67a5306d55a24c4c0404657a9d245b5abdc56b3febf0eac286f844"
+      "capture_hash": "9d4340f8f6ccc148256d8d849443fb06aa22935c76ea1552f55e54c05f14fed9"
     },
     {
       "source_id": "usdd_overview",
       "url": "https://openapi.usdd.io/api/v1/market-site/overview",
-      "received_at": "2026-09-28T10:18:20.499418+00:00",
+      "received_at": "2026-09-28T10:49:10.758574+00:00",
       "observed_at": null,
       "block": null,
-      "raw_sha256": "0e542fb32e02cacb910dfec2000fb27094fabf1c6ca7a07998b8a6b8fe4d8a71",
+      "raw_sha256": "ab2fb971fe74554941968debe4ae38877e683a4a3d4d1a7d3c995d191e767c5e",
       "error": null,
-      "capture_hash": "dd9277be1b3af6388a8ee290ffffaf6170101564e89b57feba1b6bc2b9e62fa0"
+      "capture_hash": "aab0767ac1ae9e96cfa2b3b53042dc9564547b509232ea3c4e2803fbad1cc321"
     },
     {
       "source_id": "usdd_tron_collateral",
       "url": "https://openapi.usdd.io/api/v1/data-platform/latest-collateral?chain=tron",
-      "received_at": "2026-09-28T10:18:21.661952+00:00",
+      "received_at": "2026-09-28T10:49:11.850149+00:00",
       "observed_at": null,
       "block": null,
-      "raw_sha256": "7ac7f8c2b9862f330ee8f9d6535b572dc99099149947ff4663bea7faefb7a174",
+      "raw_sha256": "6bdd1f6e30dce0633ec8aab890c7f166aaf7609255d83a703b1bd33684502856",
       "error": null,
-      "capture_hash": "ecf922cc2f02677d93cfe24ac88335b9d4191e0317a49565de89a27b9667d97d"
+      "capture_hash": "990c9fa52b94cc61e427e2de80cd584c2513203c234bd49834fd315f26eedcbe"
     },
     {
       "source_id": "usdd_vault_config",
       "url": "https://openapi.usdd.io/api/v1/vault/collaterals",
-      "received_at": "2026-09-28T10:18:21.858290+00:00",
+      "received_at": "2026-09-28T10:49:12.012744+00:00",
       "observed_at": null,
       "block": null,
-      "raw_sha256": "9d7fc65d660adc45b3593475a42441a898ab7af9b09dd03f169c6eaf05b45436",
+      "raw_sha256": "55bf2c532c8861484b25c1e5997c1b9f5ee971339ed01358b7c852292bab1b94",
       "error": null,
-      "capture_hash": "06ec4ca17fad3b8b3064444fd4218d084790e4722fd36c0f2a906c1bd50f46ad"
+      "capture_hash": "2381c9dc8b3ddad72eb83bb28b91f607e939dd6908c56ba0beb1ab4df354500a"
     }
   ],
   "rpc": {
-    "error": "INCOMPLETE_RPC_READ",
-    "capture_hash": "40a8985bfca1ce8a5c8f9ed766f4a90789325ab465ea655834ad882813fc0e68",
-    "records": 2,
+    "error": null,
+    "failure": null,
+    "strategy": "ATOMIC_PUBLIC",
+    "capture_hash": "9cff5635478e7beb176737df3fdf3767343da3da8e9f900e94525b2fe69647e5",
+    "records": 7,
     "requests": [
       {
         "path": "/walletsolidity/getnowblock",
-        "payload": null,
-        "raw_sha256": "91f497a63d822d606b46d8709e4fd68f8e9403ab9f452f6f5a318ebc2e526476"
+        "payload": {},
+        "raw_sha256": "09f289ae2b9497a28f6110134c2011e911c10f8abd8244ca6120b74edeeded6a"
       },
       {
         "path": "/walletsolidity/triggerconstantcontract",
         "payload": {
-          "contract_address": "41ea09611b57e89d67fbb33a516eb90508ca95a3e5",
-          "function_selector": "getCash()",
           "owner_address": "41ea09611b57e89d67fbb33a516eb90508ca95a3e5",
-          "parameter": "",
+          "contract_address": "41e777b7157d44d95ef48a8483c743a5d3f8a72180",
+          "function_selector": "aggregate3((address,bool,bytes)[])",
+          "parameter": "0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000a000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001e00000000000000000000000000000000000000000000000000000000000000280000000000000000000000000000000000000000000000000000000000000032000000000000000000000000000000000000000000000000000000000000003c00000000000000000000000000000000000000000000000000000000000000460000000000000000000000000000000000000000000000000000000000000050000000000000000000000000000000000000000000000000000000000000005a0000000000000000000000000000000000000000000000000000000000000064000000000000000000000000000000000000000000000000000000000000006e000000000000000000000000065c9fede72ba73cd1b0dca2a974c070153dc6fcb0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000043b1d21a20000000000000000000000000000000000000000000000000000000000000000000000000000000065c9fede72ba73cd1b0dca2a974c070153dc6fcb000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000004182df0f500000000000000000000000000000000000000000000000000000000000000000000000000000000e7f8a90ede3d84c7c0166bd84a4635e4675accfc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000043b1d21a200000000000000000000000000000000000000000000000000000000000000000000000000000000e7f8a90ede3d84c7c0166bd84a4635e4675accfc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000004182df0f500000000000000000000000000000000000000000000000000000000000000000000000000000000ea09611b57e89d67fbb33a516eb90508ca95a3e50000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000043b1d21a200000000000000000000000000000000000000000000000000000000000000000000000000000000ea09611b57e89d67fbb33a516eb90508ca95a3e5000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000004182df0f500000000000000000000000000000000000000000000000000000000000000000000000000000000c64e69acde1c7b16c2a3efcdbbdaa96c3644c2b30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000043ba0b9a900000000000000000000000000000000000000000000000000000000000000000000000000000000c64e69acde1c7b16c2a3efcdbbdaa96c3644c2b3000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000004c70920bc00000000000000000000000000000000000000000000000000000000000000000000000000000000e777b7157d44d95ef48a8483c743a5d3f8a7218000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000442cbb15c00000000000000000000000000000000000000000000000000000000000000000000000000000000e777b7157d44d95ef48a8483c743a5d3f8a721800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000040f28c97d00000000000000000000000000000000000000000000000000000000",
           "visible": false
         },
-        "raw_sha256": "147de54259d1502b347b555519ed7fa4513a9c287cb8f4184fda5a54d51a70e5"
+        "raw_sha256": "59c978602709349cd17418de216dcb98be8f2c8d85d8468fedd6b57a85911b37"
+      },
+      {
+        "path": "/walletsolidity/getblockbynum",
+        "payload": {
+          "num": 86640017
+        },
+        "raw_sha256": "ff49b3a574457b766d31e93ec3a4654e351842ff547014825f263dc6ae2b0f3b"
+      },
+      {
+        "path": "/wallet/getchainparameters",
+        "payload": null,
+        "raw_sha256": "c36f9830aed426c3b3fcbbf85487b4c9da8777f8db5cd7b3c7f763713c95ae7a"
+      },
+      {
+        "path": "/walletsolidity/getnowblock",
+        "payload": {},
+        "raw_sha256": "09f289ae2b9497a28f6110134c2011e911c10f8abd8244ca6120b74edeeded6a"
+      },
+      {
+        "path": "/walletsolidity/getnowblock",
+        "payload": {},
+        "raw_sha256": "3a691f7fad7fc5d04615438ab8165a97dfefb15e60d0d8c13fa66a03d83a34f8"
+      },
+      {
+        "path": "/walletsolidity/getnowblock",
+        "payload": {},
+        "raw_sha256": "4ad48841e7b8978797777a8c9e41551be69173581bad9662f2ef41ef4840dbce"
       }
     ]
   },
-  "comparisons": [],
+  "comparisons": [
+    {
+      "path": "justlend.v1.jUSDT.available_cash",
+      "status": "AGREE",
+      "api_value": "81732556.971551",
+      "rpc_value": "81732556.971551",
+      "unit": "USDT",
+      "aligned_source_block": false,
+      "meaning": "OBSERVATIONS_ONLY_NO_ORACLE_QUORUM"
+    },
+    {
+      "path": "justlend.v1.jUSDT.exchange_rate",
+      "status": "DISAGREE",
+      "api_value": "0.010870278496292653",
+      "rpc_value": "0.0108702641861094",
+      "unit": "underlying_per_share",
+      "aligned_source_block": false,
+      "meaning": "OBSERVATIONS_ONLY_NO_ORACLE_QUORUM"
+    },
+    {
+      "path": "justlend.v1.jUSDD.available_cash",
+      "status": "AGREE",
+      "api_value": "399236953.53547988251751836",
+      "rpc_value": "399236953.53547988251751836",
+      "unit": "USDD",
+      "aligned_source_block": false,
+      "meaning": "OBSERVATIONS_ONLY_NO_ORACLE_QUORUM"
+    },
+    {
+      "path": "justlend.v1.jUSDD.exchange_rate",
+      "status": "DISAGREE",
+      "api_value": "0.010012691735239081",
+      "rpc_value": "0.0100126917337635890190802032",
+      "unit": "underlying_per_share",
+      "aligned_source_block": false,
+      "meaning": "OBSERVATIONS_ONLY_NO_ORACLE_QUORUM"
+    },
+    {
+      "path": "justlend.v1.jUSDDOLD.available_cash",
+      "status": "AGREE",
+      "api_value": "345548.99412709475090216",
+      "rpc_value": "345548.99412709475090216",
+      "unit": "USDDOLD",
+      "aligned_source_block": false,
+      "meaning": "OBSERVATIONS_ONLY_NO_ORACLE_QUORUM"
+    },
+    {
+      "path": "justlend.v1.jUSDDOLD.exchange_rate",
+      "status": "DISAGREE",
+      "api_value": "0.010193197167944168",
+      "rpc_value": "0.0101931971679441679161190848",
+      "unit": "underlying_per_share",
+      "aligned_source_block": false,
+      "meaning": "OBSERVATIONS_ONLY_NO_ORACLE_QUORUM"
+    },
+    {
+      "path": "justlend.strx.exchange_rate",
+      "status": "DISAGREE",
+      "api_value": "1.317602943712283391",
+      "rpc_value": "1.317602350648392717",
+      "unit": "TRX_per_sTRX",
+      "aligned_source_block": false,
+      "meaning": "OBSERVATIONS_ONLY_NO_ORACLE_QUORUM"
+    },
+    {
+      "path": "justlend.strx.total_underlying",
+      "status": "DISAGREE",
+      "api_value": "9784928679.972601",
+      "rpc_value": "9784923812.678921",
+      "unit": "TRX",
+      "aligned_source_block": false,
+      "meaning": "OBSERVATIONS_ONLY_NO_ORACLE_QUORUM"
+    },
+    {
+      "path": "tron.chain.getEnergyFee",
+      "status": "AGREE",
+      "api_value": "100",
+      "rpc_value": "100",
+      "unit": "sun_per_energy",
+      "aligned_source_block": false,
+      "meaning": "OBSERVATIONS_ONLY_NO_ORACLE_QUORUM"
+    },
+    {
+      "path": "tron.chain.getTransactionFee",
+      "status": "AGREE",
+      "api_value": "1000",
+      "rpc_value": "1000",
+      "unit": "sun_per_byte",
+      "aligned_source_block": false,
+      "meaning": "OBSERVATIONS_ONLY_NO_ORACLE_QUORUM"
+    },
+    {
+      "path": "tron.chain.getUnfreezeDelayDays",
+      "status": "AGREE",
+      "api_value": "14",
+      "rpc_value": "14",
+      "unit": "days",
+      "aligned_source_block": false,
+      "meaning": "OBSERVATIONS_ONLY_NO_ORACLE_QUORUM"
+    }
+  ],
   "field_mappings": {
     "justlend.v1.jUSDT.supply_apy": {
       "value": "0.021758719399776",
@@ -172,7 +300,7 @@
       ]
     },
     "justlend.v1.jUSDT.exchange_rate": {
-      "value": "0.010870264613614925",
+      "value": "0.010870278496292653",
       "unit": "underlying_per_share",
       "quality": "VALID",
       "source_id": "justlend_markets_v1",
@@ -198,7 +326,7 @@
       ]
     },
     "justlend.v1.jUSDT.total_borrows": {
-      "value": "133825121.114835",
+      "value": "133825426.447203",
       "unit": "USDT",
       "quality": "VALID",
       "source_id": "justlend_markets_v1",
@@ -224,7 +352,7 @@
       ]
     },
     "justlend.v1.jUSDD.supply_apy": {
-      "value": "0.000008510294448",
+      "value": "0.000008511377184",
       "unit": "annual_fraction",
       "quality": "VALID",
       "source_id": "justlend_markets_v1",
@@ -237,7 +365,7 @@
       ]
     },
     "justlend.v1.jUSDD.borrow_apy": {
-      "value": "0.070011126441216",
+      "value": "0.070011127839312",
       "unit": "annual_fraction",
       "quality": "VALID",
       "source_id": "justlend_markets_v1",
@@ -250,7 +378,7 @@
       ]
     },
     "justlend.v1.jUSDD.exchange_rate": {
-      "value": "0.010012691730236938",
+      "value": "0.010012691735239081",
       "unit": "underlying_per_share",
       "quality": "VALID",
       "source_id": "justlend_markets_v1",
@@ -263,7 +391,7 @@
       ]
     },
     "justlend.v1.jUSDD.available_cash": {
-      "value": "399285655.075659304123673723",
+      "value": "399236953.53547988251751836",
       "unit": "USDD",
       "quality": "VALID",
       "source_id": "justlend_markets_v1",
@@ -276,7 +404,7 @@
       ]
     },
     "justlend.v1.jUSDD.total_borrows": {
-      "value": "51095.260402155276898274",
+      "value": "51095.470367744451086244",
       "unit": "USDD",
       "quality": "VALID",
       "source_id": "justlend_markets_v1",
@@ -289,7 +417,7 @@
       ]
     },
     "justlend.v1.jUSDD.total_shares": {
-      "value": "39881808087.81557853",
+      "value": "39876944107.03055212",
       "unit": "jtoken",
       "quality": "VALID",
       "source_id": "justlend_markets_v1",
@@ -315,7 +443,7 @@
       ]
     },
     "justlend.v1.jUSDDOLD.borrow_apy": {
-      "value": "0.04990816419768",
+      "value": "0.049929151069296",
       "unit": "annual_fraction",
       "quality": "VALID",
       "source_id": "justlend_markets_v1",
@@ -341,7 +469,7 @@
       ]
     },
     "justlend.v1.jUSDDOLD.available_cash": {
-      "value": "345551.616747752600884758",
+      "value": "345548.99412709475090216",
       "unit": "USDDOLD",
       "quality": "VALID",
       "source_id": "justlend_markets_v1",
@@ -354,7 +482,7 @@
       ]
     },
     "justlend.v1.jUSDDOLD.total_borrows": {
-      "value": "178207.258170757916775574",
+      "value": "178207.78009805322031299",
       "unit": "USDDOLD",
       "quality": "VALID",
       "source_id": "justlend_markets_v1",
@@ -367,7 +495,7 @@
       ]
     },
     "justlend.v1.jUSDDOLD.total_shares": {
-      "value": "43769773.12462988",
+      "value": "43769515.83335859",
       "unit": "jtoken",
       "quality": "VALID",
       "source_id": "justlend_markets_v1",
@@ -380,7 +508,7 @@
       ]
     },
     "justlend.strx.exchange_rate": {
-      "value": "1.317601424748899967",
+      "value": "1.317602943712283391",
       "unit": "TRX_per_sTRX",
       "quality": "VALID",
       "source_id": "justlend_strx_v1",
@@ -393,7 +521,7 @@
       ]
     },
     "justlend.strx.aggregate_apy": {
-      "value": "0.03271564",
+      "value": "0.03436378",
       "unit": "annual_fraction",
       "quality": "VALID",
       "source_id": "justlend_strx_v1",
@@ -406,7 +534,7 @@
       ]
     },
     "justlend.strx.total_underlying": {
-      "value": "9784916924.075379",
+      "value": "9784928679.972601",
       "unit": "TRX",
       "quality": "VALID",
       "source_id": "justlend_strx_v1",
@@ -419,7 +547,7 @@
       ]
     },
     "justlend.strx.total_shares": {
-      "value": "7426310218.160340666520119677",
+      "value": "7426310579.121834366115373901",
       "unit": "sTRX",
       "quality": "VALID",
       "source_id": "justlend_strx_v1",
@@ -432,7 +560,7 @@
       ]
     },
     "justlend.strx.reserves": {
-      "value": "311410697.238353",
+      "value": "311413517.311677",
       "unit": "TRX",
       "quality": "VALID",
       "source_id": "justlend_strx_v1",
@@ -445,7 +573,7 @@
       ]
     },
     "tron.energy_rental.price_per_10000_energy": {
-      "value": "0.45677171",
+      "value": "0.47182204",
       "unit": "TRX_per_10000_energy",
       "quality": "VALID",
       "source_id": "justlend_strx_v1",
@@ -458,7 +586,7 @@
       ]
     },
     "tron.energy_rental.delegated_trx": {
-      "value": "575607549.695373",
+      "value": "680177919.064352",
       "unit": "TRX",
       "quality": "VALID",
       "source_id": "justlend_strx_v1",
@@ -484,7 +612,7 @@
       ]
     },
     "justlend.v1.jUSDD.reward_apy": {
-      "value": "0.0402545",
+      "value": "0.04025941",
       "unit": "annual_fraction",
       "quality": "VALID",
       "source_id": "justlend_usdd_rewards_v1",
@@ -1132,10 +1260,168 @@
         "SOURCE_TIME_UNKNOWN",
         "SOURCE_BLOCK_UNKNOWN"
       ]
+    },
+    "rpc.justlend.v1.jUSDT.available_cash": {
+      "value": "81732556.971551",
+      "unit": "USDT",
+      "quality": "VALID",
+      "source_id": "trongrid",
+      "json_pointer": null,
+      "block": {
+        "block_id": "00000000052a0591cc4b93660607af47ac5494729f7f0b2ab1700f9fa62bd3e0",
+        "number": 86640017,
+        "timestamp_ms": 1790592498000
+      },
+      "observed_at": "2026-09-28T10:48:18+00:00",
+      "withheld_reasons": []
+    },
+    "rpc.justlend.v1.jUSDT.exchange_rate": {
+      "value": "0.0108702641861094",
+      "unit": "underlying_per_share",
+      "quality": "VALID",
+      "source_id": "trongrid",
+      "json_pointer": null,
+      "block": {
+        "block_id": "00000000052a0591cc4b93660607af47ac5494729f7f0b2ab1700f9fa62bd3e0",
+        "number": 86640017,
+        "timestamp_ms": 1790592498000
+      },
+      "observed_at": "2026-09-28T10:48:18+00:00",
+      "withheld_reasons": [
+        "SOURCE_DISAGREEMENT"
+      ]
+    },
+    "rpc.justlend.v1.jUSDD.available_cash": {
+      "value": "399236953.53547988251751836",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "trongrid",
+      "json_pointer": null,
+      "block": {
+        "block_id": "00000000052a0591cc4b93660607af47ac5494729f7f0b2ab1700f9fa62bd3e0",
+        "number": 86640017,
+        "timestamp_ms": 1790592498000
+      },
+      "observed_at": "2026-09-28T10:48:18+00:00",
+      "withheld_reasons": []
+    },
+    "rpc.justlend.v1.jUSDD.exchange_rate": {
+      "value": "0.0100126917337635890190802032",
+      "unit": "underlying_per_share",
+      "quality": "VALID",
+      "source_id": "trongrid",
+      "json_pointer": null,
+      "block": {
+        "block_id": "00000000052a0591cc4b93660607af47ac5494729f7f0b2ab1700f9fa62bd3e0",
+        "number": 86640017,
+        "timestamp_ms": 1790592498000
+      },
+      "observed_at": "2026-09-28T10:48:18+00:00",
+      "withheld_reasons": [
+        "SOURCE_DISAGREEMENT"
+      ]
+    },
+    "rpc.justlend.v1.jUSDDOLD.available_cash": {
+      "value": "345548.99412709475090216",
+      "unit": "USDDOLD",
+      "quality": "VALID",
+      "source_id": "trongrid",
+      "json_pointer": null,
+      "block": {
+        "block_id": "00000000052a0591cc4b93660607af47ac5494729f7f0b2ab1700f9fa62bd3e0",
+        "number": 86640017,
+        "timestamp_ms": 1790592498000
+      },
+      "observed_at": "2026-09-28T10:48:18+00:00",
+      "withheld_reasons": []
+    },
+    "rpc.justlend.v1.jUSDDOLD.exchange_rate": {
+      "value": "0.0101931971679441679161190848",
+      "unit": "underlying_per_share",
+      "quality": "VALID",
+      "source_id": "trongrid",
+      "json_pointer": null,
+      "block": {
+        "block_id": "00000000052a0591cc4b93660607af47ac5494729f7f0b2ab1700f9fa62bd3e0",
+        "number": 86640017,
+        "timestamp_ms": 1790592498000
+      },
+      "observed_at": "2026-09-28T10:48:18+00:00",
+      "withheld_reasons": [
+        "SOURCE_DISAGREEMENT"
+      ]
+    },
+    "rpc.justlend.strx.exchange_rate": {
+      "value": "1.317602350648392717",
+      "unit": "TRX_per_sTRX",
+      "quality": "VALID",
+      "source_id": "trongrid",
+      "json_pointer": null,
+      "block": {
+        "block_id": "00000000052a0591cc4b93660607af47ac5494729f7f0b2ab1700f9fa62bd3e0",
+        "number": 86640017,
+        "timestamp_ms": 1790592498000
+      },
+      "observed_at": "2026-09-28T10:48:18+00:00",
+      "withheld_reasons": [
+        "SOURCE_DISAGREEMENT"
+      ]
+    },
+    "rpc.justlend.strx.total_underlying": {
+      "value": "9784923812.678921",
+      "unit": "TRX",
+      "quality": "VALID",
+      "source_id": "trongrid",
+      "json_pointer": null,
+      "block": {
+        "block_id": "00000000052a0591cc4b93660607af47ac5494729f7f0b2ab1700f9fa62bd3e0",
+        "number": 86640017,
+        "timestamp_ms": 1790592498000
+      },
+      "observed_at": "2026-09-28T10:48:18+00:00",
+      "withheld_reasons": [
+        "SOURCE_DISAGREEMENT"
+      ]
+    },
+    "rpc.tron.chain.getEnergyFee": {
+      "value": "100",
+      "unit": "sun_per_energy",
+      "quality": "VALID",
+      "source_id": "trongrid",
+      "json_pointer": null,
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "FULLNODE_BLOCK_UNKNOWN"
+      ]
+    },
+    "rpc.tron.chain.getTransactionFee": {
+      "value": "1000",
+      "unit": "sun_per_byte",
+      "quality": "VALID",
+      "source_id": "trongrid",
+      "json_pointer": null,
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "FULLNODE_BLOCK_UNKNOWN"
+      ]
+    },
+    "rpc.tron.chain.getUnfreezeDelayDays": {
+      "value": "14",
+      "unit": "days",
+      "quality": "VALID",
+      "source_id": "trongrid",
+      "json_pointer": null,
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "FULLNODE_BLOCK_UNKNOWN"
+      ]
     }
   },
   "evidence_files": {
-    "captures.json": "3e5b2a1a3243cd0c67adb74a553ab026390e837eb376b59876d1a604e3fc44f7",
-    "snapshot.json": "832a1d00214d601741d01c3c2e99dd13e471af272a39ca78cc68257d66340b55"
+    "captures.json": "8fe6d7a2de602843fbae7ed7eacfd54e7cc568de00dac3d4e124e9b9b4378734",
+    "snapshot.json": "52ded8db8d49cdcfc67b0fb4541e411d24bc09e708b424c0a2fe3b17f67a6540"
   }
 }

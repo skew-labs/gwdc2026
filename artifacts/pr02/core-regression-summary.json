@@ -1,8 +1,8 @@
 {
-  "at": "2026-09-28T10:20:57.501516+00:00",
+  "at": "2026-09-28T10:51:23.367950+00:00",
   "scope": "economic core + mandate/snapshot service + legacy server; source pipeline in original research environment",
   "core": {
-    "tests": 223,
+    "tests": 241,
     "failures": 0,
     "errors": 0,
     "skipped": 0,

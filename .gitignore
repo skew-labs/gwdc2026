@@ -42,3 +42,4 @@ artifacts/pr02/*
 !artifacts/pr02/core-regression-tests.log
 !artifacts/pr02/pipeline-tests.log
 !artifacts/pr02/live-manifest.json
+!artifacts/pr02/upstream-sources.json
