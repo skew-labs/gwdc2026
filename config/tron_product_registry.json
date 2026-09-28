@@ -1,0 +1,23 @@
+{
+  "schema_version": "economic-tron-product-registry-1",
+  "network": "tron-mainnet",
+  "justlend_directory_source": "justlend_contracts",
+  "market_api_version": "v1",
+  "jtoken_symbols": ["jUSDT", "jUSDD", "jUSDDOLD"],
+  "usdd_deployment_source": "https://docs.usdd.io/developers/deployment-addresses",
+  "usdd_joins": {
+    "TRX-A": "TJ1VWPvFVq7sVsN7J7dWJVZz4SLT14qRUr",
+    "TRX-B": "TGQKnHDQNyc3QeHJ7YxH8wggdg89UVXyvX",
+    "TRX-C": "TPUPPLTYLdbW4jxwD5g2T7ystxsR9HL2mt",
+    "USDT-A": "TDUkQbjrXs6xUbxGCLknWwJHxVTdysXBhy"
+  },
+  "usdd_contracts": {
+    "manager": "TDDWjmQaquEtUn1Pa8wCd8dfWFPdQLGPYL",
+    "vat": "TH5dhX7o39afSbfDT2e3c9k4itWjNKD4D9",
+    "proxy_registry": "THuVWkvAikvSqmoZXHMUQJAcocsgFr4wuk"
+  },
+  "max_age_seconds": 900,
+  "max_registry_age_seconds": 86400,
+  "max_source_skew_seconds": 120,
+  "execution_enabled": false
+}

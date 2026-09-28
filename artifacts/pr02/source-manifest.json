@@ -1,0 +1,56 @@
+{
+  "method": "Python physical lines excluding blanks, comment-only lines, and AST docstrings; configuration excluded from source/test totals",
+  "files": [
+    {
+      "path": "src/economic_machine/tron_sources.py",
+      "sha256": "84a845832edb1d3863f49ee1382d759f077bcfe4f3e648e0bcb0d44b21ab2d5c",
+      "lines": 196,
+      "nonblank_noncomment_nondocstring_lines": 164
+    },
+    {
+      "path": "src/economic_machine/tron_products.py",
+      "sha256": "6aaaaeec3bd400cc1278554ebf2f7f323d7619f77963cb0381f3744232c93795",
+      "lines": 111,
+      "nonblank_noncomment_nondocstring_lines": 99
+    },
+    {
+      "path": "src/economic_machine/tron_rpc_snapshot.py",
+      "sha256": "4bca308ad3a98951e83a174edef62cc5e65243a1e43711f1a34a430f608794fe",
+      "lines": 271,
+      "nonblank_noncomment_nondocstring_lines": 236
+    },
+    {
+      "path": "src/economic_machine/snapshot_assembly.py",
+      "sha256": "b1edc6f87688694c87eb592159f25028090975eed4ea6bae852a50403cec48e5",
+      "lines": 378,
+      "nonblank_noncomment_nondocstring_lines": 349
+    },
+    {
+      "path": "src/finance_service/snapshot_service.py",
+      "sha256": "0a38f897e412d9a29e1b287ff655f0f0eef8627d474be214e001f23109040a15",
+      "lines": 18,
+      "nonblank_noncomment_nondocstring_lines": 12
+    },
+    {
+      "path": "scripts/verify_tron_snapshots.py",
+      "sha256": "d670e27533a73a1f6858254925e9bcd9641dc63414c97877c244b7b5069e5997",
+      "lines": 82,
+      "nonblank_noncomment_nondocstring_lines": 73
+    },
+    {
+      "path": "config/tron_product_registry.json",
+      "sha256": "ae3a40c7f602065c0871ff3ace7411f1640e81fd7da517df280444ec74e3bc7e",
+      "lines": 23,
+      "nonblank_noncomment_nondocstring_lines": null
+    },
+    {
+      "path": "tests/test_economic_tron_sources.py",
+      "sha256": "bac189665cb73f290e347ef7607dd3b90a55158c4ca3f663034c8f28b2d33d62",
+      "lines": 477,
+      "nonblank_noncomment_nondocstring_lines": 411
+    }
+  ],
+  "source_lines": 860,
+  "test_lines": 411,
+  "verification_script_lines": 73
+}

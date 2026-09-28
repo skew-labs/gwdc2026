@@ -33,3 +33,12 @@ artifacts/pr01/*
 !artifacts/pr01/source-manifest.json
 !artifacts/pr01/core-regression-summary.json
 !artifacts/pr01/core-regression-tests.log
+
+# Reviewed PR 02 summaries; raw captures and databases remain on Cherry.
+!artifacts/pr02/
+artifacts/pr02/*
+!artifacts/pr02/source-manifest.json
+!artifacts/pr02/core-regression-summary.json
+!artifacts/pr02/core-regression-tests.log
+!artifacts/pr02/pipeline-tests.log
+!artifacts/pr02/live-manifest.json

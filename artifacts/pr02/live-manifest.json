@@ -1,0 +1,1141 @@
+{
+  "schema_version": "economic-tron-live-manifest-1",
+  "at": "2026-09-28T10:20:11.437879+00:00",
+  "replay_of": "data/verification/pr02-20260928/run-02/captures.json",
+  "snapshot_hash": "654e597a36cd7a98bd2fa6dcc897d6145bb4dd83f6e69b70f911432824c2c275",
+  "mode": "LIVE_READ",
+  "wallet_provided": false,
+  "execution_enabled": false,
+  "products": 9,
+  "facts": 76,
+  "quality_counts": {
+    "VALID": 73,
+    "VALID_ZERO": 3
+  },
+  "state_eligible_count": 0,
+  "unavailable": [
+    "RPC_READ_INCOMPLETE",
+    "WALLET_NOT_PROVIDED"
+  ],
+  "source_status": {
+    "justlend_contracts": "AVAILABLE",
+    "justlend_markets_v1": "AVAILABLE",
+    "justlend_strx_v1": "AVAILABLE",
+    "justlend_usdd_rewards_v1": "AVAILABLE",
+    "tron_chain_parameters": "AVAILABLE",
+    "usdd_earn_apy": "AVAILABLE",
+    "usdd_overview": "AVAILABLE",
+    "usdd_tron_collateral": "AVAILABLE",
+    "usdd_vault_config": "AVAILABLE"
+  },
+  "sources": [
+    {
+      "source_id": "justlend_contracts",
+      "url": "https://docs.justlend.org/developers/contracts.json",
+      "received_at": "2026-09-28T10:18:16.154457+00:00",
+      "observed_at": null,
+      "block": null,
+      "raw_sha256": "e134f6fea60ae2a9264c56eb04c156d0d39a3ffa55ce4a8979aa713bbf6a7eba",
+      "error": null,
+      "capture_hash": "51fb45cf2a70fdd0aa3851bd8e5cda682c841cc409629f24605dfa14c942b08e"
+    },
+    {
+      "source_id": "justlend_markets_v1",
+      "url": "https://openapi.just.network/lend/jtoken",
+      "received_at": "2026-09-28T10:18:17.228232+00:00",
+      "observed_at": null,
+      "block": null,
+      "raw_sha256": "e62ff7e3a757a635dbb0f8d9fda8bd5f759655d10a4e402b9cd7d21366206368",
+      "error": null,
+      "capture_hash": "f6a841faec8e66177df08f5447b8aa5e54f6c3ce91df1c5e8d2e0ba5a9145d5c"
+    },
+    {
+      "source_id": "justlend_strx_v1",
+      "url": "https://openapi.just.network/lend/strx",
+      "received_at": "2026-09-28T10:18:21.764498+00:00",
+      "observed_at": null,
+      "block": null,
+      "raw_sha256": "a116255c2ea0e2c4f9fb58c76aec3e99fef2340b8bfbe98fb84bebdb7dd9bdcb",
+      "error": null,
+      "capture_hash": "34944cf7af9ff39e87a5ed936f1eaf9bab4aca7bf429c1d198a6ffdf82cf17a6"
+    },
+    {
+      "source_id": "justlend_usdd_rewards_v1",
+      "url": "https://openapi.just.network/mining/apy",
+      "received_at": "2026-09-28T10:18:18.322499+00:00",
+      "observed_at": null,
+      "block": null,
+      "raw_sha256": "4ffa8d33c78f244f5c242d3a35f90e6e743b9ebaad4540979b6a32d037fde763",
+      "error": null,
+      "capture_hash": "95ddfbd39eb1991e2fe84216b13868b715cdadc2ffa8315fa13d23e9f1e7282a"
+    },
+    {
+      "source_id": "tron_chain_parameters",
+      "url": "https://api.trongrid.io/wallet/getchainparameters",
+      "received_at": "2026-09-28T10:18:22.108629+00:00",
+      "observed_at": null,
+      "block": null,
+      "raw_sha256": "c36f9830aed426c3b3fcbbf85487b4c9da8777f8db5cd7b3c7f763713c95ae7a",
+      "error": null,
+      "capture_hash": "57c802fcc83bcd6e86570f63263cea1a20af16bc3eed6fda3ea2d9ecff45e6db"
+    },
+    {
+      "source_id": "usdd_earn_apy",
+      "url": "https://openapi.usdd.io/api/v1/external/earn-apy",
+      "received_at": "2026-09-28T10:18:19.410965+00:00",
+      "observed_at": null,
+      "block": null,
+      "raw_sha256": "53eec3175db49777623fbae6b7451be939426441a6b130141085238b1f00baf6",
+      "error": null,
+      "capture_hash": "12f15a846d67a5306d55a24c4c0404657a9d245b5abdc56b3febf0eac286f844"
+    },
+    {
+      "source_id": "usdd_overview",
+      "url": "https://openapi.usdd.io/api/v1/market-site/overview",
+      "received_at": "2026-09-28T10:18:20.499418+00:00",
+      "observed_at": null,
+      "block": null,
+      "raw_sha256": "0e542fb32e02cacb910dfec2000fb27094fabf1c6ca7a07998b8a6b8fe4d8a71",
+      "error": null,
+      "capture_hash": "dd9277be1b3af6388a8ee290ffffaf6170101564e89b57feba1b6bc2b9e62fa0"
+    },
+    {
+      "source_id": "usdd_tron_collateral",
+      "url": "https://openapi.usdd.io/api/v1/data-platform/latest-collateral?chain=tron",
+      "received_at": "2026-09-28T10:18:21.661952+00:00",
+      "observed_at": null,
+      "block": null,
+      "raw_sha256": "7ac7f8c2b9862f330ee8f9d6535b572dc99099149947ff4663bea7faefb7a174",
+      "error": null,
+      "capture_hash": "ecf922cc2f02677d93cfe24ac88335b9d4191e0317a49565de89a27b9667d97d"
+    },
+    {
+      "source_id": "usdd_vault_config",
+      "url": "https://openapi.usdd.io/api/v1/vault/collaterals",
+      "received_at": "2026-09-28T10:18:21.858290+00:00",
+      "observed_at": null,
+      "block": null,
+      "raw_sha256": "9d7fc65d660adc45b3593475a42441a898ab7af9b09dd03f169c6eaf05b45436",
+      "error": null,
+      "capture_hash": "06ec4ca17fad3b8b3064444fd4218d084790e4722fd36c0f2a906c1bd50f46ad"
+    }
+  ],
+  "rpc": {
+    "error": "INCOMPLETE_RPC_READ",
+    "capture_hash": "40a8985bfca1ce8a5c8f9ed766f4a90789325ab465ea655834ad882813fc0e68",
+    "records": 2,
+    "requests": [
+      {
+        "path": "/walletsolidity/getnowblock",
+        "payload": null,
+        "raw_sha256": "91f497a63d822d606b46d8709e4fd68f8e9403ab9f452f6f5a318ebc2e526476"
+      },
+      {
+        "path": "/walletsolidity/triggerconstantcontract",
+        "payload": {
+          "contract_address": "41ea09611b57e89d67fbb33a516eb90508ca95a3e5",
+          "function_selector": "getCash()",
+          "owner_address": "41ea09611b57e89d67fbb33a516eb90508ca95a3e5",
+          "parameter": "",
+          "visible": false
+        },
+        "raw_sha256": "147de54259d1502b347b555519ed7fa4513a9c287cb8f4184fda5a54d51a70e5"
+      }
+    ]
+  },
+  "comparisons": [],
+  "field_mappings": {
+    "justlend.v1.jUSDT.supply_apy": {
+      "value": "0.021758719399776",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/2/supplyRate",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDT.borrow_apy": {
+      "value": "0.038871868757904",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/2/borrowRate",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDT.exchange_rate": {
+      "value": "0.010870264613614925",
+      "unit": "underlying_per_share",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/2/exchangeRate",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDT.available_cash": {
+      "value": "81732556.971551",
+      "unit": "USDT",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/2/cash",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDT.total_borrows": {
+      "value": "133825121.114835",
+      "unit": "USDT",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/2/totalBorrows",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDT.total_shares": {
+      "value": "19794389554.30522593",
+      "unit": "jtoken",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/2/totalSupply",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDD.supply_apy": {
+      "value": "0.000008510294448",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/1/supplyRate",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDD.borrow_apy": {
+      "value": "0.070011126441216",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/1/borrowRate",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDD.exchange_rate": {
+      "value": "0.010012691730236938",
+      "unit": "underlying_per_share",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/1/exchangeRate",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDD.available_cash": {
+      "value": "399285655.075659304123673723",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/1/cash",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDD.total_borrows": {
+      "value": "51095.260402155276898274",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/1/totalBorrows",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDD.total_shares": {
+      "value": "39881808087.81557853",
+      "unit": "jtoken",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/1/totalSupply",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDDOLD.supply_apy": {
+      "value": "0",
+      "unit": "annual_fraction",
+      "quality": "VALID_ZERO",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/18/supplyRate",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDDOLD.borrow_apy": {
+      "value": "0.04990816419768",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/18/borrowRate",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDDOLD.exchange_rate": {
+      "value": "0.010193197167944168",
+      "unit": "underlying_per_share",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/18/exchangeRate",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDDOLD.available_cash": {
+      "value": "345551.616747752600884758",
+      "unit": "USDDOLD",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/18/cash",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDDOLD.total_borrows": {
+      "value": "178207.258170757916775574",
+      "unit": "USDDOLD",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/18/totalBorrows",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDDOLD.total_shares": {
+      "value": "43769773.12462988",
+      "unit": "jtoken",
+      "quality": "VALID",
+      "source_id": "justlend_markets_v1",
+      "json_pointer": "/data/tokenList/18/totalSupply",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.strx.exchange_rate": {
+      "value": "1.317601424748899967",
+      "unit": "TRX_per_sTRX",
+      "quality": "VALID",
+      "source_id": "justlend_strx_v1",
+      "json_pointer": "/data/stakeInfo/exchangeRate",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.strx.aggregate_apy": {
+      "value": "0.03271564",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "justlend_strx_v1",
+      "json_pointer": "/data/stakeInfo/supplyRate",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.strx.total_underlying": {
+      "value": "9784916924.075379",
+      "unit": "TRX",
+      "quality": "VALID",
+      "source_id": "justlend_strx_v1",
+      "json_pointer": "/data/stakeInfo/totalUnderlying",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.strx.total_shares": {
+      "value": "7426310218.160340666520119677",
+      "unit": "sTRX",
+      "quality": "VALID",
+      "source_id": "justlend_strx_v1",
+      "json_pointer": "/data/stakeInfo/totalSupply",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.strx.reserves": {
+      "value": "311410697.238353",
+      "unit": "TRX",
+      "quality": "VALID",
+      "source_id": "justlend_strx_v1",
+      "json_pointer": "/data/stakeInfo/reserves",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "tron.energy_rental.price_per_10000_energy": {
+      "value": "0.45677171",
+      "unit": "TRX_per_10000_energy",
+      "quality": "VALID",
+      "source_id": "justlend_strx_v1",
+      "json_pointer": "/data/rentInfo/priceFor10KEnergByRent",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "tron.energy_rental.delegated_trx": {
+      "value": "575607549.695373",
+      "unit": "TRX",
+      "quality": "VALID",
+      "source_id": "justlend_strx_v1",
+      "json_pointer": "/data/rentInfo/totalDelegatedEnergyTrx",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDT.reward_apy": {
+      "value": "0",
+      "unit": "annual_fraction",
+      "quality": "VALID_ZERO",
+      "source_id": "justlend_usdd_rewards_v1",
+      "json_pointer": "/data/TXJgMdjVX5dKiQaUi9QobwNxtSQaFqccvd/USDD",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDD.reward_apy": {
+      "value": "0.0402545",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "justlend_usdd_rewards_v1",
+      "json_pointer": "/data/TKFRELGGoRgiayhwJTNNLqCNjFoLBh3Mnf/USDD",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "justlend.v1.jUSDDOLD.reward_apy": {
+      "value": "0",
+      "unit": "annual_fraction",
+      "quality": "VALID_ZERO",
+      "source_id": "justlend_usdd_rewards_v1",
+      "json_pointer": "/data/TX7kybeP6UwTBRHLNPYmswFESHfyjm9bAS/USDD",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "tron.chain.getEnergyFee": {
+      "value": "100",
+      "unit": "sun_per_energy",
+      "quality": "VALID",
+      "source_id": "tron_chain_parameters",
+      "json_pointer": "/chainParameter/11/value",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "tron.chain.getTransactionFee": {
+      "value": "1000",
+      "unit": "sun_per_byte",
+      "quality": "VALID",
+      "source_id": "tron_chain_parameters",
+      "json_pointer": "/chainParameter/3/value",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "tron.chain.getUnfreezeDelayDays": {
+      "value": "14",
+      "unit": "days",
+      "quality": "VALID",
+      "source_id": "tron_chain_parameters",
+      "json_pointer": "/chainParameter/57/value",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.earn.apy": {
+      "value": "0.04",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "usdd_earn_apy",
+      "json_pointer": "/data/tronApy",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-A.type_debt": {
+      "value": "171079732.76",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/0/debt",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-A.type_minted": {
+      "value": "170640774.92",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/0/mintedUSDD",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-A.type_collateral_value": {
+      "value": "418749894.38",
+      "unit": "USD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/0/lockedValue",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-A.type_debt_ceiling": {
+      "value": "400000000",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/0/line",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-A.stability_fee": {
+      "value": "0.00500000096840569341338778031",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/0/stabilityFee",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-A.liquidation_ratio": {
+      "value": "1.2",
+      "unit": "multiple",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/0/minCollateralRatio",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-A.type_collateral_ratio": {
+      "value": "2.4476",
+      "unit": "multiple",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/0/collateralRatio",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-B.type_debt": {
+      "value": "95776801.32",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/1/debt",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-B.type_minted": {
+      "value": "95216654.39",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/1/mintedUSDD",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-B.type_collateral_value": {
+      "value": "240970695.17",
+      "unit": "USD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/1/lockedValue",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-B.type_debt_ceiling": {
+      "value": "300000000",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/1/line",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-B.stability_fee": {
+      "value": "0.00500000096840569341338778031",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/1/stabilityFee",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-B.liquidation_ratio": {
+      "value": "1.17",
+      "unit": "multiple",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/1/minCollateralRatio",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-B.type_collateral_ratio": {
+      "value": "2.5159",
+      "unit": "multiple",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/1/collateralRatio",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-C.type_debt": {
+      "value": "190597364.68",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/2/debt",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-C.type_minted": {
+      "value": "190089610.15",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/2/mintedUSDD",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-C.type_collateral_value": {
+      "value": "501314487",
+      "unit": "USD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/2/lockedValue",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-C.type_debt_ceiling": {
+      "value": "400000000",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/2/line",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-C.stability_fee": {
+      "value": "0.00500000096840569341338778031",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/2/stabilityFee",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-C.liquidation_ratio": {
+      "value": "1.3",
+      "unit": "multiple",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/2/minCollateralRatio",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.TRX-C.type_collateral_ratio": {
+      "value": "2.6302",
+      "unit": "multiple",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/2/collateralRatio",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.USDT-A.type_debt": {
+      "value": "551593.98",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/3/debt",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.USDT-A.type_minted": {
+      "value": "540218.75",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/3/mintedUSDD",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.USDT-A.type_collateral_value": {
+      "value": "660971.6",
+      "unit": "USD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/3/lockedValue",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.USDT-A.type_debt_ceiling": {
+      "value": "200000000",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/3/line",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.USDT-A.stability_fee": {
+      "value": "0.01000000062219852381417695142",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/3/stabilityFee",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.USDT-A.liquidation_ratio": {
+      "value": "1.05",
+      "unit": "multiple",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/3/minCollateralRatio",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.vault.USDT-A.type_collateral_ratio": {
+      "value": "1.1982",
+      "unit": "multiple",
+      "quality": "VALID",
+      "source_id": "usdd_tron_collateral",
+      "json_pointer": "/data/items/3/collateralRatio",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.TRX-A.minimum_debt": {
+      "value": "1000",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/0/dust",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.TRX-A.debt_ceiling": {
+      "value": "400000000",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/0/maxMinted",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.TRX-A.liquidation_ratio": {
+      "value": "1.2",
+      "unit": "multiple",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/0/minCollateralRatio",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.TRX-A.stability_fee": {
+      "value": "0.005",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/0/stabilityFee",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.TRX-B.minimum_debt": {
+      "value": "2000",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/1/dust",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.TRX-B.debt_ceiling": {
+      "value": "300000000",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/1/maxMinted",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.TRX-B.liquidation_ratio": {
+      "value": "1.17",
+      "unit": "multiple",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/1/minCollateralRatio",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.TRX-B.stability_fee": {
+      "value": "0.005",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/1/stabilityFee",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.TRX-C.minimum_debt": {
+      "value": "500",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/2/dust",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.TRX-C.debt_ceiling": {
+      "value": "400000000",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/2/maxMinted",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.TRX-C.liquidation_ratio": {
+      "value": "1.3",
+      "unit": "multiple",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/2/minCollateralRatio",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.TRX-C.stability_fee": {
+      "value": "0.005",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/2/stabilityFee",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.USDT-A.minimum_debt": {
+      "value": "2000",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/3/dust",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.USDT-A.debt_ceiling": {
+      "value": "200000000",
+      "unit": "USDD",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/3/maxMinted",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.USDT-A.liquidation_ratio": {
+      "value": "1.05",
+      "unit": "multiple",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/3/minCollateralRatio",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    },
+    "usdd.config.USDT-A.stability_fee": {
+      "value": "0.01",
+      "unit": "annual_fraction",
+      "quality": "VALID",
+      "source_id": "usdd_vault_config",
+      "json_pointer": "/data/items/3/stabilityFee",
+      "block": null,
+      "observed_at": null,
+      "withheld_reasons": [
+        "SOURCE_TIME_UNKNOWN",
+        "SOURCE_BLOCK_UNKNOWN"
+      ]
+    }
+  },
+  "evidence_files": {
+    "captures.json": "3e5b2a1a3243cd0c67adb74a553ab026390e837eb376b59876d1a604e3fc44f7",
+    "snapshot.json": "832a1d00214d601741d01c3c2e99dd13e471af272a39ca78cc68257d66340b55"
+  }
+}
