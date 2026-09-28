@@ -1,0 +1,23 @@
+{
+  "at": "2026-09-28T12:53:13.244020+00:00",
+  "core": {
+    "tests": 312,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": true
+  },
+  "pipeline": {
+    "tests": 10,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": true
+  },
+  "compilers": {
+    "tron_solc_0_8_20": "fa95cdeb30aaf521df75b87f57c6ffc1ee6fef5de190981a69cdb878da3a4e14",
+    "evm_solc_0_8_20": "0479d44fdf9c501c25337fdc540419f1593b884a87b47f023da4f1c700fda782"
+  },
+  "replay_outputs_identical": true,
+  "passed": true
+}
