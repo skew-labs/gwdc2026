@@ -42,10 +42,10 @@ def _list(data, key):
     return rows
 
 
-def _number(value):
+def _number(value, *, signed=False):
     if type(value) is int:
         value = str(value)
-    return decstr(decimal(value))
+    return decstr(decimal(value, signed=signed))
 
 
 class SnapshotAssembler:
@@ -90,7 +90,7 @@ class SnapshotAssembler:
         def add(capture, path, row, field, unit, pointer, *, role="MARKET"):
             value = row.get(field)
             quality = "ERROR" if capture["error"] and capture["error"] != "NOT_COLLECTED" else "MISSING" if value is None else "VALID"
-            value = _number(value) if quality == "VALID" else None
+            value = _number(value, signed=unit == "annual_fraction" and field in {"supplyRate", "borrowRate"}) if quality == "VALID" else None
             if value == "0":
                 quality = "VALID_ZERO"
             if path in facts:

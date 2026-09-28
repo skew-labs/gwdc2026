@@ -1,0 +1,80 @@
+{
+  "method": "Physical lines excluding blank/comment-only lines and AST docstrings. Modified existing files are hashed but not counted as new source.",
+  "files": [
+    {
+      "path": "src/economic_machine/yield_math.py",
+      "sha256": "5945f366f82bb424dd2721a4e4dd91d66ca60b302e9637d0ffb8c6544ea0ec03",
+      "physical_lines": 94,
+      "meaningful_lines": 68,
+      "scope": "new_source"
+    },
+    {
+      "path": "src/economic_machine/liquidity.py",
+      "sha256": "04aba9054ddebd7b0c0b1b4cd96e287465bbc5b9fda6992b7355d888dc13f4dd",
+      "physical_lines": 100,
+      "meaningful_lines": 82,
+      "scope": "new_source"
+    },
+    {
+      "path": "src/economic_machine/resource_cost.py",
+      "sha256": "da6955c3bc47b9f61d2f7ea77bec7b9b8b4f77a0b26166c45379d7c79a91bcc0",
+      "physical_lines": 90,
+      "meaningful_lines": 72,
+      "scope": "new_source"
+    },
+    {
+      "path": "src/economic_machine/vault_accounting.py",
+      "sha256": "d5ad2e36615f5fa63ddf12f24d5f0105fd97fbeaf72014de0059c31f300c26a3",
+      "physical_lines": 73,
+      "meaningful_lines": 66,
+      "scope": "new_source"
+    },
+    {
+      "path": "src/economic_machine/tron_cashflow.py",
+      "sha256": "9086705fa9948ee0172e29b1acd1e649c26770a14b754479af97d2caa68865eb",
+      "physical_lines": 308,
+      "meaningful_lines": 272,
+      "scope": "new_source"
+    },
+    {
+      "path": "src/economic_machine/tron_yield.py",
+      "sha256": "49fd776d5ffcce3bc976e2d0974d789b54d8a92bb3461811b7481522ff466fa2",
+      "physical_lines": 511,
+      "meaningful_lines": 480,
+      "scope": "modified_existing_source"
+    },
+    {
+      "path": "src/economic_machine/snapshot_assembly.py",
+      "sha256": "6f9f719343b966d5fb621953b2d6fc19474abd762c3dd8e63269edbcbacc86de",
+      "physical_lines": 379,
+      "meaningful_lines": 350,
+      "scope": "modified_existing_source"
+    },
+    {
+      "path": "tests/test_economic_cashflow_math.py",
+      "sha256": "22eb10982516a0d0a5088cafde1de1e9a92e6566743cb8f40e7be4d073bf062a",
+      "physical_lines": 231,
+      "meaningful_lines": 187,
+      "scope": "tests"
+    },
+    {
+      "path": "tests/test_economic_tron_cashflow.py",
+      "sha256": "43c3eda22873373241db3c563866a622a3c4961216fd7da2f96de8c6afefb148",
+      "physical_lines": 282,
+      "meaningful_lines": 235,
+      "scope": "tests"
+    },
+    {
+      "path": "scripts/verify_tron_cashflows.py",
+      "sha256": "a5a83a260034b1617acd9a046d12a02619ef93d44272bb551bfce5fbbc2948ac",
+      "physical_lines": 91,
+      "meaningful_lines": 80,
+      "scope": "verification_script"
+    }
+  ],
+  "totals": {
+    "new_source": 560,
+    "tests": 422,
+    "verification_script": 80
+  }
+}
