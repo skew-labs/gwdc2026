@@ -1,0 +1,33 @@
+HOST=Cherry Servers 999573 / charmed-weasel
+PATH=/srv/skew/gwdc-financial-agent-20260924/cache/gwdc2026-publish-worktree-20260928
+SCOPE=PR07 changed files plus direct PR06 boundary; unrelated prior suites not rerun
+test_direct_approval_requires_ready_simulation_and_separate_confirmation (test_economic_approval.ApprovalTests.test_direct_approval_requires_ready_simulation_and_separate_confirmation) ... ok
+test_guard_binding_must_be_in_active_server_trust_policy (test_economic_approval.ApprovalTests.test_guard_binding_must_be_in_active_server_trust_policy) ... ok
+test_guard_path_binds_fixed_code_market_tokens_limits_and_nonce (test_economic_approval.ApprovalTests.test_guard_path_binds_fixed_code_market_tokens_limits_and_nonce) ... ok
+test_guard_path_rejects_missing_or_false_postcondition_simulation (test_economic_approval.ApprovalTests.test_guard_path_rejects_missing_or_false_postcondition_simulation) ... ok
+test_session_wallet_network_or_auth_change_invalidates_approval (test_economic_approval.ApprovalTests.test_session_wallet_network_or_auth_change_invalidates_approval) ... ok
+test_tapos_anchor_is_derived_from_exact_block (test_economic_approval.ApprovalTests.test_tapos_anchor_is_derived_from_exact_block) ... ok
+test_unready_or_tampered_preflight_cannot_create_card (test_economic_approval.ApprovalTests.test_unready_or_tampered_preflight_cannot_create_card) ... ok
+test_amount_target_fee_deadline_and_data_tampering_are_rejected (test_economic_signed_tx_validation.SignedTransactionTests.test_amount_target_fee_deadline_and_data_tampering_are_rejected) ... ok
+test_exact_signed_protobuf_and_signature_validate_without_broadcast (test_economic_signed_tx_validation.SignedTransactionTests.test_exact_signed_protobuf_and_signature_validate_without_broadcast) ... ok
+test_keccak_selector_and_recovered_tron_address_match_known_vectors (test_economic_signed_tx_validation.SignedTransactionTests.test_keccak_selector_and_recovered_tron_address_match_known_vectors) ... ok
+test_txid_signature_and_protobuf_shape_are_independently_checked (test_economic_signed_tx_validation.SignedTransactionTests.test_txid_signature_and_protobuf_shape_are_independently_checked) ... ok
+test_wrong_signer_session_and_replay_are_rejected (test_economic_signed_tx_validation.SignedTransactionTests.test_wrong_signer_session_and_replay_are_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 1.951s
+
+OK
+test_only_owner_exact_nonce_step_and_limits_can_execute (test_economic_execution_guard_runtime.ExecutionGuardRuntimeTests.test_only_owner_exact_nonce_step_and_limits_can_execute) ... ok
+test_owner_contract_reentry_during_token_transfer_is_rejected (test_economic_execution_guard_runtime.ExecutionGuardRuntimeTests.test_owner_contract_reentry_during_token_transfer_is_rejected) ... ok
+test_preexisting_adapter_residuals_are_rejected (test_economic_execution_guard_runtime.ExecutionGuardRuntimeTests.test_preexisting_adapter_residuals_are_rejected) ... ok
+test_preexisting_guard_residuals_are_rejected (test_economic_execution_guard_runtime.ExecutionGuardRuntimeTests.test_preexisting_guard_residuals_are_rejected) ... ok
+test_protocol_error_false_token_fee_token_and_short_position_roll_back (test_economic_execution_guard_runtime.ExecutionGuardRuntimeTests.test_protocol_error_false_token_fee_token_and_short_position_roll_back) ... ok
+test_redeem_returns_underlying_to_fixed_owner_and_resets_allowances (test_economic_execution_guard_runtime.ExecutionGuardRuntimeTests.test_redeem_returns_underlying_to_fixed_owner_and_resets_allowances) ... ok
+test_supply_moves_exact_amount_to_position_and_leaves_no_guard_or_adapter_balance (test_economic_execution_guard_runtime.ExecutionGuardRuntimeTests.test_supply_moves_exact_amount_to_position_and_leaves_no_guard_or_adapter_balance) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 2.028s
+
+OK
+{"artifacts": [{"abi_sha256": "c69d2bc8992f7f9e26b1e351454ef7990546e86191c20f098dd44b0e8f4186c9", "bytecode_bytes": 4374, "bytecode_sha256": "27bbd20d60e9aabe16c463d377d43fb7eaba975bf34dc81d1034ba14fc506e4d", "contract": "JustLendV1Adapter", "events": ["GuardBound", "Redeemed", "Supplied"], "functions": ["bindGuard", "guard", "market", "owner", "redeem", "shareToken", "supply", "underlyingToken"], "source_sha256": "3e81bff148ec16de76b69b61b25da5eb7aa17f1a197804aa7dbe3b6452ee8488"}, {"abi_sha256": "d79d40cee712df966a039bd1a33552689acb15991be80b1177f4a04d504bc33a", "bytecode_bytes": 7474, "bytecode_sha256": "5ed1456ca1c660c636160c8465d0891a1604a417b40a8d2aafefe6ca1e5bd1b4", "contract": "EconomicExecutionGuardV1", "events": ["GuardExecution"], "functions": ["adapter", "adapterCodeHash", "cumulativeSupplied", "cumulativeSupplyLimit", "executeRedeem", "executeSupply", "executionDigest", "market", "marketCodeHash", "maxRedeemShares", "maxSupplyAmount", "nextNonce", "owner", "shareCodeHash", "shareToken", "underlyingCodeHash", "underlyingToken", "usedStep"], "source_sha256": "ab30c7738a561f72a55786720716d1769e0cb228fa302eaf764fcbd06e3de923"}], "audit": "NONE", "chain_family": "TRON_TVM", "compiler_sha256": "fa95cdeb30aaf521df75b87f57c6ffc1ee6fef5de190981a69cdb878da3a4e14", "compiler_version": "solc.tron, the solidity compiler commandline interface\nVersion: 0.8.20+commit.5f1834bc.Linux.g++", "deployment": "NONE", "execution": "NOT_TESTED_ON_TVM"}
