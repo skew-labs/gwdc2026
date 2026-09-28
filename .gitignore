@@ -53,3 +53,14 @@ artifacts/pr03/*
 !artifacts/pr03/pipeline-tests.log
 !artifacts/pr03/replay-summary.json
 !artifacts/pr03/arithmetic-vectors.json
+
+# Reviewed PR 04 plan comparison and prepare-only intent evidence.
+!artifacts/pr04/
+artifacts/pr04/*
+!artifacts/pr04/source-manifest.json
+!artifacts/pr04/regression-summary.json
+!artifacts/pr04/core-regression-tests.log
+!artifacts/pr04/pipeline-tests.log
+!artifacts/pr04/replay-summary.json
+!artifacts/pr04/comparison.json
+!artifacts/pr04/intent.json

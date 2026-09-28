@@ -1,0 +1,45 @@
+{
+  "method": "Physical lines excluding blank/comment-only lines and AST docstrings.",
+  "files": [
+    {
+      "path": "src/economic_machine/plan_compiler.py",
+      "sha256": "fcc89c7a10edb1ed15fd91baa161cbae1284245d0fc1c24eb3ae6d8072b58481",
+      "physical_lines": 498,
+      "meaningful_lines": 442,
+      "scope": "new_source"
+    },
+    {
+      "path": "src/finance_service/plan_service.py",
+      "sha256": "d0181fa0b9f7cefa7921dae88c4128535522f00057cf9e0fcbf6eb259034f5b0",
+      "physical_lines": 48,
+      "meaningful_lines": 39,
+      "scope": "new_source"
+    },
+    {
+      "path": "tests/test_economic_plan_compiler.py",
+      "sha256": "35a42dba259d6331cd9d4539a61c46289f217e6b6d6bd18a194bd40f51fcd66a",
+      "physical_lines": 220,
+      "meaningful_lines": 193,
+      "scope": "tests"
+    },
+    {
+      "path": "tests/test_finance_plan_service.py",
+      "sha256": "16a8be991d447bf9059bd515973ba87abafa0a6e0fe82804d3d36d6d041d2457",
+      "physical_lines": 136,
+      "meaningful_lines": 118,
+      "scope": "tests"
+    },
+    {
+      "path": "scripts/verify_economic_plans.py",
+      "sha256": "b6dd6b35e428353ff1a2c85f9748de815c9076a68d239bd6305d18e2b6b73005",
+      "physical_lines": 140,
+      "meaningful_lines": 122,
+      "scope": "verification_script"
+    }
+  ],
+  "totals": {
+    "new_source": 481,
+    "tests": 311,
+    "verification_script": 122
+  }
+}

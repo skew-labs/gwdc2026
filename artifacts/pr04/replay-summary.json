@@ -1,0 +1,54 @@
+{
+  "verified_at": "2026-09-28T12:52:34.627809+00:00",
+  "source_snapshot_as_of": "2026-09-28T10:49:17.903850+00:00",
+  "source_snapshot_hash": "3756e04d7320715f0cca9667193720db26693845d4c13dd9691ccd4f4f489d06",
+  "evidence_kind": "HISTORICAL_PUBLIC_CAPTURE_REPLAY_WITH_SYNTHETIC_CONDITIONS",
+  "comparison_hash": "7bdd4e78d96ff06bdd0ea54e9289ca011915fd0db1b08919a72aa5f3beb4e3e7",
+  "intent_hash": "092784d7d0f246b91af6b091fe0055880aab0509302e8eeb5e9280713ce7892f",
+  "enumerated_candidates": 56,
+  "eligible_candidates": 7,
+  "complete_enumeration": true,
+  "vault_exclusion_reasons": {
+    "BORROWING_NOT_CONSENTED": 25,
+    "MAXIMUM_EXCEEDED": 10
+  },
+  "plans": [
+    {
+      "name": "CONSERVATIVE",
+      "weights_bps": {
+        "justlend.v1.jUSDD": 0,
+        "justlend.v1.jUSDT": 2000,
+        "usdd.vault.TRX-A": 0
+      },
+      "cash_amount": "7997",
+      "net_income_base": "0.54155",
+      "daily_loss_base": "5",
+      "worst_stress_loss_base": "20",
+      "plan_hash": "6cc047baa9f5102e31fbcc2acd43516ac3ffd178cbfd9cc168bf30530db82140"
+    },
+    {
+      "name": "GROWTH",
+      "weights_bps": {
+        "justlend.v1.jUSDD": 4000,
+        "justlend.v1.jUSDT": 2000,
+        "usdd.vault.TRX-A": 0
+      },
+      "cash_amount": "3994",
+      "net_income_base": "7.292508",
+      "daily_loss_base": "45",
+      "worst_stress_loss_base": "180",
+      "plan_hash": "f44bd9c3c3d4b03ec7cbeac3b562beaad557cf0aa2b2c204eda03dcd72c94a9a"
+    }
+  ],
+  "intent_status": "INTENT_PREPARED",
+  "intent_blockers": [
+    "EXECUTION_CAPABILITY_NOT_VERIFIED:justlend.v1.jUSDD",
+    "EXECUTION_CAPABILITY_NOT_VERIFIED:justlend.v1.jUSDT",
+    "LIVE_QUOTE_AND_RISK_ASSUMPTIONS_REQUIRED",
+    "PR06_TRANSACTION_GRAPH_REQUIRED",
+    "PR07_WALLET_SIGNATURE_REQUIRED"
+  ],
+  "execution_authority": "NONE",
+  "signature_status": "NOT_REQUESTED",
+  "chain_status": "NOT_SUBMITTED"
+}
