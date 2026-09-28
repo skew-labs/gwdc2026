@@ -1,0 +1,80 @@
+{
+  "method": "Python physical lines excluding blanks, comment-only lines and AST docstrings; configuration/captures excluded from source/test totals",
+  "files": [
+    {
+      "path": "cases/tron_public_multicall_20260928.json",
+      "sha256": "7c0998da99b768e77b35219ed58245086552bc6ddd6b1dc46b8ccfb71d001a17",
+      "lines": 17,
+      "nonblank_noncomment_nondocstring_lines": null
+    },
+    {
+      "path": "config/tron_product_registry.json",
+      "sha256": "ae3a40c7f602065c0871ff3ace7411f1640e81fd7da517df280444ec74e3bc7e",
+      "lines": 23,
+      "nonblank_noncomment_nondocstring_lines": null
+    },
+    {
+      "path": "scripts/verify_tron_snapshots.py",
+      "sha256": "241296372a2bd4ae129af8848fa0782a682c5c8c52b34a9fccceb31749c7b1d2",
+      "lines": 83,
+      "nonblank_noncomment_nondocstring_lines": 74
+    },
+    {
+      "path": "src/economic_machine/snapshot_assembly.py",
+      "sha256": "bc5be7c8e0868468d0827ff999fb62ce0e8558ab963a895f672017207363f889",
+      "lines": 379,
+      "nonblank_noncomment_nondocstring_lines": 350
+    },
+    {
+      "path": "src/economic_machine/tron_constant.py",
+      "sha256": "1cc5d47d75032579f97b31dc8bd5499063294dcbc9b93fe83c6da8e42c9fe51d",
+      "lines": 100,
+      "nonblank_noncomment_nondocstring_lines": 77
+    },
+    {
+      "path": "src/economic_machine/tron_multicall.py",
+      "sha256": "3bb6bbd24379ac60c9ba633984759223d75e7bf41f9682b181dc81c0937ac5c0",
+      "lines": 89,
+      "nonblank_noncomment_nondocstring_lines": 72
+    },
+    {
+      "path": "src/economic_machine/tron_products.py",
+      "sha256": "6aaaaeec3bd400cc1278554ebf2f7f323d7619f77963cb0381f3744232c93795",
+      "lines": 111,
+      "nonblank_noncomment_nondocstring_lines": 99
+    },
+    {
+      "path": "src/economic_machine/tron_rpc_snapshot.py",
+      "sha256": "533b6c0ec18bfcb3188319b53818d3f40f3f4c89af02fad9547ba57dedccf644",
+      "lines": 319,
+      "nonblank_noncomment_nondocstring_lines": 279
+    },
+    {
+      "path": "src/economic_machine/tron_sources.py",
+      "sha256": "84a845832edb1d3863f49ee1382d759f077bcfe4f3e648e0bcb0d44b21ab2d5c",
+      "lines": 196,
+      "nonblank_noncomment_nondocstring_lines": 164
+    },
+    {
+      "path": "src/finance_service/snapshot_service.py",
+      "sha256": "0a38f897e412d9a29e1b287ff655f0f0eef8627d474be214e001f23109040a15",
+      "lines": 18,
+      "nonblank_noncomment_nondocstring_lines": 12
+    },
+    {
+      "path": "tests/test_economic_tron_multicall.py",
+      "sha256": "f534aa992a5242516ae78fd1861e86466874f108f83e6fadfc987d816806dd5c",
+      "lines": 159,
+      "nonblank_noncomment_nondocstring_lines": 136
+    },
+    {
+      "path": "tests/test_economic_tron_sources.py",
+      "sha256": "2697ffff4185721cba6370e68b1b8f451bf471cefb79ba52269c34dd0cf63de9",
+      "lines": 569,
+      "nonblank_noncomment_nondocstring_lines": 495
+    }
+  ],
+  "source_lines": 1053,
+  "test_lines": 631,
+  "verification_script_lines": 74
+}

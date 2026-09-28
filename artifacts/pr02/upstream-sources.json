@@ -1,0 +1,44 @@
+[
+  {
+    "name": "tron-proto.txt",
+    "url": "https://raw.githubusercontent.com/tronprotocol/protocol/master/core/Tron.proto",
+    "sha256": "6982f5177850db3c5048005f8f222827d925052fbb8c93b0d041b20ed774aed3",
+    "bytes": 21037
+  },
+  {
+    "name": "wallet-java.txt",
+    "url": "https://raw.githubusercontent.com/tronprotocol/java-tron/develop/framework/src/main/java/org/tron/core/Wallet.java",
+    "sha256": "886e0185d60fe96894e02b72dd1854bf827e199d182ed5cff7aa314e778ed3a6",
+    "bytes": 192783
+  },
+  {
+    "name": "delegator.txt",
+    "url": "https://raw.githubusercontent.com/justlend/justlend-protocol/master/contracts/CErc20Delegator.sol",
+    "sha256": "4293707617b67003d9e9e332bd9032cf53d5b8840d37e1957658798df25ed214",
+    "bytes": 20081
+  },
+  {
+    "name": "chains.txt",
+    "url": "https://raw.githubusercontent.com/justlend/mcp-server-justlend/main/src/core/chains.ts",
+    "sha256": "d17c98cea5b6296462482fe32e7bac487520926d1956ed1e29535adea0a23706",
+    "bytes": 28690
+  },
+  {
+    "name": "jtoken-abi.txt",
+    "url": "https://docs.justlend.org/developers/abis/jtoken.json",
+    "sha256": "31d33f61570d2d2e93cda4eb056a93bd65d5134fdcad3961427685e3c4697f8b",
+    "bytes": 6572
+  },
+  {
+    "name": "multicall-abi.txt",
+    "url": "https://raw.githubusercontent.com/justlend/mcp-server-justlend/main/src/core/services/multicall-abi.ts",
+    "sha256": "ac13403f55ad90fd178124e0f197f29e8963c56aa9082b239b29cc5f445629cd",
+    "bytes": 3386
+  },
+  {
+    "name": "multicall-contract.json",
+    "url": "https://api.trongrid.io/wallet/getcontract",
+    "sha256": "e267ed4f9cca87f017712c3c91cd3cdfd96938c00bc52be19cb053be22c54f35",
+    "bytes": 16476
+  }
+]

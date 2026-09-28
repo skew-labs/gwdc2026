@@ -4,6 +4,8 @@
 
 **10PR 구현 시작:** [PR 01 — 확인된 조건과 서비스 계약](IMPLEMENTATION_PR01_20260928.md)을 구현했다. Mandate/상품 capability, 계정 범위, 정책 revision·확인·취소, unsigned 검토안 무효화와 미결 hold 보존을 Cherry에서 검증했다. 신규 42개를 포함해 회귀 테스트 185개 통과. 실제 인증·PostgreSQL·지갑 거래는 후속 구현이다. [GitHub 저장소](https://github.com/skew-labs/gwdc2026)의 `pr01-confirmed-mandates`에서 이번 변경을 검토한다.
 
+**PR 02 RPC 수정 완료:** [TRON 관측·원문 재생·상태 연결](IMPLEMENTATION_PR02_20260928.md)의 실제 응답 해석과 동일 상태 묶음 조회를 수정했다. Cherry에서 총 251개 테스트가 통과했고 실제 공개 원천 9개에서 상품 9개·지표 87개를 재생했다. RPC 미완료 오류는 사라졌고 블록·대조 조건을 만족한 3개 값이 상태 투영에 적격하다. [원인·수정·실제 증거](RPC_FIX_PR02_20260928.md). 개인 지갑은 fixture 검증이며 지갑·거래는 활성화하지 않았다.
+
 데이터 입력을 제외한 별도 **Economic Machine 실행 코어**는 [구현·명령어·불변조건·검증표](MACHINE_ECONOMICS_CORE_20260925.md)에 있다. `src/economic_machine/`는 State/Opcode/Invariant/Transition/Receipt 및 Capital Sandbox를 구현한 독립 패키지이며, Cherry에서 가상 상태만으로 검증했다. 체인 거래 실행이나 실제 정산은 아직 연결되지 않았다.
 
 기준 모델: **Qwen3 32B** — 2026-09-28 사용자 확정. 공개 Kiln 카탈로그에 `qwen3-32b`가 표시되며 계정별 실제 endpoint 호출·사용량·실행 환경 증거는 별도 확인 대상이다.
@@ -12,7 +14,7 @@
 
 과거 대회 적용안인 [FS1 BYON 설계](FS1_NODE_GWDC_ARCHITECTURE_20260925.md)와 [9/25 빌드·검증표](GWDC_BYON_CONTEST_BUILD_20260925.md)는 역사 기록이다. **BYON은 9/28 사용자 지시로 제품 범위에서 제외됐다.** 당시의 읽기 전용 runner와 변경 감지 코드는 서버 내부 worker로 재사용할 수 있으나, 가입/노드 네트워크를 만들지는 않는다. Cherry는 현재 승인된 개발·검증 호스트다. 과거 서비스 가동 기록은 오늘의 운영 상태를 보장하지 않는다.
 
-**현재 구현:** Cherry에서 실원천 수집·사실 변화 채굴·제한된 형식 최적배분 계산이 주기 실행된다. 사용자별 영향 그래프, 지속형 판단 큐, 소비자용 배분 증명서, 실제 구매 경로는 아직 없다. 이전에 구현한 금액·단위·시점·출금 조건 입력과 공동 판단 연구는 [V3 구현 기록](research/FINANCIAL_CORE_V3.md)에 남긴다.
+**과거 연구 구현:** Cherry에 실원천 수집·사실 변화 채굴·제한된 형식 최적배분 계산을 구현했다. 이 기록은 현재 예약작업의 실행 상태를 뜻하지 않는다. PR 작업에서 연구 타이머를 재시작하지 않는다. 사용자별 영향 그래프, 지속형 판단 큐, 소비자용 배분 증명서, 실제 구매 경로는 아직 없다. 이전에 구현한 금액·단위·시점·출금 조건 입력과 공동 판단 연구는 [V3 구현 기록](research/FINANCIAL_CORE_V3.md)에 남긴다.
 
 **TRON 실데이터 추가:** [실관측 데이터 릴리스와 학습 결과](research/REAL_TRON_DATA_20260924.md)에 USDD TRON 일별 기록 366개와 JustLend jUSDT·jUSDD 확정 이벤트 800개, 원문 대조, 시계열 인코더 학습 결과를 기록했다. 실제 배분 정답은 아직 없으며 첫 시계열 예측은 단순 지속값 기준선보다 오차가 컸다.
 
