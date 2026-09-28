@@ -1,0 +1,12 @@
+{
+  "at": "2026-09-28T11:32:01.280051+00:00",
+  "core": {
+    "tests": 293,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": true
+  },
+  "pipeline_exit_code": 0,
+  "passed": true
+}

@@ -1,0 +1,40 @@
+{
+  "verified_at": "2026-09-28T11:31:51.136865+00:00",
+  "source_snapshot_as_of": "2026-09-28T10:49:17.903850+00:00",
+  "source_snapshot_hash": "3756e04d7320715f0cca9667193720db26693845d4c13dd9691ccd4f4f489d06",
+  "calculation_hash": "1d620bdce311a6550a37f64663bc8ae959e1106bcd452a9b6e11b67d24ae99fc",
+  "evidence_kind": "HISTORICAL_PUBLIC_CAPTURE_REPLAY_WITH_SYNTHETIC_CONDITIONS",
+  "execution_authority": "NONE",
+  "quotes": [
+    {
+      "product_id": "justlend.v1.jUSDT",
+      "status": "CALCULATED_ASSUMPTIONS",
+      "reason_codes": [],
+      "net_income_base": "-1.229225"
+    },
+    {
+      "product_id": "justlend.v1.jUSDD",
+      "status": "CALCULATED_ASSUMPTIONS",
+      "reason_codes": [],
+      "net_income_base": "-0.586638"
+    },
+    {
+      "product_id": "justlend.strx",
+      "status": "CALCULATED_ASSUMPTIONS",
+      "reason_codes": [],
+      "net_income_base": "-2.304792"
+    },
+    {
+      "product_id": "tron.native.stake",
+      "status": "CALCULATED_ASSUMPTIONS",
+      "reason_codes": [],
+      "net_income_base": "-2.178083"
+    },
+    {
+      "product_id": "usdd.vault.TRX-A",
+      "status": "CALCULATED_ASSUMPTIONS",
+      "reason_codes": [],
+      "net_income_base": "-3.405227"
+    }
+  ]
+}

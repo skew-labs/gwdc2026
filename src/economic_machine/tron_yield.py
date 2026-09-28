@@ -7,7 +7,6 @@ or assumptions. The output is a planning comparison, never trade authority.
 
 from datetime import datetime
 from decimal import Decimal, ROUND_FLOOR, localcontext
-from math import ceil
 
 from .grid_search import VERSION_V2 as GRID_VERSION, search_grid
 from .values import MachineError, decimal, decstr, digest, ident, require_keys, utc
@@ -197,7 +196,7 @@ def _normalize(opportunity: dict, request: dict, chain: dict) -> tuple[dict | No
     aggregate = _integer(opportunity["aggregate_reported_bps"],
                          "aggregate reported APY", 0, 100000)
     if kind == "JUSTLEND_STRX":
-        if aggregate == 0 or any(components.values()) or opportunity["reward_tokens"]:
+        if any(components.values()) or opportunity["reward_tokens"]:
             raise MachineError("sTRX reported total cannot be double-counted")
     elif kind == "USDD_VAULT_STRATEGY":
         if aggregate or any(components.values()) or opportunity["reward_tokens"]:
@@ -260,7 +259,7 @@ def _normalize(opportunity: dict, request: dict, chain: dict) -> tuple[dict | No
                             chain["max_delegate_lock_blocks"])
             ident(rental["source_id"], "rental source")
             _hash32(rental["source_record_hash"], "rental source hash")
-            minimum_exit += ceil(lock * chain["block_time_seconds"] / 86400)
+            minimum_exit += (lock * chain["block_time_seconds"] + 86399) // 86400
             if (rental["status"] != "ACTIVE_QUOTE" or
                     not _fresh(rental["observed_at"], rental["valid_until"],
                                utc(request["as_of"]), request["max_age_ms"])):

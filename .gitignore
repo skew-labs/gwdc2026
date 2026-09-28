@@ -43,3 +43,13 @@ artifacts/pr02/*
 !artifacts/pr02/pipeline-tests.log
 !artifacts/pr02/live-manifest.json
 !artifacts/pr02/upstream-sources.json
+
+# Reviewed PR 03 financial calculations; full replay inputs remain on Cherry.
+!artifacts/pr03/
+artifacts/pr03/*
+!artifacts/pr03/source-manifest.json
+!artifacts/pr03/core-regression-summary.json
+!artifacts/pr03/core-regression-tests.log
+!artifacts/pr03/pipeline-tests.log
+!artifacts/pr03/replay-summary.json
+!artifacts/pr03/arithmetic-vectors.json

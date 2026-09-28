@@ -1,0 +1,15 @@
+test_daily_public_request_budget (test_pipeline.PipelineTests.test_daily_public_request_budget) ... ok
+test_exact_budget_and_blocked_execution (test_pipeline.PipelineTests.test_exact_budget_and_blocked_execution) ... ok
+test_history_cutoff_and_raw_integrity (test_pipeline.PipelineTests.test_history_cutoff_and_raw_integrity) ... ok
+test_normalized_fact_tampering_fails_closed (test_pipeline.PipelineTests.test_normalized_fact_tampering_fails_closed) ... ok
+test_numeric_json_amount_is_rejected (test_pipeline.PipelineTests.test_numeric_json_amount_is_rejected) ... ok
+test_quality_gate_detects_raw_tampering (test_pipeline.PipelineTests.test_quality_gate_detects_raw_tampering) ... ok
+test_stale_source_fails_closed (test_pipeline.PipelineTests.test_stale_source_fails_closed) ... ok
+test_typed_api_draft_is_excluded_and_abstains (test_pipeline.PipelineTests.test_typed_api_draft_is_excluded_and_abstains) ... ok
+test_usdd_tron_collateral_numeric_zero_and_vault_risk (test_pipeline.PipelineTests.test_usdd_tron_collateral_numeric_zero_and_vault_risk) ... ok
+test_zero_and_missing_remain_distinct (test_pipeline.PipelineTests.test_zero_and_missing_remain_distinct) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.118s
+
+OK
