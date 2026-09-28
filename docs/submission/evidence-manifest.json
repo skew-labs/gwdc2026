@@ -1,0 +1,59 @@
+{
+  "actual_transactions": 0,
+  "artifacts": [
+    {
+      "name": "PR04 deterministic comparison",
+      "sha256": "6b735b4e17ab41a1c1725ad7b9503e97b7bb42d08d9caa947a93ece7fbefbdf8",
+      "status": "VERIFIED_REPLAY"
+    },
+    {
+      "name": "PR05 Qwen boundary",
+      "sha256": "4d1804d11b3f9edfdd9b93ca038ede1687ea8115685459f3f717fc3c908f8cd6",
+      "status": "LIVE_PROVIDER_NOT_MET"
+    },
+    {
+      "name": "PR07 approval boundary",
+      "sha256": "5bb4a9823a3c542312a27f24ce679dfe9e6e6aebd739dacfcfc4985dcd415774",
+      "status": "VERIFIED_REPLAY"
+    },
+    {
+      "name": "PR08 reconciliation boundary",
+      "sha256": "eb6199e55989d80eb274c4d0a5bfa7368c41bf8ec48bfbad5de263695d2d18c3",
+      "status": "VERIFIED_REPLAY"
+    },
+    {
+      "name": "PR09 hosted service",
+      "sha256": "5a957276dfe16ec67dc0686f69f08cb49f37051318c9be697cd55dccdd7fe556",
+      "status": "VERIFIED_REPLAY"
+    }
+  ],
+  "broadcasts": 0,
+  "browser_verification": {
+    "approval_chain_status": "NOT_SUBMITTED",
+    "approval_signature_status": "NOT_REQUESTED",
+    "console_warnings_or_errors": 0,
+    "in_app_browser": "PASS",
+    "mobile_horizontal_overflow_px": 0,
+    "mobile_viewport": "390x844",
+    "plan_count": 2,
+    "product_count": 3,
+    "refresh_preserved_plan_selection": true,
+    "refresh_preserved_replay_review": true,
+    "service_health": "PASS",
+    "service_host": "CHERRY_VIA_LOCAL_SSH_TUNNEL"
+  },
+  "condition_change_altered_comparison": true,
+  "customer_signatures": 0,
+  "energy_joules": null,
+  "furiosa_a_acceptance": "NOT_MET",
+  "qwen_actual_calls": 0,
+  "qwen_latency_ms": null,
+  "qwen_token_usage": null,
+  "run_a_comparison_hash": "f40deda0afed61611aa502f4c02295c4e1cbe671623c44006dc0ddfd429e5f4d",
+  "run_b_comparison_hash": "3506f665bfd67a1247dba659074801b3505d702666c61a37c6693268814dcb21",
+  "schema_version": "dual-track-evidence-manifest-1",
+  "snapshot_hash": "3756e04d7320715f0cca9667193720db26693845d4c13dd9691ccd4f4f489d06",
+  "story_hash": "c39131af6c6fbbc88532d74e46b42a9c9a964fee944a076d9f7a1a738ac0c5af",
+  "tron_b_acceptance": "NOT_MET",
+  "ui_evidence": "VERIFIED_IN_APP_BROWSER_2026-09-29"
+}

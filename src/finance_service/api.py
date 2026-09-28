@@ -21,7 +21,8 @@ def _public_job(job):
             if key not in {"lease_token", "lease_owner", "account_key"}}
 
 
-def create_app(*, session_verifier, repository, clock):
+def create_app(*, session_verifier, repository, clock, product_service=None,
+               web_root=None, demo_story=None):
     try:
         from fastapi import FastAPI, Header, HTTPException
     except ImportError as exc:
@@ -105,5 +106,42 @@ def create_app(*, session_verifier, repository, clock):
     def list_routines(authorization: str = Header(alias="Authorization")):
         ctx = context(authorization)
         return call(lambda: repository.list_routines(ctx.scope))
+
+    if demo_story is not None:
+        from .product_workspace import normalize_product_story
+
+        demo_story = normalize_product_story(demo_story)
+
+        @app.get("/api/demo/story")
+        def read_demo_story():
+            return demo_story
+
+    if product_service is not None:
+        @app.get("/v1/workspaces/{story_id}")
+        def read_workspace(story_id: str,
+                           authorization: str = Header(alias="Authorization")):
+            ctx = context(authorization)
+            return call(lambda: product_service.read(ctx, story_id))
+
+        @app.post("/v1/workspaces/{story_id}/decisions")
+        def decide_workspace(story_id: str, request: dict,
+                             authorization: str = Header(alias="Authorization")):
+            ctx = context(authorization)
+            required = {"decision", "story_revision", "plan_hash", "approval_hash",
+                        "expected_decision_version"}
+            if set(request) != required:
+                raise HTTPException(status_code=422,
+                                    detail="exact workspace decision fields required")
+            return call(lambda: product_service.decide(ctx, story_id, request))
+
+    if web_root is not None:
+        from pathlib import Path
+
+        from fastapi.staticfiles import StaticFiles
+
+        root = Path(web_root).resolve()
+        if not root.is_dir() or not (root / "index.html").is_file():
+            raise RuntimeError("finance service web root is incomplete")
+        app.mount("/", StaticFiles(directory=root, html=True), name="product-web")
 
     return app

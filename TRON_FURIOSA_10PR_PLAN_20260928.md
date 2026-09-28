@@ -4,7 +4,7 @@
 
 기존 모듈을 지우고 새로 만드는 계획이 아니다. 기존 계산/검증 자산을 하나의 사용자 흐름으로 연결한다. 새 데이터셋·학습, NIC/FPGA 최적화, 외부 검증자 네트워크는 이 10개 PR의 범위 밖이다. ALPHA/VAULT/WATCH는 서버 안의 역할과 작업 기록이다.
 
-**2026-09-29 진행:** PR 01–08은 순서대로 구현·검증해 [GitHub 저장소](https://github.com/skew-labs/gwdc2026)에 검토 가능한 PR로 올렸다. PR 09의 [인증된 지속 서비스·복구 작업·직원 routine](IMPLEMENTATION_PR09_20260929.md)도 구현과 Cherry 변경 경계 검증을 마쳤으며, 실제 PostgreSQL server 적용은 아직 검증하지 않았다. 각 단계는 변경 코드와 직접 연결만 Cherry에서 다시 검증하며 앞 PR의 무관한 전체 suite를 반복하지 않는다. 고객 서명·broadcast·배포·실자산 실행은 수행하지 않았고 PR 10은 계획 상태다.
+**2026-09-29 진행:** PR 01–09는 순서대로 구현·검증해 [GitHub 저장소](https://github.com/skew-labs/gwdc2026)에 검토 가능한 PR로 올렸다. PR 10 [대화형 자산관리 workspace와 제출 증거](IMPLEMENTATION_PR10_20260929.md)도 구현했으며 Cherry 직접 연결 테스트 25개와 실제 브라우저·새로고침·모바일·콘솔 검증을 통과했다. exact commit 검증 증거는 `artifacts/pr10`에 포함한다. 실제 PostgreSQL server, Qwen/Kiln, 지갑 서명, 테스트넷 거래는 아직 검증하지 않았고 고객 서명·broadcast·배포·실자산 실행은 수행하지 않았다.
 
 ## 완료 기준과 공통 규칙
 

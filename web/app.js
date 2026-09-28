@@ -1,192 +1,315 @@
-const turns = document.getElementById("turns");
-const dialog = document.getElementById("needs-dialog");
-const needsForm = document.getElementById("needs-form");
-const workspace = document.getElementById("workspace");
-const workspaceBody = document.getElementById("workspace-body");
+const byId = (id) => document.getElementById(id);
+const turns = byId("turns");
+const workspace = byId("workspace");
+const workspaceBody = byId("workspace-body");
+const state = {story: null, selectedPlan: null};
 
-function node(tag, className, content) {
-  const element = document.createElement(tag);
-  if (className) element.className = className;
-  if (content !== undefined) element.textContent = String(content);
-  return element;
+function el(tag, className, text) {
+  const item = document.createElement(tag);
+  if (className) item.className = className;
+  if (text !== undefined) item.textContent = String(text);
+  return item;
 }
 
-function turn(kind, message, buttonLabel, onClick) {
-  const element = node("div", `turn ${kind}`);
-  if (kind !== "user") element.append(node("div", "turn-sender", "Whollet"));
-  element.append(node("div", "", message));
-  if (buttonLabel) {
-    const button = node("button", "inline-action", buttonLabel);
-    button.type = "button";
-    button.addEventListener("click", onClick);
-    element.append(button);
+function append(parent, ...children) {
+  parent.append(...children.filter(Boolean));
+  return parent;
+}
+
+function exactNumber(value) {
+  if (value === null || value === undefined) return "미측정";
+  const raw = String(value);
+  const sign = raw.startsWith("-") ? "-" : "";
+  const unsigned = sign ? raw.slice(1) : raw;
+  if (!/^\d+(\.\d+)?$/.test(unsigned)) return raw;
+  const [whole, fraction] = unsigned.split(".");
+  const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return `${sign}${grouped}${fraction ? `.${fraction}` : ""}`;
+}
+
+function shortHash(value) {
+  return value ? `${value.slice(0, 8)}…${value.slice(-6)}` : "없음";
+}
+
+function timeLabel(value) {
+  return value ? value.slice(0, 16).replace("T", " ") + " UTC" : "시점 미확인";
+}
+
+function toast(message) {
+  const box = byId("toast");
+  box.textContent = message;
+  box.classList.add("show");
+  window.setTimeout(() => box.classList.remove("show"), 2600);
+}
+
+function addTurn(kind, sender, message, action) {
+  const article = el("article", `turn ${kind}`);
+  if (kind !== "user") {
+    const head = el("div", "sender");
+    append(head, el("span", `agent-icon ${sender.toLowerCase()} mini`, sender[0]),
+      el("strong", "", sender), el("time", "", "지금"));
+    article.append(head);
   }
-  turns.append(element);
+  article.append(el("p", "", message));
+  if (action) {
+    const button = el("button", "suggestion", action.label);
+    button.type = "button";
+    button.addEventListener("click", action.run);
+    article.append(button);
+  }
+  turns.append(article);
   turns.scrollTop = turns.scrollHeight;
 }
 
-async function api(path, payload) {
-  const response = await fetch(path, {
-    method: "POST", headers: {"Content-Type": "application/json"},
-    body: JSON.stringify(payload), cache: "no-store"
+async function getJson(path) {
+  const response = await fetch(path, {cache: "no-store", credentials: "same-origin"});
+  let body;
+  try { body = await response.json(); } catch { body = {}; }
+  if (!response.ok) throw new Error(body.detail || body.error || "서비스 응답을 확인할 수 없습니다.");
+  return body;
+}
+
+function metric(label, value, tone = "") {
+  const item = el("div", `metric ${tone}`);
+  append(item, el("span", "", label), el("strong", "", value));
+  return item;
+}
+
+function section(title, caption, id) {
+  const block = el("section", "workspace-section");
+  if (id) block.id = id;
+  const head = el("div", "section-head");
+  append(head, el("h3", "", title), caption ? el("p", "", caption) : null);
+  block.append(head);
+  return block;
+}
+
+function statusKorean(status) {
+  return ({ACTIVE: "작동 중", PAUSED: "일시정지", HELD: "확인 필요", FAILED: "실패"})[status] || status;
+}
+
+function renderRoster(story) {
+  for (const button of document.querySelectorAll("[data-role]")) {
+    const employee = story.employees.find((item) => item.role === button.dataset.role);
+    button.className = employee.status.toLowerCase();
+    button.querySelector("i").textContent = statusKorean(employee.status);
+    button.title = `${employee.responsibility} · ${employee.next_action}`;
+  }
+}
+
+function renderMandate(story) {
+  const block = section("확인된 조건", "모델 출력이 아니라 이 replay에 고정된 정책입니다.", "conditions");
+  const grid = el("div", "condition-grid");
+  append(grid,
+    metric("운용 원금", `${exactNumber(story.mandate.amount)} ${story.mandate.asset}`),
+    metric("즉시 보유", `${exactNumber(story.mandate.liquid_reserve)} ${story.mandate.asset}`),
+    metric("운용 기간", `${story.mandate.horizon_days}일`),
+    metric("차입", story.mandate.borrowing_consent ? "허용" : "허용 안 함", "safe"));
+  block.append(grid, el("p", "policy-line", story.mandate.withdrawal_summary));
+  return block;
+}
+
+function usageText(usage) {
+  if (usage.status !== "ACTUAL") return "실제 호출 없음 · 토큰/지연/에너지 미측정";
+  return `입력 ${exactNumber(usage.prompt_tokens)} · 출력 ${exactNumber(usage.completion_tokens)} · ${exactNumber(usage.latency_ms)} ms`;
+}
+
+function renderRuns(story) {
+  const block = section("조건을 바꾼 두 번의 계산", "같은 snapshot에서 즉시 보유 조건만 바꿨습니다.", "run-comparison");
+  const grid = el("div", "run-grid");
+  for (const run of story.runs) {
+    const card = el("article", "run-card");
+    append(card, el("span", "run-id", `RUN ${run.run_id}`), el("strong", "", run.condition),
+      el("p", "", usageText(run.model_usage)),
+      el("code", "", `계획 ${shortHash(run.selected_plan_hash)}`));
+    grid.append(card);
+  }
+  block.append(grid);
+  return block;
+}
+
+function renderProducts(story) {
+  const block = section("검색한 TRON 상품", "수익 원리와 부채 경로를 분리해 표시합니다.", "products");
+  const list = el("div", "product-list");
+  for (const product of story.products) {
+    const card = el("article", `product ${product.decision.toLowerCase()}`);
+    const top = el("div", "product-top");
+    const label = el("div");
+    append(label, el("strong", "", product.name), el("small", "", `${product.protocol} · ${product.kind}`));
+    const decision = el("span", "decision", product.decision === "INCLUDED" ? "계획 포함" : "이번 계획 제외");
+    append(top, label, decision);
+    const rate = product.rate.value === null ? "수익률 미확인" : `${product.rate.value} ${product.rate.unit}`;
+    append(card, top, el("p", "rationale", product.rationale), metric("관측 금리", rate),
+      metric("출금", product.liquidity), metric("주요 위험", product.risk),
+      el("code", "source-hash", `${product.source.source_id} · ${shortHash(product.source.capture_hash)}`));
+    list.append(card);
+  }
+  block.append(list);
+  return block;
+}
+
+function weightLabel(weight, story) {
+  const product = story.products.find((item) => item.product_id === weight.product_id);
+  return `${product ? product.name : weight.product_id} ${(weight.bps / 100).toFixed(0)}%`;
+}
+
+function renderPlans(story) {
+  const block = section("배분안 2개", "순수익은 고정 가정의 replay 결과이며 실제 수익이 아닙니다.", "plans");
+  const grid = el("div", "plans-grid");
+  story.plans.forEach((plan, index) => {
+    const card = el("article", `plan-card ${index ? "growth" : "conservative"}`);
+    card.dataset.planHash = plan.plan_hash;
+    const top = el("div", "plan-top");
+    append(top, el("div", "plan-rank", `0${index + 1}`), el("h4", "", plan.name),
+      el("span", "plan-hash", shortHash(plan.plan_hash)));
+    const bar = el("div", "allocation-bar");
+    let allocated = 0;
+    for (const weight of plan.weights) {
+      const segment = el("span", "");
+      segment.style.width = `${weight.bps / 100}%`;
+      segment.title = weightLabel(weight, story);
+      bar.append(segment);
+      allocated += weight.bps;
+    }
+    const cash = el("span", "cash-segment");
+    cash.style.width = `${Math.max(0, 100 - allocated / 100)}%`;
+    cash.title = "현금 보유";
+    bar.append(cash);
+    const labels = el("div", "weight-labels");
+    plan.weights.forEach((weight) => labels.append(el("span", "", weightLabel(weight, story))));
+    labels.append(el("span", "", `현금 ${exactNumber(plan.cash_amount)} ${story.mandate.asset}`));
+    const metrics = el("div", "plan-metrics");
+    append(metrics, metric("가정 순수익", `${exactNumber(plan.net_income_base)} ${story.mandate.asset}`),
+      metric("비용", `${exactNumber(plan.total_cost_base)} ${story.mandate.asset}`),
+      metric("최대 stress", `${exactNumber(plan.worst_stress_loss_base)} ${story.mandate.asset}`));
+    const choose = el("button", "choose-plan", state.selectedPlan === plan.plan_hash ? "선택됨" : "이 안 검토");
+    choose.type = "button";
+    choose.addEventListener("click", () => {
+      state.selectedPlan = plan.plan_hash;
+      localStorage.setItem(`whollet:selected:${story.story_hash}`, plan.plan_hash);
+      renderWorkspace(story);
+      document.querySelector("#approval")?.scrollIntoView({behavior: "smooth", block: "start"});
+    });
+    append(card, top, bar, labels, metrics, el("p", "plan-note", plan.exit_summary),
+      el("p", "plan-note", plan.vault_summary), choose);
+    grid.append(card);
   });
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.error || result.reason || "요청을 처리하지 못했습니다.");
-  return result;
+  block.append(grid);
+  return block;
 }
 
-function fillDraft(draft = {}) {
-  for (const name of ["asset", "amount", "liquid_reserve", "horizon_days", "risk"]) {
-    needsForm.elements[name].value = draft[name] ?? "";
+function renderApproval(story) {
+  const selected = story.plans.find((plan) => plan.plan_hash === state.selectedPlan);
+  const block = section("승인 전 확인", "여기서 확인해도 지갑 서명이나 체인 전송은 일어나지 않습니다.", "approval");
+  if (!selected) {
+    block.append(el("div", "approval-empty", "위의 두 안 중 하나를 먼저 선택해 주세요."));
+    return block;
   }
+  const card = el("article", "approval-card");
+  const header = el("div", "approval-title");
+  append(header, el("div", "shield", "✓"), el("div", "", `${selected.name} 검토`),
+    el("span", "blocked", story.approval.status === "READY" ? "지갑 검토 가능" : "실행 잠김"));
+  const facts = el("div", "approval-facts");
+  append(facts, metric("금액", `${exactNumber(story.approval.amount)} ${story.approval.asset}`),
+    metric("수취인", shortHash(story.approval.recipient)), metric("네트워크", story.approval.network),
+    metric("서명 / 체인", `${story.approval.signature_status} / ${story.approval.chain_status}`));
+  card.append(header, facts);
+  const reasons = el("ul", "blocker-list");
+  story.approval.reason_codes.forEach((reason) => reasons.append(el("li", "", reason)));
+  card.append(reasons);
+  const reviewedKey = `whollet:reviewed:${story.story_hash}:${selected.plan_hash}`;
+  const button = el("button", "review-button",
+    localStorage.getItem(reviewedKey) ? "Replay 검토 완료" : "Replay 내용 확인");
+  button.type = "button";
+  button.addEventListener("click", () => {
+    localStorage.setItem(reviewedKey, "1");
+    button.textContent = "Replay 검토 완료";
+    addTurn("assistant", "VAULT", "검토 기록만 저장했습니다. 지갑 요청, 서명, 전송은 만들지 않았습니다.");
+    toast("검토 기록 저장 · 실행 효과 없음");
+  });
+  card.append(button);
+  block.append(card);
+  return block;
 }
 
-function openDialog(draft = {}) {
-  fillDraft(draft);
-  dialog.showModal();
-  needsForm.elements.asset.focus();
+function renderEvidence(story) {
+  const block = section("근거와 제출 상태", "완료되지 않은 요구는 그대로 미완으로 표시합니다.", "evidence");
+  const status = el("div", "evidence-status");
+  append(status, metric("TRON B", story.evidence.tron_b_status),
+    metric("Furiosa A", story.evidence.furiosa_a_status),
+    metric("실거래", story.evidence.live_execution_status));
+  block.append(status);
+  const details = el("details", "artifact-list");
+  details.append(el("summary", "", `검증 artifact ${story.evidence.artifacts.length}개`));
+  story.evidence.artifacts.forEach((artifact) => {
+    const line = el("div", "artifact-row");
+    append(line, el("strong", "", artifact.name), el("span", "", artifact.status),
+      el("code", "", shortHash(artifact.sha256)));
+    details.append(line);
+  });
+  block.append(details);
+  const blockers = el("ul", "global-blockers");
+  story.blockers.forEach((reason) => blockers.append(el("li", "", reason)));
+  block.append(blockers);
+  return block;
 }
 
-document.getElementById("cancel-needs").addEventListener("click", () => dialog.close());
-document.getElementById("cancel-needs-bottom").addEventListener("click", () => dialog.close());
-document.getElementById("close-workspace").addEventListener("click", () => workspace.classList.remove("open"));
-
-document.getElementById("chat-form").addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const input = document.getElementById("message");
-  const text = input.value.trim();
-  if (!text) return;
-  turn("user", text);
-  input.value = "";
-  document.getElementById("send").disabled = true;
-  try {
-    const result = await api("/api/interpret", {message: text});
-    turn("assistant", "말씀하신 조건을 읽었습니다. 금액과 기간을 확인해 주시면 당시 자료로 비교하겠습니다.", "조건 확인", () => openDialog(result.draft));
-    openDialog(result.draft);
-  } catch (error) {
-    turn("assistant error", "현재 AI 연결을 확인할 수 없습니다. 조건을 직접 입력하면 저장된 공식 자료를 조회해 비교할 수 있습니다.", "조건 직접 입력", () => openDialog());
-    openDialog();
-  } finally {
-    document.getElementById("send").disabled = false;
+function renderWorkspace(story) {
+  state.story = story;
+  if (!story.plans.some((plan) => plan.plan_hash === state.selectedPlan)) {
+    const savedPlan = localStorage.getItem(`whollet:selected:${story.story_hash}`);
+    state.selectedPlan = story.plans.some((plan) => plan.plan_hash === savedPlan)
+      ? savedPlan : null;
   }
-});
-
-function row(label, value, highlight = false) {
-  const line = node("div", `plan-row${highlight ? " warning" : ""}`);
-  line.append(node("span", "", label), node("strong", "", value));
-  return line;
-}
-
-function context(label, value) {
-  const line = node("div", "context-row");
-  line.append(node("span", "", label), node("span", "", value));
-  return line;
-}
-
-function formatAmount(value, asset) {
-  const exact = String(value);
-  if (!/^(0|[1-9]\d*)(\.\d+)?$/.test(exact)) return `${exact} ${asset}`;
-  const [whole, fraction] = exact.split(".");
-  const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  return `${grouped}${fraction ? `.${fraction}` : ""} ${asset}`;
-}
-
-function renderPlan(answer) {
-  workspaceBody.replaceChildren();
   workspace.classList.add("open");
-  document.getElementById("workspace-title").textContent = `${answer.needs.asset} 운용안 비교`;
-  const market = answer.market;
-  const status = node("div", "snapshot-strip");
-  status.append(node("strong", "", "공식 API 수집 자료 · 검토 전"), node("span", "", ` · 비교 ${answer.as_of.slice(0, 16).replace("T", " ")} UTC · 실행 전 재조회 필요`));
-  workspaceBody.append(status);
-
-  const overview = node("div", "market-overview");
-  const label = node("div");
-  label.append(node("div", "market-name", `JustLend ${market.jtoken_symbol}`),
-               node("div", "market-sub", `${market.underlying_symbol} 공급 시장 · ${market.status}`));
-  const rate = node("div", "rate", `${(Number(answer.supply_apy) * 100).toFixed(2)}%`);
-  rate.append(node("small", "", "최근 API 기본 공급 연율 · 반올림 표시"));
-  overview.append(label, rate);
-  workspaceBody.append(overview);
-  workspaceBody.append(context("상품 주소", market.market_address));
-  workspaceBody.append(context("설정한 위험 상한", `공급 배분 최대 ${(Number(answer.risk_ceiling_fraction) * 100).toFixed(0)}% · 임시 비중 정책`));
-  workspaceBody.append(context("시장 가용 수량", formatAmount(answer.available_market_cash, answer.needs.asset)));
-  workspaceBody.append(context("USDD 추가 보상", answer.usdd_mining_apy === null ? "미확인" : `${(Number(answer.usdd_mining_apy) * 100).toFixed(2)}% · 예상액 미포함`));
-  workspaceBody.append(context("USDD 프로젝트 자료", answer.usdd_tron_earn_apy_context === null ? "미확인" : `${(Number(answer.usdd_tron_earn_apy_context) * 100).toFixed(2)}% · 직접 참여 경로 미검증`));
-  const evidence = node("details", "evidence-details");
-  evidence.append(node("summary", "", "조회 근거와 원문 해시"));
-  evidence.append(context("공급 금리 위치", answer.supply_apy_evidence.json_path));
-  evidence.append(context("시장 수량 위치", answer.available_cash_evidence.json_path));
-  for (const [sourceId, ref] of Object.entries(answer.sources)) {
-    evidence.append(context(sourceId, `${ref.fetched_at} · SHA-256 ${ref.sha256}`));
-  }
-  workspaceBody.append(evidence);
-  workspaceBody.append(node("h2", "plans-title", "비교할 배분안"));
-
-  if (answer.plans.length < 2) {
-    workspaceBody.append(node("p", "workspace-empty", "현재 조건과 시장 자료로 서로 다른 두 계획을 만들 수 없습니다. 남겨 둘 금액이나 자료의 최신성을 확인해 주세요."));
-  }
-  for (const [index, plan] of answer.plans.entries()) {
-    const card = node("article", `plan${index === 0 ? " primary-plan" : ""}`);
-    const head = node("div", "plan-head");
-    head.append(node("div", "plan-name", plan.name), node("div", "plan-numeral", `안 ${index + 1}`));
-    card.append(head);
-    const fraction = Math.max(0, Math.min(100, Number(plan.legs[1].amount) / Number(answer.needs.amount) * 100));
-    const bar = node("div", "bar");
-    const supply = node("div", "supply");
-    supply.style.width = `${fraction}%`;
-    bar.append(supply, node("div", "cash"));
-    bar.lastChild.style.width = `${100 - fraction}%`;
-    card.append(bar);
-    const data = node("div", "plan-data");
-    data.append(row("바로 보유", formatAmount(plan.legs[0].amount, answer.needs.asset)),
-                row("공급 제안", formatAmount(plan.legs[1].amount, answer.needs.asset)),
-                row("기간 중 수익", "연율 적용 방식 미확인", true),
-                row("총 거래 비용·순수익", "견적 없음", true));
-    data.append(node("p", "claim-foot", "표시된 공급 연율의 적용·복리 방식이 확인되지 않아 기간 수익을 계산하지 않았습니다. 금리 변동, 추가 보상, 거래 비용, 가격 변화도 반영 전입니다."));
-    card.append(data);
-    workspaceBody.append(card);
-  }
-  const footer = node("div", "workspace-footer");
-  footer.append(node("div", "block", "구매·예치는 아직 사용할 수 없습니다. 현재 지갑 잔액, 정확한 수수료, 참여 경로와 승인 범위가 연결되면 실행 카드를 다시 확인해야 합니다."));
-  const links = node("div", "source-links");
-  const justlend = node("a", "", "JustLend 원천 문서");
-  justlend.href = "https://docs.justlend.org/developers/apis/";
-  justlend.target = "_blank";
-  justlend.rel = "noopener noreferrer";
-  const usdd = node("a", "", "USDD 원천 문서");
-  usdd.href = "https://docs.usdd.io/developers/usdd-public-api";
-  usdd.target = "_blank";
-  usdd.rel = "noopener noreferrer";
-  links.append(justlend, usdd);
-  footer.append(links);
-  workspaceBody.append(footer);
+  byId("workspace-title").textContent = story.headline;
+  byId("mode-badge").textContent = story.mode.replaceAll("_", " ");
+  byId("mode-badge").className = `mode-badge ${story.mode.toLowerCase()}`;
+  byId("story-time").textContent = timeLabel(story.evidence.snapshot_as_of);
+  workspaceBody.replaceChildren(renderMandate(story), renderRuns(story), renderProducts(story),
+    renderPlans(story), renderApproval(story), renderEvidence(story));
+  renderRoster(story);
+  localStorage.setItem("whollet:last-story", story.story_hash);
+  byId("source-state").textContent = `snapshot ${shortHash(story.evidence.snapshot_hash)}`;
 }
 
-needsForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const fields = new FormData(needsForm);
-  const need = Object.fromEntries(["asset", "amount", "liquid_reserve", "horizon_days", "risk"].map(k => [k, fields.get(k)]));
-  need.horizon_days = Number(need.horizon_days);
-  dialog.close();
-  turn("user", `확인한 조건: ${need.amount} ${need.asset}, 바로 보유 ${need.liquid_reserve}, ${need.horizon_days}일, ${needsForm.elements.risk.selectedOptions[0].textContent}`);
+async function loadReplay({announce = true} = {}) {
   try {
-    const answer = await api("/api/plan", need);
-    renderPlan(answer);
-    turn("assistant", answer.plans.length >= 2 ?
-      "같은 시점 자료로 유동성 우선안과 공급 비중 우선안을 계산했습니다. 오른쪽 창에서 배분과 근거를 비교해 주세요. 현재 비용 견적이 없어 구매는 열리지 않습니다." :
-      "현재 조건에서는 실질적으로 다른 두 안을 계산하지 못했습니다. 오른쪽 창의 자료와 조건을 확인해 주세요.", "배분안 보기", () => workspace.classList.add("open"));
+    const story = await getJson("/api/demo/story");
+    renderWorkspace(story);
+    if (announce) addTurn("assistant", "ALPHA",
+      "실제 모델 호출 대신 검증된 historical replay를 열었습니다. 조건 A/B의 계산 변화와 실행이 잠긴 이유를 함께 보여드립니다.",
+      {label: "배분안 보기 →", run: () => workspace.classList.add("open")});
   } catch (error) {
-    turn("assistant error", `비교안을 만들 수 없습니다: ${error.message} 공식 자료 수집과 유효 시점을 확인해 주세요.`);
+    addTurn("assistant error", "WATCH", `기록을 열지 못했습니다. ${error.message}`);
   }
+}
+
+byId("open-replay").addEventListener("click", () => loadReplay());
+byId("close-workspace").addEventListener("click", () => workspace.classList.remove("open"));
+byId("chat-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const input = byId("message");
+  const message = input.value.trim();
+  if (!message) return;
+  addTurn("user", "", message);
+  input.value = "";
+  byId("send").disabled = true;
+  await loadReplay();
+  byId("send").disabled = false;
 });
 
-fetch("/api/status", {cache:"no-store"}).then(r => r.json()).then(status => {
-  const count = Object.values(status.sources).filter(Boolean).length;
-  const fresh = Object.values(status.sources).filter(source => source?.fresh).length;
-  document.getElementById("source-state").textContent = `${fresh}/4개 필수 원천 최신 · ${count}/4개 수집`;
-  document.getElementById("model-state").textContent = status.model_configured ? "Qwen 설정됨 · 호출 미확인" : "Qwen 연결 대기";
-}).catch(() => {
-  document.getElementById("source-state").textContent = "데이터 상태 조회 실패";
-  document.getElementById("model-state").textContent = "연결 확인 실패";
-});
+for (const button of document.querySelectorAll("[data-role]")) {
+  button.addEventListener("click", () => {
+    if (!state.story) return toast("먼저 대화에서 기록을 열어 주세요.");
+    const employee = state.story.employees.find((item) => item.role === button.dataset.role);
+    toast(`${employee.name} · ${statusKorean(employee.status)} · ${employee.next_action}`);
+  });
+}
+
+getJson("/healthz").then((health) => {
+  byId("service-state").textContent = health.status === "ok" ? "서비스 연결됨" : "서비스 확인 필요";
+  byId("service-dot").classList.toggle("live", health.status === "ok");
+}).catch(() => { byId("service-state").textContent = "서비스 연결 실패"; });
+
+if (localStorage.getItem("whollet:last-story")) loadReplay({announce: false});

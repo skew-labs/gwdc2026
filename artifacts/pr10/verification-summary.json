@@ -1,0 +1,23 @@
+{
+  "actual_transactions": 0,
+  "asset_movements": 0,
+  "broadcasts": 0,
+  "browser_console_warnings_or_errors": 0,
+  "browser_in_app": "PASS",
+  "customer_signatures": 0,
+  "deployments": 0,
+  "ephemeral_uvicorn_health": "PASS",
+  "furiosa_a_acceptance": "NOT_MET_NO_ACTUAL_QWEN_TRACE",
+  "git_diff_check": "PASS",
+  "mobile_390x844_horizontal_overflow_px": 0,
+  "py_compile": "PASS",
+  "qwen_actual_calls": 0,
+  "refresh_persistence": "PASS",
+  "remote_playwright_chromium": "NOT_AVAILABLE_CDN_TIMEOUT",
+  "ruff": "PASS_NEW_AND_DIRECT_CONNECTION_FILES",
+  "service_host": "CHERRY",
+  "status": "PASS",
+  "story_rebuild_exact_match": "PASS",
+  "targeted_tests": 25,
+  "tron_b_acceptance": "NOT_MET_NO_LIVE_EXECUTION"
+}
