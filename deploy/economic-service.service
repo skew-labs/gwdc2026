@@ -9,6 +9,8 @@ User=gwdc-finance
 Group=gwdc-finance
 WorkingDirectory=/srv/gwdc2026
 EnvironmentFile=/etc/gwdc/economic-service.env
+Environment=FINANCE_SERVICE_WEB_ROOT=/srv/gwdc2026/web
+Environment=FINANCE_SERVICE_DEMO_STORY_PATH=/srv/gwdc2026/cases/product_workspace_story.json
 ExecStart=/srv/gwdc2026/.venv/bin/uvicorn finance_service.entrypoint:app --host 127.0.0.1 --port 8080 --workers 1
 Restart=on-failure
 RestartSec=5

@@ -1,0 +1,74 @@
+{
+  "files": {
+    "IMPLEMENTATION_PR10_20260929.md": {
+      "lines": 47,
+      "sha256": "d6abd21c4455d07171d2b5e3a222c270d86cc4f1e40e53638ff13b3dd5b26c45"
+    },
+    "TRON_FURIOSA_10PR_PLAN_20260928.md": {
+      "lines": 202,
+      "sha256": "3637b93ede9cc96e30bb702f9fb148dfaa299fe0a7704aced70054b8f3096df8"
+    },
+    "artifacts/pr10/browser-verification.json": {
+      "lines": 25,
+      "sha256": "e6f65f309a9179446b774cd175aeed4efcad6fced65e2cd8b41dd7e5cc313d4c"
+    },
+    "artifacts/pr10/verification-summary.json": {
+      "lines": 23,
+      "sha256": "616b9b3f6e531f6255015d7d3eb1d01c92bf40ef6aacb55922008c778ba1d1a4"
+    },
+    "cases/product_workspace_story.json": {
+      "lines": 1,
+      "sha256": "2d6e5109f80cc2138f61846f6905ea5a12f3f97b8dbb03834bdbc7c4a5f1238f"
+    },
+    "deploy/economic-service.service": {
+      "lines": 24,
+      "sha256": "65ef6794e2f136bdeb45c7ad962fbfdd1b67409a1ea4108e5b7f68e3fc997ae8"
+    },
+    "docs/submission/evidence-manifest.json": {
+      "lines": 59,
+      "sha256": "b03fe9076c87f8dee7335abe5050e9e6dd81303e711ff166376b7642aecc0b74"
+    },
+    "docs/submission/requirements.md": {
+      "lines": 34,
+      "sha256": "f5578873dab34af0b060596c665291e8302c31bf26fc16cee4fe4fcf97cd0f8d"
+    },
+    "scripts/build_pr10_product_story.py": {
+      "lines": 247,
+      "sha256": "053b91bb0b339cc7334b8d8eba2effa29406cc240ee405780cda71563046a922"
+    },
+    "src/finance_service/api.py": {
+      "lines": 147,
+      "sha256": "5b16bc8d5df29ae48e9f2835d035f5b8d9f1e145fdd8652d2c2a305f030d895c"
+    },
+    "src/finance_service/entrypoint.py": {
+      "lines": 43,
+      "sha256": "79f924a888af88391fd1b299013d5a6782656ca7ab6be1ca4236c5549f69eea8"
+    },
+    "src/finance_service/product_workspace.py": {
+      "lines": 408,
+      "sha256": "ca5c881fb0145aa2a65414262f44171aa432dadacc5eb3f9894129ec63358607"
+    },
+    "tests/test_finance_product_workspace.py": {
+      "lines": 230,
+      "sha256": "0230788dc8598f107ff712c126eaad9ad35c62c1c347ac12748e650c774305dd"
+    },
+    "web/app.css": {
+      "lines": 7,
+      "sha256": "0cfe66225173b2963ae1c01b938b1abecbbd3243e64b6e3103c02831e4c23488"
+    },
+    "web/app.js": {
+      "lines": 315,
+      "sha256": "60594a67e39124bdd42dc9bdef65f7b283b122765ab6f1b16c3bbde27004b092"
+    },
+    "web/index.html": {
+      "lines": 51,
+      "sha256": "734826660e493a0dcf61267094cc10a6e1b95a2f03b2a5b153d83794cede2c1e"
+    }
+  },
+  "line_counts": {
+    "docs": 390,
+    "implementation": 1219,
+    "infra": 24,
+    "tests": 230
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "approval_chain_status": "NOT_SUBMITTED",
+  "approval_signature_status": "NOT_REQUESTED",
+  "console_warnings_or_errors": 0,
+  "in_app_browser": "PASS",
+  "live_effect": "NONE",
+  "mode": "HISTORICAL_REPLAY",
+  "mobile": {
+    "approval_visible": true,
+    "client_width": 390,
+    "close_control_visible": true,
+    "horizontal_overflow_px": 0,
+    "scroll_width": 390,
+    "viewport": "390x844",
+    "workspace_visible": true
+  },
+  "plan_count": 2,
+  "product_count": 3,
+  "refresh_preserved_plan_selection": true,
+  "refresh_preserved_replay_review": true,
+  "service_health": "PASS",
+  "service_host": "CHERRY_VIA_LOCAL_SSH_TUNNEL",
+  "story_hash": "c39131af6c6fbbc88532d74e46b42a9c9a964fee944a076d9f7a1a738ac0c5af",
+  "verified_at": "2026-09-29"
+}

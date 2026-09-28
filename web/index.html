@@ -3,65 +3,49 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#10161a">
-  <title>Whollet | 자산 배분 대화</title>
+  <meta name="theme-color" content="#080b0b">
+  <title>WHOLLET — 나의 자산관리 팀</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23bbf451'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='36' font-family='Arial' font-weight='700' fill='%23080b0b'%3EW%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="/app.css">
   <script src="/app.js" defer></script>
 </head>
 <body>
-  <div class="shell">
-    <aside class="rail" aria-label="작업 메뉴">
-      <div class="brand"><span class="brand-mark">◒</span><span>whollet</span></div>
-      <button class="rail-action active" type="button">자산 대화</button>
-      <div class="rail-divider"></div>
-      <div class="rail-caption">데이터 상태</div>
-      <div id="source-state" class="rail-detail">확인 중</div>
-      <div class="rail-bottom"><span class="status-dot" id="model-dot"></span><span id="model-state">AI 연결 확인 중</span></div>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="나의 금융 직원">
+      <a class="brand" href="/" aria-label="Whollet 홈"><span class="brand-glyph">W</span><span>WHOLLET</span></a>
+      <div class="roster-label">MY TEAM</div>
+      <nav id="roster" class="roster" aria-label="직원 목록">
+        <button type="button" data-role="ALPHA"><span class="agent-icon alpha">A</span><span><strong>ALPHA</strong><small>Planner</small></span><i>—</i></button>
+        <button type="button" data-role="VAULT"><span class="agent-icon vault">V</span><span><strong>VAULT</strong><small>Treasury</small></span><i>—</i></button>
+        <button type="button" data-role="WATCH"><span class="agent-icon watch">W</span><span><strong>WATCH</strong><small>Onchain</small></span><i>—</i></button>
+      </nav>
+      <div class="sidebar-card"><span class="eyebrow">SERVICE</span><strong id="service-state">연결 확인 중</strong><small id="source-state">근거를 불러오고 있습니다.</small></div>
+      <div class="sidebar-foot"><span class="status-dot" id="service-dot"></span><span>사용자 소유 노드 없음</span></div>
     </aside>
 
-    <main class="conversation">
-      <header class="conversation-head">
-        <div><div class="head-title">어떻게 운용하고 싶으세요?</div><div class="head-sub">조건을 정하면 상품과 배분안을 비교합니다.</div></div>
-        <div class="head-chip">TRON · USDT / USDD</div>
-      </header>
-      <div class="turns" id="turns" aria-live="polite">
-        <div class="turn assistant intro">
-          <div class="turn-sender">Whollet</div>
-          <div>보유 자산과 금액, 언제 필요한지, 바로 쓸 금액을 알려주세요. 현재 조건을 확인한 뒤 근거가 있는 안만 보여드릴게요.</div>
-        </div>
+    <main class="chat-panel">
+      <header class="chat-head"><div><span class="eyebrow">PRIVATE WEALTH DESK</span><h1>내 자산관리 팀</h1></div><div class="network-pill"><span></span> TRON</div></header>
+      <div id="turns" class="turns" aria-live="polite">
+        <article class="turn assistant">
+          <div class="sender"><span class="agent-icon alpha mini">A</span><strong>ALPHA</strong><time>지금</time></div>
+          <p>금액, 단위, 운용 기간, 언제 얼마를 꺼내야 하는지 알려주세요. 확인된 조건과 근거가 있는 상품만 비교하겠습니다.</p>
+          <button id="open-replay" class="suggestion" type="button">10,000 USDT · 30일 기록 보기 <span>→</span></button>
+        </article>
       </div>
-      <div class="composer-area">
-        <form id="chat-form" class="composer">
-          <label class="sr-only" for="message">원하는 운용 조건</label>
-          <textarea id="message" rows="2" maxlength="2000" placeholder="예: 2,000 USDT 중 500은 바로 쓸 수 있게 남기고 한 달 운용하고 싶어"></textarea>
-          <button type="submit" id="send">보내기</button>
-        </form>
-        <p class="composer-note">AI 연결 시 입력한 내용은 설정된 모델 제공자에게 전달됩니다. 이 화면은 읽기·비교용이며 거래를 실행하지 않습니다.</p>
-      </div>
+      <footer class="composer-wrap">
+        <form id="chat-form" class="composer"><label class="sr-only" for="message">자산 운용 조건</label><textarea id="message" rows="2" maxlength="2000" placeholder="예: 10,000 USDT 중 30%는 바로 쓸 수 있게 남겨줘"></textarea><button id="send" type="submit" aria-label="메시지 보내기">↑</button></form>
+        <p>현재 공개 데모는 historical replay입니다. 실제 Qwen 호출·지갑 서명·체인 거래를 수행하지 않습니다.</p>
+      </footer>
     </main>
 
-    <section class="workspace" id="workspace" aria-label="상품과 배분안 작업 공간">
-      <div class="workspace-head"><div><div class="workspace-kicker">배분 작업 공간</div><h1 id="workspace-title">조건을 기다리고 있어요</h1></div><button class="close-workspace" id="close-workspace" type="button" aria-label="작업 공간 닫기">×</button></div>
-      <div class="workspace-body" id="workspace-body">
-        <div class="empty-line"></div><div class="empty-line short"></div>
-        <p class="workspace-empty">대화에서 조건을 보내면 관련 상품과 계획을 이곳에서 비교할 수 있습니다.</p>
-      </div>
+    <section id="workspace" class="workspace" aria-label="자산 배분 작업 공간">
+      <header class="workspace-head">
+        <div><div class="workspace-meta"><span id="mode-badge" class="mode-badge">대기</span><span id="story-time">—</span></div><h2 id="workspace-title">대화에서 조건을 알려주세요</h2></div>
+        <button id="close-workspace" class="icon-button" type="button" aria-label="작업 공간 닫기">×</button>
+      </header>
+      <div id="workspace-body" class="workspace-body"><div class="empty-state"><div class="empty-orbit"><span></span></div><strong>계획을 만들 준비가 됐습니다</strong><p>대화가 시작되면 상품, 두 배분안, 승인 가능 여부와 근거가 이곳에 나타납니다.</p></div></div>
     </section>
   </div>
-
-  <dialog id="needs-dialog" aria-labelledby="needs-title">
-    <form id="needs-form" method="dialog">
-      <div class="dialog-title"><h2 id="needs-title">조건을 확인해 주세요</h2><button type="button" id="cancel-needs" aria-label="닫기">×</button></div>
-      <p class="dialog-copy">AI가 읽은 값은 초안입니다. 실제 보유액과 원하는 조건을 직접 확인해 주세요.</p>
-      <div class="fields">
-        <label>보유 자산<select name="asset" required><option value="">선택</option><option value="USDT">USDT</option><option value="USDD">USDD</option></select></label>
-        <label>보유 수량<input name="amount" type="text" inputmode="decimal" placeholder="2000" required></label>
-        <label>바로 쓸 수 있게 남길 수량<input name="liquid_reserve" type="text" inputmode="decimal" placeholder="500" required></label>
-        <label>운용 기간 (일)<input name="horizon_days" type="number" min="1" max="365" placeholder="30" required></label>
-        <label>위험 선호<select name="risk" required><option value="">선택</option><option value="cautious">유동성 우선</option><option value="balanced">균형</option><option value="growth">공급 비중 우선</option></select></label>
-      </div>
-      <div class="dialog-actions"><button type="button" id="cancel-needs-bottom" class="secondary">취소</button><button type="submit" class="primary">이 조건으로 비교</button></div>
-    </form>
-  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
