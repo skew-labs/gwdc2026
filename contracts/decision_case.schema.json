@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Financial Decision Case v0.1",
+  "description": "Dataset record, including offline expected label. Never send the label to the model. Cross-record split, provenance and reference checks are additionally required.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "case_id", "episode_id", "family_id", "task_id", "as_of", "release_id", "split", "data_mode", "review_status", "reviewer_ids", "state", "question", "label"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "case_id": {"type": "string", "minLength": 1},
+    "episode_id": {"type": "string", "minLength": 1},
+    "family_id": {"type": "string", "minLength": 1},
+    "task_id": {"enum": ["intent.route", "meaning.metric", "evidence.relevance", "evidence.support"]},
+    "as_of": {"type": "string", "format": "date-time"},
+    "release_id": {"type": "string", "minLength": 1},
+    "split": {"enum": ["train", "development", "calibration", "sealed", "excluded"]},
+    "data_mode": {"enum": ["synthetic", "document_based", "live_observation", "historical_replay"]},
+    "review_status": {"enum": ["draft_unreviewed", "single_review", "adjudicated", "rejected"]},
+    "reviewer_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["utterance", "context", "evidence"],
+      "properties": {
+        "utterance": {"type": "string"},
+        "context": {"type": "string"},
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "text", "origin", "source_ref", "locator", "observed_at", "rights_status"],
+            "properties": {
+              "id": {"type": "string", "minLength": 1},
+              "text": {"type": "string", "minLength": 1},
+              "origin": {"enum": ["synthetic_fixture", "official_document", "api_observation", "chain_observation", "user_statement"]},
+              "source_ref": {"type": "string", "minLength": 1},
+              "locator": {"type": "string", "minLength": 1},
+              "observed_at": {"type": ["string", "null"], "format": "date-time"},
+              "rights_status": {"enum": ["authored_fixture", "review_required", "approved_for_this_use"]}
+            }
+          }
+        }
+      }
+    },
+    "question": {"type": "string", "minLength": 1},
+    "label": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["answer", "evidence_ids", "reason", "oracle_method"],
+      "properties": {
+        "answer": {"type": "string", "minLength": 1},
+        "evidence_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "reason": {"type": "string", "minLength": 1},
+        "oracle_method": {"enum": ["author_proposal", "human_source_review", "independent_calculation", "observed_outcome"]}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"task_id": {"const": "intent.route"}}},
+      "then": {"properties": {"label": {"properties": {"answer": {"enum": ["DISCOVER", "COMPARE", "PLAN", "REVISE", "REVIEW", "EXIT", "UNCLEAR"]}}}}}
+    },
+    {
+      "if": {"properties": {"task_id": {"const": "meaning.metric"}}},
+      "then": {"properties": {"label": {"properties": {"answer": {"enum": ["BASE_APR", "TOTAL_APY", "REWARD_RATE", "BORROW_RATE", "UNKNOWN"]}}}}}
+    },
+    {
+      "if": {"properties": {"task_id": {"const": "evidence.relevance"}}},
+      "then": {"properties": {"label": {"properties": {"answer": {"enum": ["DIRECT", "CONTEXT", "IRRELEVANT", "INSUFFICIENT"]}}}}}
+    },
+    {
+      "if": {"properties": {"task_id": {"const": "evidence.support"}}},
+      "then": {"properties": {"label": {"properties": {"answer": {"enum": ["SUPPORTED", "CONTRADICTED", "INSUFFICIENT"]}}}}}
+    },
+    {
+      "if": {"properties": {"review_status": {"const": "adjudicated"}}},
+      "then": {"properties": {"reviewer_ids": {"minItems": 2}, "label": {"properties": {"oracle_method": {"not": {"const": "author_proposal"}}}}}}
+    },
+    {
+      "if": {"properties": {"review_status": {"const": "draft_unreviewed"}}},
+      "then": {"properties": {"split": {"enum": ["development", "excluded"]}, "reviewer_ids": {"maxItems": 0}}}
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "binding_version": "0.1.0",
+  "required_model_family": "Qwen",
+  "required_parameter_class": "32B",
+  "requirement_basis": "user_update_2026-09-23",
+  "model_generation": null,
+  "model_variant": null,
+  "provider": null,
+  "base_url": null,
+  "api_model_id": null,
+  "model_revision": null,
+  "credential_env_name": null,
+  "capabilities": {
+    "structured_outputs": "unverified",
+    "automatic_tool_calling": "unverified",
+    "forced_tool_calling": "unverified",
+    "parallel_tool_calling": "unverified",
+    "reasoning_control": "unverified",
+    "usage_accounting": "unverified"
+  },
+  "readiness": "configuration_required",
+  "previous_public_brief": {
+    "provider": "Kiln",
+    "api_model_id": "gpt-oss-120b",
+    "source_url": "https://docs.google.com/document/d/13qh7oePGl7Flrl-Zh_A6hfr02L266PvS/edit",
+    "superseded_for_model_selection": true
+  }
+}

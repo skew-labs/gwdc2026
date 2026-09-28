@@ -1,0 +1,20 @@
+{
+  "owner_id": "owner_demo",
+  "network": "economic-testnet-sim",
+  "sequence": 4,
+  "as_of": "2026-09-25T12:01:00+00:00",
+  "facts": {
+    "portfolio.nav": {
+      "value": "1000",
+      "unit": "USDT",
+      "quality": "VALID",
+      "source_id": "synthetic_nav_fixture",
+      "source_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "observed_at": "2026-09-25T12:00:00+00:00"
+    }
+  },
+  "balances": {"USDT": "1000"},
+  "exposures": {},
+  "daily_losses": {},
+  "quotes": {}
+}

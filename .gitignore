@@ -1,0 +1,35 @@
+# Generated data, machine-local state and dependency caches stay on Cherry.
+data/
+cache/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+node_modules/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+
+# Never commit credentials, signing material or local databases.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.sqlite*
+*.db
+
+# Only the small, reviewed PR 01 verification evidence is versioned.
+artifacts/*
+!artifacts/pr01/
+artifacts/pr01/*
+!artifacts/pr01/source-manifest.json
+!artifacts/pr01/core-regression-summary.json
+!artifacts/pr01/core-regression-tests.log

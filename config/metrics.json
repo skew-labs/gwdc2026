@@ -1,0 +1,31 @@
+{
+  "version": "0.1.0",
+  "metrics": [
+    {"id": "supply_apy", "subject": "market", "unit": "annual_fraction", "null_policy": "missing_is_unknown;zero_is_valid", "source_field": "justlend_markets_v1.data.tokenList[].supplyRate"},
+    {"id": "borrow_apy", "subject": "market", "unit": "annual_fraction", "null_policy": "missing_is_unknown;zero_is_valid", "source_field": "justlend_markets_v1.data.tokenList[].borrowRate"},
+    {"id": "usdd_reward_apy", "subject": "market", "unit": "annual_fraction", "null_policy": "missing_is_unknown;zero_is_valid", "source_field": "justlend_usdd_rewards_v1.data[market_address].USDD"},
+    {"id": "available_cash", "subject": "market", "unit": "underlying_tokens", "null_policy": "missing_is_unknown;zero_is_valid", "source_field": "justlend_markets_v1.data.tokenList[].cash"},
+    {"id": "total_borrows", "subject": "market", "unit": "underlying_tokens", "null_policy": "missing_is_unknown;zero_is_valid", "source_field": "justlend_markets_v1.data.tokenList[].totalBorrows"},
+    {"id": "reserves", "subject": "market", "unit": "underlying_tokens", "null_policy": "missing_is_unknown;zero_is_valid", "source_field": "justlend_markets_v1.data.tokenList[].reserves"},
+    {"id": "jtoken_supply", "subject": "market", "unit": "jtoken_tokens", "null_policy": "missing_is_unknown;zero_is_valid", "source_field": "justlend_markets_v1.data.tokenList[].totalSupply"},
+    {"id": "exchange_rate", "subject": "market", "unit": "underlying_per_jtoken", "null_policy": "missing_is_unknown;zero_is_valid", "source_field": "justlend_markets_v1.data.tokenList[].exchangeRate"},
+    {"id": "collateral_factor", "subject": "market", "unit": "fraction", "null_policy": "missing_is_unknown;zero_is_valid", "source_field": "justlend_markets_v1.data.tokenList[].collateralFactor"},
+    {"id": "reserve_factor", "subject": "market", "unit": "fraction", "null_policy": "missing_is_unknown;zero_is_valid", "source_field": "justlend_markets_v1.data.tokenList[].reserveFactor"},
+    {"id": "underlying_price_in_trx", "subject": "market", "unit": "TRX_per_underlying", "null_policy": "missing_is_unknown;zero_is_valid", "source_field": "justlend_markets_v1.data.tokenList[].underlyingPriceInTrx"},
+    {"id": "usdd_tron_earn_apy", "subject": "protocol", "unit": "annual_fraction", "null_policy": "missing_is_unknown;zero_is_valid", "source_field": "usdd_earn_apy.data.tronApy"},
+    {"id": "usdd_tron_total_supply", "subject": "protocol", "unit": "USDD", "source_field": "usdd_tron_collateral.data.usddTotalSupply"},
+    {"id": "usdd_tron_collateral_value", "subject": "protocol", "unit": "USD", "source_field": "usdd_tron_collateral.data.totalCollateralValue"},
+    {"id": "usdd_tron_earn_tvl", "subject": "protocol", "unit": "USD", "source_field": "usdd_tron_collateral.data.earnTvl", "null_policy": "zero_is_valid"},
+    {"id": "usdd_tron_collateral_apy", "subject": "protocol", "unit": "annual_fraction", "source_field": "usdd_tron_collateral.data.apy"},
+    {"id": "vault_minted_usdd", "subject": "vault", "unit": "USDD", "source_field": "usdd_tron_collateral.data.items[].mintedUSDD"},
+    {"id": "vault_debt", "subject": "vault", "unit": "USDD", "source_field": "usdd_tron_collateral.data.items[].debt"},
+    {"id": "vault_locked_value", "subject": "vault", "unit": "USD", "source_field": "usdd_tron_collateral.data.items[].lockedValue"},
+    {"id": "vault_collateral_ratio", "subject": "vault", "unit": "multiple", "source_field": "usdd_tron_collateral.data.items[].collateralRatio", "null_policy": "zero_is_valid_when_debt_zero"},
+    {"id": "vault_min_collateral_ratio", "subject": "vault", "unit": "multiple", "source_field": "usdd_tron_collateral.data.items[].minCollateralRatio"},
+    {"id": "vault_stability_fee", "subject": "vault", "unit": "annual_fraction", "source_field": "usdd_tron_collateral.data.items[].stabilityFee"},
+    {"id": "vault_debt_ceiling", "subject": "vault", "unit": "USDD", "source_field": "usdd_tron_collateral.data.items[].line"},
+    {"id": "vault_apy", "subject": "vault", "unit": "annual_fraction", "source_field": "usdd_tron_collateral.data.items[].apy", "null_policy": "null_is_not_applicable_for_regular_vault"},
+    {"id": "vault_estimated_annual_earnings", "subject": "vault", "unit": "USD", "source_field": "usdd_tron_collateral.data.items[].estimatedAnnualEarnings", "null_policy": "null_is_not_applicable_for_regular_vault"},
+    {"id": "vault_psm_fee", "subject": "vault", "unit": "annual_fraction", "source_field": "usdd_tron_collateral.data.items[].psmFee", "null_policy": "null_is_not_applicable_for_non_psm_vault"}
+  ]
+}

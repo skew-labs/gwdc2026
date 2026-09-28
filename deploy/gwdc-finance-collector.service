@@ -1,0 +1,26 @@
+[Unit]
+Description=GWDC read-only financial data collector
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=gwdc-finance
+Group=gwdc-finance
+WorkingDirectory=/srv/skew/gwdc-financial-agent-20260924
+Environment=PYTHONPATH=/srv/skew/gwdc-financial-agent-20260924/src
+ExecStart=/srv/skew/gwdc-financial-agent-20260924/.venv/bin/python scripts/collector_loop.py --data-dir /srv/skew/gwdc-financial-agent-20260924/data/live-read --registry /srv/skew/gwdc-financial-agent-20260924/config/sources.json --interval-seconds 600
+Restart=on-failure
+RestartSec=30
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/skew/gwdc-financial-agent-20260924/data/live-read
+CapabilityBoundingSet=
+AmbientCapabilities=
+MemoryMax=512M
+CPUQuota=20%
+
+[Install]
+WantedBy=multi-user.target

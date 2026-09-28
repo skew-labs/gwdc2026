@@ -1,0 +1,53 @@
+{
+  "version": "0.1.0",
+  "sources": [
+    {
+      "id": "justlend_markets_v1",
+      "url": "https://openapi.just.network/lend/jtoken",
+      "kind": "justlend_markets_v1",
+      "network": "tron_mainnet",
+      "max_age_seconds": 900,
+      "documentation": "https://docs.justlend.org/developers/apis/"
+    },
+    {
+      "id": "justlend_usdd_rewards_v1",
+      "url": "https://openapi.just.network/mining/apy",
+      "kind": "justlend_rewards_v1",
+      "network": "tron_mainnet",
+      "max_age_seconds": 900,
+      "documentation": "https://docs.justlend.org/developers/apis/"
+    },
+    {
+      "id": "justlend_contracts",
+      "url": "https://docs.justlend.org/developers/contracts.json",
+      "kind": "justlend_contracts",
+      "network": "tron_mainnet",
+      "max_age_seconds": 86400,
+      "documentation": "https://docs.justlend.org/developers/contracts.json"
+    },
+    {
+      "id": "usdd_earn_apy",
+      "url": "https://openapi.usdd.io/api/v1/external/earn-apy",
+      "kind": "usdd_earn_apy",
+      "network": "multi_chain",
+      "max_age_seconds": 900,
+      "documentation": "https://docs.usdd.io/developers/usdd-public-api"
+    },
+    {
+      "id": "usdd_overview",
+      "url": "https://openapi.usdd.io/api/v1/market-site/overview",
+      "kind": "usdd_overview",
+      "network": "multi_chain",
+      "max_age_seconds": 900,
+      "documentation": "https://docs.usdd.io/developers/usdd-public-api"
+    },
+    {
+      "id": "usdd_tron_collateral",
+      "url": "https://openapi.usdd.io/api/v1/data-platform/latest-collateral?chain=tron",
+      "kind": "usdd_tron_collateral",
+      "network": "tron_mainnet",
+      "max_age_seconds": 900,
+      "documentation": "https://docs.usdd.io/developers/usdd-public-api"
+    }
+  ]
+}

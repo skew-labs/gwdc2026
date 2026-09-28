@@ -1,0 +1,10 @@
+{
+  "budget": {"value": "1000", "unit": "USDT"},
+  "horizon_days": 30,
+  "withdrawal": {
+    "min_immediate": {"value": "250", "unit": "USDT"},
+    "latest_day": null,
+    "max_notice_days": null
+  },
+  "risk": {"total_fraction": "0.75", "shared_group_fraction": "0.45"}
+}

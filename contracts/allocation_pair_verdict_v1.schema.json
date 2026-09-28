@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AllocationCounterfactualVerdictV1",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "oracle_version", "scenario_family", "changed_field",
+               "proposal_changed", "base_episode_sha256", "changed_episode_sha256",
+               "base_proposal_sha256", "changed_proposal_sha256",
+               "base_verdict", "changed_verdict", "pair_verdict",
+               "changed_failure_codes", "optimality_proven", "human_gold",
+               "product_actionable"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "oracle_version": {"const": "allocation-constraints-1.0.0"},
+    "scenario_family": {"type": "string", "minLength": 1},
+    "changed_field": {"type": "string", "minLength": 1},
+    "proposal_changed": {"type": "boolean"},
+    "base_episode_sha256": {"$ref": "#/$defs/hash"},
+    "changed_episode_sha256": {"$ref": "#/$defs/hash"},
+    "base_proposal_sha256": {"$ref": "#/$defs/hash"},
+    "changed_proposal_sha256": {"$ref": "#/$defs/hash"},
+    "base_verdict": {"enum": ["REJECTED", "NEEDS_EVIDENCE", "CONSTRAINTS_PASS"]},
+    "changed_verdict": {"enum": ["REJECTED", "NEEDS_EVIDENCE", "CONSTRAINTS_PASS"]},
+    "pair_verdict": {"enum": ["BASE_PROPOSAL_REJECTED", "CHANGED_PROPOSAL_REJECTED",
+                              "NEEDS_EVIDENCE", "BOTH_CONSTRAINTS_PASS"]},
+    "changed_failure_codes": {"type": "array", "items": {"type": "string"}},
+    "optimality_proven": {"const": false},
+    "human_gold": {"const": false},
+    "product_actionable": {"const": false}
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

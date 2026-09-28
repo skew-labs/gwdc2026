@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FinancialDecisionEpisodeV2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "episode_id", "scenario_family", "as_of", "split", "source_mode", "review_status", "rights_status", "utterance_origin", "text", "needs", "candidates", "evidence", "target"],
+  "properties": {
+    "schema_version": {"const": "2.0.0"},
+    "episode_id": {"type": "string", "minLength": 1},
+    "scenario_family": {"type": "string", "minLength": 1},
+    "as_of": {"type": "string", "format": "date-time"},
+    "split": {"enum": ["train", "development", "calibration", "sealed", "synthetic_holdout", "excluded"]},
+    "source_mode": {"enum": ["synthetic_fixture", "official_document", "api_observation", "historical_replay"]},
+    "review_status": {"enum": ["synthetic_unreviewed", "unreviewed", "single_review", "adjudicated"]},
+    "rights_status": {"enum": ["synthetic_generated", "unknown", "restricted", "verified_reusable"]},
+    "utterance_origin": {"enum": ["synthetic_template", "authored_case", "user_confirmed"]},
+    "source_release": {"type": ["string", "null"]},
+    "text": {"type": "string", "minLength": 1},
+    "needs": {
+      "type": "object", "additionalProperties": false,
+      "required": ["asset", "amount", "liquid_reserve", "horizon_days", "risk"],
+      "properties": {
+        "asset": {"enum": ["USDT", "USDD"]},
+        "amount": {"$ref": "#/$defs/decimal"},
+        "liquid_reserve": {"$ref": "#/$defs/decimal"},
+        "horizon_days": {"type": "integer", "minimum": 1, "maximum": 365},
+        "risk": {"enum": ["cautious", "balanced", "growth"]}
+      }
+    },
+    "candidates": {
+      "type": "array", "minItems": 1, "maxItems": 32,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "asset", "network", "status", "supply_apy", "available_cash", "fee_quote", "history", "risk_group", "source_ref"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "asset": {"enum": ["USDT", "USDD"]},
+          "network": {"enum": ["tron_mainnet", "tron_testnet", "synthetic"]},
+          "status": {"enum": ["active", "legacy", "unverified", "synthetic"]},
+          "supply_apy": {"$ref": "#/$defs/decimal"},
+          "available_cash": {"$ref": "#/$defs/decimal"},
+          "fee_quote": {"anyOf": [{"$ref": "#/$defs/decimal"}, {"type": "null"}]},
+          "history": {"type": "array", "maxItems": 64, "items": {"type": "object", "required": ["age_days", "supply_apy", "available_cash"], "properties": {"age_days": {"type": "integer", "minimum": 0}, "supply_apy": {"$ref": "#/$defs/decimal"}, "available_cash": {"$ref": "#/$defs/decimal"}}, "additionalProperties": false}},
+          "risk_group": {"type": "string", "minLength": 1},
+          "source_ref": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "evidence": {"type": "array", "maxItems": 64, "items": {"type": "object", "additionalProperties": false, "required": ["id", "text", "source_ref", "locator"], "properties": {"id": {"type": "string"}, "text": {"type": "string"}, "source_ref": {"type": "string"}, "locator": {"type": "string"}}}},
+    "target": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "plans", "reason", "oracle_kind"],
+      "properties": {
+        "mode": {"enum": ["propose", "ask", "abstain"]},
+        "plans": {"type": "array", "maxItems": 4, "items": {"type": "object", "additionalProperties": false, "required": ["allocations", "reserve", "evidence_ids"], "properties": {"allocations": {"type": "object", "additionalProperties": {"$ref": "#/$defs/decimal"}}, "reserve": {"$ref": "#/$defs/decimal"}, "evidence_ids": {"type": "array", "items": {"type": "string"}}}}},
+        "reason": {"type": "string", "minLength": 1},
+        "oracle_kind": {"enum": ["synthetic_rule", "deterministic_planner", "independent_calculation", "human_adjudication", "observed_outcome"]}
+      }
+    }
+  },
+  "$defs": {"decimal": {"type": "string", "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"}},
+  "allOf": [{"if": {"properties": {"source_mode": {"const": "synthetic_fixture"}}}, "then": {"properties": {"rights_status": {"const": "synthetic_generated"}, "review_status": {"const": "synthetic_unreviewed"}, "split": {"enum": ["train", "development", "synthetic_holdout", "excluded"]}}}}, {"if": {"properties": {"review_status": {"const": "unreviewed"}}}, "then": {"properties": {"split": {"const": "excluded"}}}}]
+}

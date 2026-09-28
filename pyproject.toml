@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gwdc-financial-agent"
+version = "0.1.0"
+description = "Evidence-linked TRON allocation research and financial decision model"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+research = ["torch>=2.3,<3"]
+validation = ["jsonschema>=4.23,<5"]
+encoder = ["sentence-transformers>=6,<7"]
+
+[project.scripts]
+gwdc-finance = "finagent.cli:main"
+economic-machine = "economic_machine.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

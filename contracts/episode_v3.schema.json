@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FinancialDecisionEpisodeV3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "episode_id", "scenario_family", "parent_episode_id", "changed_field", "expected_pair_effect", "as_of", "split", "source_mode", "review_status", "rights_status", "text", "need", "candidates", "evidence", "target"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"},
+    "episode_id": {"type": "string", "minLength": 1},
+    "scenario_family": {"type": "string", "minLength": 1},
+    "parent_episode_id": {"type": ["string", "null"]},
+    "changed_field": {"type": ["string", "null"]},
+    "expected_pair_effect": {"enum": ["changed", "unchanged", null]},
+    "as_of": {"type": "string", "format": "date-time"},
+    "split": {"enum": ["train", "development", "synthetic_holdout", "excluded"]},
+    "source_mode": {"enum": ["synthetic_fixture", "api_observation"]},
+    "review_status": {"enum": ["synthetic_unreviewed", "unreviewed"]},
+    "rights_status": {"enum": ["synthetic_generated", "unknown"]},
+    "need_origin": {"enum": ["synthetic_template", "authored_example", "user_confirmed"]},
+    "source_release": {"type": ["string", "null"]},
+    "text": {"type": "string", "minLength": 1},
+    "need": {
+      "type": "object", "additionalProperties": false,
+      "required": ["budget", "horizon_days", "withdrawal", "risk"],
+      "properties": {
+        "budget": {"$ref": "#/$defs/money"},
+        "horizon_days": {"type": "integer", "minimum": 1, "maximum": 365},
+        "withdrawal": {
+          "type": "object", "additionalProperties": false,
+          "required": ["min_immediate", "latest_day", "max_notice_days"],
+          "properties": {
+            "min_immediate": {"$ref": "#/$defs/money"},
+            "latest_day": {"type": ["integer", "null"], "minimum": 0, "maximum": 365},
+            "max_notice_days": {"type": ["integer", "null"], "minimum": 0, "maximum": 365}
+          }
+        },
+        "risk": {
+          "type": "object", "additionalProperties": false,
+          "required": ["total_fraction", "shared_group_fraction"],
+          "properties": {
+            "total_fraction": {"$ref": "#/$defs/decimal"},
+            "shared_group_fraction": {"$ref": "#/$defs/decimal"}
+          }
+        }
+      }
+    },
+    "candidates": {
+      "type": "array", "minItems": 1, "maxItems": 32,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "asset", "status", "supply_apy", "available_cash", "lock_days", "notice_days", "observed_at", "valid_until", "risk_groups", "history", "source_ref", "evidence_ids"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "network": {"enum": ["tron_mainnet", "synthetic"]},
+          "protocol_version": {"enum": ["justlend_v1", "synthetic"]},
+          "underlying_address": {"type": "string", "minLength": 1},
+          "underlying_decimals": {"type": "integer", "minimum": 0, "maximum": 36},
+          "asset": {"enum": ["USDT", "USDD"]},
+          "status": {"enum": ["active", "legacy", "unverified", "synthetic"]},
+          "supply_apy": {"$ref": "#/$defs/decimal"},
+          "available_cash": {"$ref": "#/$defs/money"},
+          "lock_days": {"type": ["integer", "null"], "minimum": 0, "maximum": 365},
+          "notice_days": {"type": ["integer", "null"], "minimum": 0, "maximum": 365},
+          "observed_at": {"type": ["string", "null"], "format": "date-time"},
+          "valid_until": {"type": ["string", "null"], "format": "date-time"},
+          "risk_groups": {"type": "array", "minItems": 1, "maxItems": 8, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "history": {"type": "array", "maxItems": 64, "items": {"type": "object", "additionalProperties": false, "required": ["age_days", "supply_apy", "available_cash"], "properties": {"age_days": {"type": "integer", "minimum": 0}, "supply_apy": {"$ref": "#/$defs/decimal"}, "available_cash": {"$ref": "#/$defs/money"}}}},
+          "source_ref": {"type": "string", "minLength": 1},
+          "evidence_ids": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "evidence": {"type": "array", "maxItems": 64, "items": {"type": "object", "additionalProperties": false, "required": ["id", "text", "source_ref", "locator"], "properties": {"id": {"type": "string", "minLength": 1}, "text": {"type": "string", "minLength": 1}, "source_ref": {"type": "string", "minLength": 1}, "locator": {"type": "string", "minLength": 1}}}},
+    "target": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "question_fields", "abstain_reasons", "plans", "oracle_kind"],
+      "properties": {
+        "mode": {"enum": ["propose", "ask", "abstain"]},
+        "question_fields": {"type": "array", "uniqueItems": true, "items": {"enum": ["withdrawal.latest_day", "withdrawal.max_notice_days", "withdrawal.min_immediate", "budget.value", "budget.unit", "as_of"]}},
+        "abstain_reasons": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "plans": {"type": "array", "maxItems": 4, "items": {"type": "object", "additionalProperties": false, "required": ["plan_id", "allocations", "hold", "evidence_ids", "dependency_ids"], "properties": {"plan_id": {"type": "string", "minLength": 1}, "allocations": {"type": "object", "additionalProperties": {"$ref": "#/$defs/decimal"}}, "hold": {"$ref": "#/$defs/decimal"}, "evidence_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}, "dependency_ids": {"type": "array", "uniqueItems": true, "items": {"enum": ["budget", "withdrawal_immediate", "withdrawal_deadline", "withdrawal_notice", "risk_total", "risk_shared", "market_cash", "source_freshness"]}}}}},
+        "oracle_kind": {"enum": ["synthetic_rule", "unreviewed_draft"]}
+      }
+    }
+  },
+  "$defs": {
+    "decimal": {"type": "string", "maxLength": 100, "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"},
+    "money": {"type": "object", "additionalProperties": false, "required": ["value", "unit"], "properties": {"value": {"$ref": "#/$defs/decimal"}, "unit": {"enum": ["USDT", "USDD"]}}}
+  }
+}

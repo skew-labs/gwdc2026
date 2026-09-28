@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TRONResearchObservationV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "record_id", "network", "source_kind", "source_url", "raw_sha256", "source_available_at", "event_time", "json_pointer", "product_id", "review_status", "rights_status", "decision_label", "measurements", "metadata"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "record_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "network": {"const": "tron_mainnet"},
+    "source_kind": {"enum": ["usdd_tron_daily", "justlend_jtoken_status"]},
+    "source_url": {"type": "string", "format": "uri"},
+    "raw_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_available_at": {"type": "string", "format": "date-time"},
+    "event_time": {"type": "string", "format": "date-time"},
+    "json_pointer": {"type": "string", "pattern": "^/data/"},
+    "product_id": {"type": "string", "minLength": 1},
+    "review_status": {"const": "unreviewed"},
+    "rights_status": {"const": "unknown"},
+    "decision_label": {"type": "null"},
+    "measurements": {
+      "type": "object", "minProperties": 1,
+      "additionalProperties": {"$ref": "#/$defs/measurement"}
+    },
+    "metadata": {"type": "object"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"source_kind": {"const": "usdd_tron_daily"}}},
+      "then": {
+        "properties": {
+          "product_id": {"const": "usdd:tron:protocol"},
+          "measurements": {
+            "required": ["collateralValue", "debt", "mintedUSDD", "usddTotalSupply", "totalSupplyValue", "earnTvl", "earnApy"],
+            "properties": {
+              "collateralValue": {"properties": {"unit": {"const": "USD"}}},
+              "debt": {"properties": {"unit": {"const": "USDD"}}},
+              "mintedUSDD": {"properties": {"unit": {"const": "USDD"}}},
+              "usddTotalSupply": {"properties": {"unit": {"const": "USDD"}}},
+              "totalSupplyValue": {"properties": {"unit": {"const": "USD"}}},
+              "earnTvl": {"properties": {"unit": {"const": "USD"}}},
+              "earnApy": {"properties": {"unit": {"const": "annual_fraction"}}}
+            }
+          },
+          "metadata": {"required": ["reported_time_text", "source_time_kind"], "properties": {"source_time_kind": {"const": "provider_statisticTime"}}}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"source_kind": {"const": "justlend_jtoken_status"}}},
+      "then": {
+        "properties": {
+          "product_id": {"type": "string", "pattern": "^T[1-9A-HJ-NP-Za-km-z]{33}$"},
+          "measurements": {"required": ["available_cash"], "properties": {"available_cash": {"properties": {"unit": {"enum": ["USDT", "USDD"]}}}}, "maxProperties": 1},
+          "metadata": {"required": ["transaction_id", "event_index", "block_number", "underlying_address", "underlying_decimals", "raw_total_cash", "confirmation_filter"], "properties": {"confirmation_filter": {"const": "only_confirmed=true"}}}
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "measurement": {
+      "type": "object", "additionalProperties": false,
+      "required": ["value", "unit", "json_pointer"],
+      "properties": {
+        "value": {"type": "string", "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"},
+        "unit": {"enum": ["USD", "USDT", "USDD", "annual_fraction"]},
+        "json_pointer": {"type": "string", "pattern": "^/data/"}
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "schema_version": "economic-basket-registry-context-1",
+  "network": "economic-testnet-sim",
+  "chain_id": 777000001,
+  "registry_address": "1111111111111111111111111111111111111111",
+  "asset_address": "2222222222222222222222222222222222222222",
+  "target_address": "3333333333333333333333333333333333333333",
+  "asset_decimals": 6
+}

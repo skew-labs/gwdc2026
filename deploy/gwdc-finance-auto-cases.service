@@ -1,0 +1,22 @@
+[Unit]
+Description=GWDC autonomous fact and formal-optimum data engine
+After=gwdc-finance-collector.service
+
+[Service]
+Type=oneshot
+User=gwdc-finance
+Group=gwdc-finance
+WorkingDirectory=/srv/skew/gwdc-financial-agent-20260924
+Environment=PYTHONPATH=/srv/skew/gwdc-financial-agent-20260924/src:/srv/skew/gwdc-financial-agent-20260924
+ExecStart=/srv/skew/gwdc-financial-agent-20260924/.venv/bin/python -m research.fdc.autonomous_pipeline --data-dir /srv/skew/gwdc-financial-agent-20260924/data/live-read --output-dir /srv/skew/gwdc-financial-agent-20260924/data/auto-cases --release-root /srv/skew/gwdc-financial-agent-20260924/data/real-tron
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/skew/gwdc-financial-agent-20260924/data/live-read /srv/skew/gwdc-financial-agent-20260924/data/auto-cases
+CapabilityBoundingSet=
+AmbientCapabilities=
+MemoryMax=1G
+CPUQuota=30%
+TasksMax=32
+TimeoutStartSec=15min

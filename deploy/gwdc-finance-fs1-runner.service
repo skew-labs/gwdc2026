@@ -1,0 +1,23 @@
+[Unit]
+Description=GWDC BYON FS1 read-only policy runner
+After=gwdc-finance-auto-cases.service
+
+[Service]
+Type=oneshot
+User=gwdc-finance
+Group=gwdc-finance
+WorkingDirectory=/srv/skew/gwdc-financial-agent-20260924
+Environment=PYTHONPATH=/srv/skew/gwdc-financial-agent-20260924/src:/srv/skew/gwdc-financial-agent-20260924
+ExecStart=/srv/skew/gwdc-financial-agent-20260924/.venv/bin/python -m finagent.fs1_runner run-once --data-dir /srv/skew/gwdc-financial-agent-20260924/data/live-read --case-dir /srv/skew/gwdc-financial-agent-20260924/data/auto-cases --runtime-dir /srv/skew/gwdc-financial-agent-20260924/data/fs1-runner-demo
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/skew/gwdc-financial-agent-20260924/data/fs1-runner-demo
+CapabilityBoundingSet=
+AmbientCapabilities=
+MemoryMax=512M
+CPUQuota=20%
+TasksMax=16
+TimeoutStartSec=2min
+

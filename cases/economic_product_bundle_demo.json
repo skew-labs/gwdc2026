@@ -1,0 +1,192 @@
+{
+  "assumptions": [
+    {
+      "expected_return_bps": 600,
+      "factor_loadings_bps": {
+        "TRX": 10000,
+        "USDT": 0
+      },
+      "generated_at": "2026-09-25T12:00:30+00:00",
+      "model_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "model_id": "risk_model_demo",
+      "observation_hash": "a486eab7c68ec25e2dd05fd463c3ef7583ed1501e40770ecb5c7a31783a69f23",
+      "product_id": "tron_lend",
+      "scenario_pnl_bps": {
+        "FUNDING_SPIKE": -400,
+        "STABLE_DEPEG": -200,
+        "TRX_CRASH": -5000
+      },
+      "schema_version": "economic-product-assumptions-1",
+      "valid_until": "2026-09-25T12:02:00+00:00"
+    },
+    {
+      "expected_return_bps": -80,
+      "factor_loadings_bps": {
+        "TRX": -10000,
+        "USDT": 0
+      },
+      "generated_at": "2026-09-25T12:00:30+00:00",
+      "model_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "model_id": "risk_model_demo",
+      "observation_hash": "89a854f8d1e56d93258d85ce0de8009400547fe60c92e29165e0bdfad1ea195e",
+      "product_id": "tron_short",
+      "scenario_pnl_bps": {
+        "FUNDING_SPIKE": -1000,
+        "STABLE_DEPEG": -100,
+        "TRX_CRASH": 4500
+      },
+      "schema_version": "economic-product-assumptions-1",
+      "valid_until": "2026-09-25T12:02:00+00:00"
+    },
+    {
+      "expected_return_bps": 300,
+      "factor_loadings_bps": {
+        "TRX": 0,
+        "USDT": 10000
+      },
+      "generated_at": "2026-09-25T12:00:30+00:00",
+      "model_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "model_id": "risk_model_demo",
+      "observation_hash": "bbc078ae7b283e159983f8d33f8428ca35d06ffceeeef43af8c85172a7562fa6",
+      "product_id": "stable_yield",
+      "scenario_pnl_bps": {
+        "FUNDING_SPIKE": -300,
+        "STABLE_DEPEG": -3500,
+        "TRX_CRASH": -200
+      },
+      "schema_version": "economic-product-assumptions-1",
+      "valid_until": "2026-09-25T12:02:00+00:00"
+    }
+  ],
+  "manifests": [
+    {
+      "asset": "USDT",
+      "base_asset": "USDT",
+      "group": "LEND",
+      "kind": "LENDING",
+      "max_bps": 6000,
+      "min_liquidity_days": 2,
+      "network": "economic-testnet-sim",
+      "product_id": "tron_lend",
+      "quote_asset": "USDT",
+      "schema_version": "economic-product-adapter-1"
+    },
+    {
+      "asset": "USDT",
+      "base_asset": "TRX",
+      "group": "HEDGE",
+      "kind": "PERP",
+      "max_basis_bps": 100,
+      "max_bps": 5000,
+      "min_liquidity_days": 1,
+      "network": "economic-testnet-sim",
+      "product_id": "tron_short",
+      "quote_asset": "USDT",
+      "schema_version": "economic-product-adapter-1"
+    },
+    {
+      "asset": "USDT",
+      "base_asset": "USDT",
+      "group": "CASHLIKE",
+      "kind": "LENDING",
+      "max_bps": 8000,
+      "min_liquidity_days": 1,
+      "network": "economic-testnet-sim",
+      "product_id": "stable_yield",
+      "quote_asset": "USDT",
+      "schema_version": "economic-product-adapter-1"
+    }
+  ],
+  "observations": [
+    {
+      "asset": "USDT",
+      "base_asset": "USDT",
+      "kind": "LENDING",
+      "market": {
+        "deposit_asset": "USDT",
+        "entry_fee_bps": 5,
+        "exit_fee_bps": 5,
+        "redemption_days": 2,
+        "redemption_enabled": true,
+        "supply_apy_bps": 600,
+        "utilization_bps": 8000
+      },
+      "market_status": "ACTIVE",
+      "network": "economic-testnet-sim",
+      "notional_unit": "USDT",
+      "observed_at": "2026-09-25T12:00:00+00:00",
+      "product_id": "tron_lend",
+      "quote_asset": "USDT",
+      "schema_version": "economic-product-observation-1",
+      "source_id": "test_feed",
+      "source_record_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "tradable_notional": "600",
+      "valid_until": "2026-09-25T12:02:00+00:00"
+    },
+    {
+      "asset": "USDT",
+      "base_asset": "TRX",
+      "kind": "PERP",
+      "market": {
+        "fee_bps": 5,
+        "funding_bps_per_8h": -2,
+        "impact_bps": 5,
+        "index_price": "10",
+        "mark_price": "10",
+        "price_unit": "USDT/TRX",
+        "spread_bps": 10
+      },
+      "market_status": "ACTIVE",
+      "network": "economic-testnet-sim",
+      "notional_unit": "USDT",
+      "observed_at": "2026-09-25T12:00:00+00:00",
+      "product_id": "tron_short",
+      "quote_asset": "USDT",
+      "schema_version": "economic-product-observation-1",
+      "source_id": "test_feed",
+      "source_record_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "tradable_notional": "500",
+      "valid_until": "2026-09-25T12:02:00+00:00"
+    },
+    {
+      "asset": "USDT",
+      "base_asset": "USDT",
+      "kind": "LENDING",
+      "market": {
+        "deposit_asset": "USDT",
+        "entry_fee_bps": 2,
+        "exit_fee_bps": 3,
+        "redemption_days": 1,
+        "redemption_enabled": true,
+        "supply_apy_bps": 300,
+        "utilization_bps": 5000
+      },
+      "market_status": "ACTIVE",
+      "network": "economic-testnet-sim",
+      "notional_unit": "USDT",
+      "observed_at": "2026-09-25T12:00:00+00:00",
+      "product_id": "stable_yield",
+      "quote_asset": "USDT",
+      "schema_version": "economic-product-observation-1",
+      "source_id": "test_feed",
+      "source_record_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "tradable_notional": "800",
+      "valid_until": "2026-09-25T12:02:00+00:00"
+    }
+  ],
+  "positions": {
+    "asset": "USDT",
+    "current_weights_bps": {
+      "stable_yield": 0,
+      "tron_lend": 0,
+      "tron_short": 0
+    },
+    "network": "economic-testnet-sim",
+    "observed_at": "2026-09-25T12:00:00+00:00",
+    "owner_id": "owner_demo",
+    "schema_version": "economic-position-snapshot-1",
+    "source_id": "test_portfolio",
+    "source_record_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+  },
+  "schema_version": "economic-product-bundle-1"
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": "economic-basket-policy-1",
+  "policy_id": "1111111111111111111111111111111111111111111111111111111111111111",
+  "owner_id": "owner_demo",
+  "network": "economic-testnet-sim",
+  "asset": "USDT",
+  "allowed_products": ["lend_A", "stable_B"],
+  "capital_fact_path": "portfolio.nav",
+  "max_capital": "1000",
+  "effective_at": "2026-09-25T12:00:00+00:00",
+  "expires_at": "2026-09-25T13:00:00+00:00",
+  "max_plan_age_ms": 300000
+}

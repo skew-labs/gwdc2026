@@ -1,0 +1,64 @@
+{
+  "as_of": "2026-09-25T12:01:00+00:00",
+  "asset": "USDT",
+  "candidates": [
+    {
+      "candidate_id": "naked",
+      "weights_bps": {
+        "stable_yield": 4000,
+        "tron_lend": 5000,
+        "tron_short": 0
+      }
+    },
+    {
+      "candidate_id": "hedged",
+      "weights_bps": {
+        "stable_yield": 2000,
+        "tron_lend": 3500,
+        "tron_short": 3500
+      }
+    },
+    {
+      "candidate_id": "overcrowded_hedge",
+      "weights_bps": {
+        "stable_yield": 0,
+        "tron_lend": 4500,
+        "tron_short": 4500
+      }
+    }
+  ],
+  "capital": "1000",
+  "cash_floor_bps": 1000,
+  "factor_gross_caps_bps": {
+    "TRX": 8000,
+    "USDT": 8000
+  },
+  "factor_net_bounds_bps": {
+    "TRX": {
+      "max": 2000,
+      "min": -2000
+    },
+    "USDT": {
+      "max": 8000,
+      "min": 0
+    }
+  },
+  "group_caps_bps": {
+    "CASHLIKE": 8000,
+    "HEDGE": 5000,
+    "LEND": 6000
+  },
+  "max_age_ms": 3600000,
+  "max_liquidity_days": 3,
+  "max_source_skew_ms": 60000,
+  "max_stress_loss": "100",
+  "max_turnover_bps": 9000,
+  "network": "economic-testnet-sim",
+  "owner_id": "owner_demo",
+  "scenarios": [
+    "TRX_CRASH",
+    "STABLE_DEPEG",
+    "FUNDING_SPIKE"
+  ],
+  "schema_version": "economic-portfolio-template-1"
+}

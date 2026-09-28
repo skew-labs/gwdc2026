@@ -1,0 +1,55 @@
+{
+  "schema_version": "economic-portfolio-selection-2",
+  "owner_id": "owner_demo",
+  "network": "economic-testnet-sim",
+  "asset": "USDT",
+  "as_of": "2026-09-25T12:01:00+00:00",
+  "capital": "1000",
+  "max_age_ms": 3600000,
+  "max_source_skew_ms": 60000,
+  "cash_floor_bps": 1000,
+  "max_turnover_bps": 9000,
+  "max_stress_loss": "100",
+  "max_liquidity_days": 3,
+  "group_caps_bps": {"LEND": 6000, "HEDGE": 5000, "CASHLIKE": 8000},
+  "factor_gross_caps_bps": {"TRX": 8000, "USDT": 8000},
+  "factor_net_bounds_bps": {
+    "TRX": {"min": -2000, "max": 2000},
+    "USDT": {"min": 0, "max": 8000}
+  },
+  "scenarios": ["TRX_CRASH", "STABLE_DEPEG", "FUNDING_SPIKE"],
+  "products": [
+    {
+      "product_id": "tron_lend", "group": "LEND", "expected_return_bps": 600,
+      "trade_cost_bps": 10,
+      "scenario_pnl_bps": {"TRX_CRASH": -5000, "STABLE_DEPEG": -200, "FUNDING_SPIKE": -400},
+      "factor_loadings_bps": {"TRX": 10000, "USDT": 0},
+      "current_bps": 0, "max_bps": 6000, "liquidity_days": 2,
+      "observed_at": "2026-09-25T12:00:00+00:00",
+      "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "product_id": "tron_short", "group": "HEDGE", "expected_return_bps": -80,
+      "trade_cost_bps": 20,
+      "scenario_pnl_bps": {"TRX_CRASH": 4500, "STABLE_DEPEG": -100, "FUNDING_SPIKE": -1000},
+      "factor_loadings_bps": {"TRX": -10000, "USDT": 0},
+      "current_bps": 0, "max_bps": 5000, "liquidity_days": 1,
+      "observed_at": "2026-09-25T12:00:00+00:00",
+      "source_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    {
+      "product_id": "stable_yield", "group": "CASHLIKE", "expected_return_bps": 300,
+      "trade_cost_bps": 5,
+      "scenario_pnl_bps": {"TRX_CRASH": -200, "STABLE_DEPEG": -3500, "FUNDING_SPIKE": -300},
+      "factor_loadings_bps": {"TRX": 0, "USDT": 10000},
+      "current_bps": 0, "max_bps": 8000, "liquidity_days": 1,
+      "observed_at": "2026-09-25T12:00:00+00:00",
+      "source_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  ],
+  "candidates": [
+    {"candidate_id": "naked", "weights_bps": {"tron_lend": 5000, "tron_short": 0, "stable_yield": 4000}},
+    {"candidate_id": "hedged", "weights_bps": {"tron_lend": 3500, "tron_short": 3500, "stable_yield": 2000}},
+    {"candidate_id": "overcrowded_hedge", "weights_bps": {"tron_lend": 4500, "tron_short": 4500, "stable_yield": 0}}
+  ]
+}

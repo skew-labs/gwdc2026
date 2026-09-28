@@ -1,0 +1,32 @@
+{
+  "schema_version": "economic-portfolio-grid-search-1",
+  "owner_id": "owner_demo",
+  "network": "economic-testnet-sim",
+  "asset": "USDT",
+  "as_of": "2026-09-25T12:01:00+00:00",
+  "capital": "1000",
+  "max_age_ms": 3600000,
+  "cash_floor_bps": 1000,
+  "max_turnover_bps": 9000,
+  "max_stress_loss": "150",
+  "max_liquidity_days": 3,
+  "group_caps_bps": {"LEND": 6000, "STABLE": 8000},
+  "scenarios": ["DEPEG", "RATE_SHOCK"],
+  "grid_step_bps": 500,
+  "products": [
+    {
+      "product_id": "lend_A", "group": "LEND", "expected_return_bps": 800,
+      "trade_cost_bps": 10, "stress_loss_bps": {"DEPEG": 3000, "RATE_SHOCK": 1000},
+      "current_bps": 0, "max_bps": 6000, "liquidity_days": 2,
+      "observed_at": "2026-09-25T12:00:00+00:00",
+      "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "product_id": "stable_B", "group": "STABLE", "expected_return_bps": 400,
+      "trade_cost_bps": 5, "stress_loss_bps": {"DEPEG": 1000, "RATE_SHOCK": 1000},
+      "current_bps": 0, "max_bps": 8000, "liquidity_days": 1,
+      "observed_at": "2026-09-25T12:00:00+00:00",
+      "source_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  ]
+}

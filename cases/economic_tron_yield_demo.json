@@ -1,0 +1,465 @@
+{
+  "schema_version": "economic-tron-yield-request-1",
+  "owner_id": "synthetic_user",
+  "network": "TRON_SIM",
+  "asset": "USDT",
+  "as_of": "2026-09-28T00:01:00+00:00",
+  "capital": "10000",
+  "horizon_days": 30,
+  "max_age_ms": 300000,
+  "max_source_skew_ms": 300000,
+  "cash_floor_bps": 1000,
+  "min_invested_bps": 5000,
+  "max_turnover_bps": 10000,
+  "max_stress_loss": "1200",
+  "max_liquidity_days": 1,
+  "group_caps_bps": {
+    "stake": 5000,
+    "energy": 5000,
+    "liquid_stake": 5000,
+    "lend": 10000,
+    "usdd_earn": 5000,
+    "vault": 2500
+  },
+  "factor_gross_caps_bps": {
+    "trx": 2500,
+    "usdd": 10000,
+    "lending": 10000,
+    "energy": 5000
+  },
+  "factor_net_bounds_bps": {
+    "trx": {
+      "min": 0,
+      "max": 10000
+    },
+    "usdd": {
+      "min": 0,
+      "max": 10000
+    },
+    "lending": {
+      "min": 0,
+      "max": 10000
+    },
+    "energy": {
+      "min": 0,
+      "max": 10000
+    }
+  },
+  "scenarios": [
+    "base",
+    "trx_down",
+    "usdd_depeg",
+    "energy_collapse",
+    "protocol_failure"
+  ],
+  "grid_step_bps": 2500,
+  "min_plan_distance_bps": 2500,
+  "max_vault_debt_to_collateral_bps": 5000,
+  "chain_parameters": {
+    "schema_version": "economic-tron-chain-parameters-1",
+    "network": "TRON_SIM",
+    "observed_at": "2026-09-28T00:00:30+00:00",
+    "valid_until": "2026-09-28T00:10:00+00:00",
+    "source_id": "synthetic_chain_parameters",
+    "source_record_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "unstake_delay_days": 14,
+    "block_time_seconds": 3,
+    "max_delegate_lock_blocks": 86400
+  },
+  "opportunities": [
+    {
+      "schema_version": "economic-tron-yield-opportunity-1",
+      "product_id": "trx_vote",
+      "kind": "TRX_STAKE",
+      "group": "stake",
+      "network": "TRON_SIM",
+      "funding_asset": "USDT",
+      "underlying_asset": "TRX",
+      "market_status": "ACTIVE",
+      "source_id": "synthetic_trx_vote",
+      "source_record_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "observed_at": "2026-09-28T00:00:30+00:00",
+      "valid_until": "2026-09-28T00:10:00+00:00",
+      "capacity": "10000",
+      "max_bps": 5000,
+      "current_bps": 0,
+      "withdrawal_days": 14,
+      "redemption_enabled": true,
+      "annualized_components_bps": {
+        "lending": 0,
+        "voting": 400,
+        "energy_rental": 0,
+        "protocol_earn": 0
+      },
+      "aggregate_reported_bps": 0,
+      "reward_tokens": [],
+      "round_trip_cost_bps": {
+        "entry": 10,
+        "exit": 10,
+        "swap": 10,
+        "network": 5
+      },
+      "scenario_pnl_bps": {
+        "base": 0,
+        "trx_down": -3000,
+        "usdd_depeg": 0,
+        "energy_collapse": 0,
+        "protocol_failure": 0
+      },
+      "factor_loadings_bps": {
+        "trx": 10000,
+        "usdd": 0,
+        "lending": 0,
+        "energy": 0
+      },
+      "rental_quote": null,
+      "vault_terms": null
+    },
+    {
+      "schema_version": "economic-tron-yield-opportunity-1",
+      "product_id": "trx_energy",
+      "kind": "TRX_STAKE_ENERGY",
+      "group": "energy",
+      "network": "TRON_SIM",
+      "funding_asset": "USDT",
+      "underlying_asset": "TRX",
+      "market_status": "ACTIVE",
+      "source_id": "synthetic_trx_energy",
+      "source_record_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "observed_at": "2026-09-28T00:00:30+00:00",
+      "valid_until": "2026-09-28T00:10:00+00:00",
+      "capacity": "10000",
+      "max_bps": 5000,
+      "current_bps": 0,
+      "withdrawal_days": 15,
+      "redemption_enabled": true,
+      "annualized_components_bps": {
+        "lending": 0,
+        "voting": 400,
+        "energy_rental": 700,
+        "protocol_earn": 0
+      },
+      "aggregate_reported_bps": 0,
+      "reward_tokens": [],
+      "round_trip_cost_bps": {
+        "entry": 10,
+        "exit": 10,
+        "swap": 10,
+        "network": 10
+      },
+      "scenario_pnl_bps": {
+        "base": 0,
+        "trx_down": -3500,
+        "usdd_depeg": 0,
+        "energy_collapse": -500,
+        "protocol_failure": 0
+      },
+      "factor_loadings_bps": {
+        "trx": 10000,
+        "usdd": 0,
+        "lending": 0,
+        "energy": 10000
+      },
+      "rental_quote": {
+        "status": "ACTIVE_QUOTE",
+        "lock_blocks": 28800,
+        "source_id": "synthetic_energy_rental",
+        "source_record_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "observed_at": "2026-09-28T00:00:30+00:00",
+        "valid_until": "2026-09-28T00:10:00+00:00"
+      },
+      "vault_terms": null
+    },
+    {
+      "schema_version": "economic-tron-yield-opportunity-1",
+      "product_id": "justlend_strx",
+      "kind": "JUSTLEND_STRX",
+      "group": "liquid_stake",
+      "network": "TRON_SIM",
+      "funding_asset": "USDT",
+      "underlying_asset": "TRX",
+      "market_status": "ACTIVE",
+      "source_id": "synthetic_justlend_strx",
+      "source_record_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "observed_at": "2026-09-28T00:00:30+00:00",
+      "valid_until": "2026-09-28T00:10:00+00:00",
+      "capacity": "10000",
+      "max_bps": 5000,
+      "current_bps": 0,
+      "withdrawal_days": 1,
+      "redemption_enabled": true,
+      "annualized_components_bps": {
+        "lending": 0,
+        "voting": 0,
+        "energy_rental": 0,
+        "protocol_earn": 0
+      },
+      "aggregate_reported_bps": 600,
+      "reward_tokens": [],
+      "round_trip_cost_bps": {
+        "entry": 5,
+        "exit": 5,
+        "swap": 10,
+        "network": 5
+      },
+      "scenario_pnl_bps": {
+        "base": 0,
+        "trx_down": -3200,
+        "usdd_depeg": 0,
+        "energy_collapse": -300,
+        "protocol_failure": -200
+      },
+      "factor_loadings_bps": {
+        "trx": 10000,
+        "usdd": 0,
+        "lending": 0,
+        "energy": 5000
+      },
+      "rental_quote": null,
+      "vault_terms": null
+    },
+    {
+      "schema_version": "economic-tron-yield-opportunity-1",
+      "product_id": "justlend_usdt",
+      "kind": "JUSTLEND_USDT",
+      "group": "lend",
+      "network": "TRON_SIM",
+      "funding_asset": "USDT",
+      "underlying_asset": "USDT",
+      "market_status": "ACTIVE",
+      "source_id": "synthetic_justlend_usdt",
+      "source_record_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "observed_at": "2026-09-28T00:00:30+00:00",
+      "valid_until": "2026-09-28T00:10:00+00:00",
+      "capacity": "10000",
+      "max_bps": 5000,
+      "current_bps": 0,
+      "withdrawal_days": 0,
+      "redemption_enabled": true,
+      "annualized_components_bps": {
+        "lending": 300,
+        "voting": 0,
+        "energy_rental": 0,
+        "protocol_earn": 0
+      },
+      "aggregate_reported_bps": 0,
+      "reward_tokens": [],
+      "round_trip_cost_bps": {
+        "entry": 5,
+        "exit": 0,
+        "swap": 0,
+        "network": 0
+      },
+      "scenario_pnl_bps": {
+        "base": 0,
+        "trx_down": 0,
+        "usdd_depeg": 0,
+        "energy_collapse": 0,
+        "protocol_failure": -500
+      },
+      "factor_loadings_bps": {
+        "trx": 0,
+        "usdd": 0,
+        "lending": 10000,
+        "energy": 0
+      },
+      "rental_quote": null,
+      "vault_terms": null
+    },
+    {
+      "schema_version": "economic-tron-yield-opportunity-1",
+      "product_id": "justlend_usdd",
+      "kind": "JUSTLEND_USDD",
+      "group": "lend",
+      "network": "TRON_SIM",
+      "funding_asset": "USDT",
+      "underlying_asset": "USDD",
+      "market_status": "ACTIVE",
+      "source_id": "synthetic_justlend_usdd",
+      "source_record_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "observed_at": "2026-09-28T00:00:30+00:00",
+      "valid_until": "2026-09-28T00:10:00+00:00",
+      "capacity": "10000",
+      "max_bps": 5000,
+      "current_bps": 0,
+      "withdrawal_days": 0,
+      "redemption_enabled": true,
+      "annualized_components_bps": {
+        "lending": 200,
+        "voting": 0,
+        "energy_rental": 0,
+        "protocol_earn": 0
+      },
+      "aggregate_reported_bps": 0,
+      "reward_tokens": [
+        {
+          "token": "USDD",
+          "gross_bps": 400,
+          "haircut_bps": 5000,
+          "source_id": "synthetic_reward_USDD",
+          "source_record_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "observed_at": "2026-09-28T00:00:30+00:00",
+          "valid_until": "2026-09-28T00:10:00+00:00"
+        },
+        {
+          "token": "TRX",
+          "gross_bps": 400,
+          "haircut_bps": 7500,
+          "source_id": "synthetic_reward_TRX",
+          "source_record_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "observed_at": "2026-09-28T00:00:30+00:00",
+          "valid_until": "2026-09-28T00:10:00+00:00"
+        }
+      ],
+      "round_trip_cost_bps": {
+        "entry": 5,
+        "exit": 5,
+        "swap": 10,
+        "network": 5
+      },
+      "scenario_pnl_bps": {
+        "base": 0,
+        "trx_down": 0,
+        "usdd_depeg": -1200,
+        "energy_collapse": 0,
+        "protocol_failure": -600
+      },
+      "factor_loadings_bps": {
+        "trx": 0,
+        "usdd": 10000,
+        "lending": 10000,
+        "energy": 0
+      },
+      "rental_quote": null,
+      "vault_terms": null
+    },
+    {
+      "schema_version": "economic-tron-yield-opportunity-1",
+      "product_id": "usdd_earn",
+      "kind": "USDD_EARN",
+      "group": "usdd_earn",
+      "network": "TRON_SIM",
+      "funding_asset": "USDT",
+      "underlying_asset": "USDD",
+      "market_status": "ACTIVE",
+      "source_id": "synthetic_usdd_earn",
+      "source_record_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "observed_at": "2026-09-28T00:00:30+00:00",
+      "valid_until": "2026-09-28T00:10:00+00:00",
+      "capacity": "10000",
+      "max_bps": 5000,
+      "current_bps": 0,
+      "withdrawal_days": 0,
+      "redemption_enabled": true,
+      "annualized_components_bps": {
+        "lending": 0,
+        "voting": 0,
+        "energy_rental": 0,
+        "protocol_earn": 450
+      },
+      "aggregate_reported_bps": 0,
+      "reward_tokens": [],
+      "round_trip_cost_bps": {
+        "entry": 5,
+        "exit": 5,
+        "swap": 10,
+        "network": 5
+      },
+      "scenario_pnl_bps": {
+        "base": 0,
+        "trx_down": 0,
+        "usdd_depeg": -1500,
+        "energy_collapse": 0,
+        "protocol_failure": -700
+      },
+      "factor_loadings_bps": {
+        "trx": 0,
+        "usdd": 10000,
+        "lending": 0,
+        "energy": 0
+      },
+      "rental_quote": null,
+      "vault_terms": null
+    },
+    {
+      "schema_version": "economic-tron-yield-opportunity-1",
+      "product_id": "usdd_vault",
+      "kind": "USDD_VAULT_STRATEGY",
+      "group": "vault",
+      "network": "TRON_SIM",
+      "funding_asset": "USDT",
+      "underlying_asset": "TRX",
+      "market_status": "ACTIVE",
+      "source_id": "synthetic_usdd_vault",
+      "source_record_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "observed_at": "2026-09-28T00:00:30+00:00",
+      "valid_until": "2026-09-28T00:10:00+00:00",
+      "capacity": "10000",
+      "max_bps": 2500,
+      "current_bps": 0,
+      "withdrawal_days": 1,
+      "redemption_enabled": true,
+      "annualized_components_bps": {
+        "lending": 0,
+        "voting": 0,
+        "energy_rental": 0,
+        "protocol_earn": 0
+      },
+      "aggregate_reported_bps": 0,
+      "reward_tokens": [],
+      "round_trip_cost_bps": {
+        "entry": 10,
+        "exit": 10,
+        "swap": 10,
+        "network": 10
+      },
+      "scenario_pnl_bps": {
+        "base": 0,
+        "trx_down": -3500,
+        "usdd_depeg": -800,
+        "energy_collapse": 0,
+        "protocol_failure": -1000
+      },
+      "factor_loadings_bps": {
+        "trx": 10000,
+        "usdd": 4000,
+        "lending": 4000,
+        "energy": 0
+      },
+      "rental_quote": null,
+      "vault_terms": {
+        "collateral_asset": "TRX",
+        "collateral_value_usdt": "1000",
+        "debt_value_usdt": "400",
+        "minted_usdd": "400",
+        "accrued_fee_usdd": "0",
+        "usdd_price_usdt": "1",
+        "destination": "JUSTLEND_USDD",
+        "destination_apy_bps": 2000,
+        "stability_fee_bps": 100,
+        "min_collateral_ratio_bps": 12000,
+        "safety_buffer_bps": 2000,
+        "liquidation_penalty_bps": 1300,
+        "destination_withdrawal_days": 1,
+        "collateral_shock_bps_by_scenario": {
+          "base": 0,
+          "trx_down": -3000,
+          "usdd_depeg": 0,
+          "energy_collapse": 0,
+          "protocol_failure": -1000
+        },
+        "debt_shock_bps_by_scenario": {
+          "base": 0,
+          "trx_down": 0,
+          "usdd_depeg": 1000,
+          "energy_collapse": 0,
+          "protocol_failure": 0
+        },
+        "source_id": "synthetic_usdd_vault",
+        "source_record_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "observed_at": "2026-09-28T00:00:30+00:00",
+        "valid_until": "2026-09-28T00:10:00+00:00"
+      }
+    }
+  ]
+}

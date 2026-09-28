@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AllocationOracleVerdictV1",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "oracle_version", "episode_id", "episode_sha256",
+               "proposal_sha256", "verdict", "hard_failures", "unknowns",
+               "plan_results", "source_witnesses", "training_scope", "human_gold",
+               "optimality_proven", "economic_net_estimate", "product_actionable"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "oracle_version": {"const": "allocation-constraints-1.0.0"},
+    "episode_id": {"type": "string", "minLength": 1},
+    "episode_sha256": {"$ref": "#/$defs/hash"},
+    "proposal_sha256": {"$ref": "#/$defs/hash"},
+    "verdict": {"enum": ["REJECTED", "NEEDS_EVIDENCE", "CONSTRAINTS_PASS"]},
+    "hard_failures": {"type": "array", "items": {"$ref": "#/$defs/issue"}},
+    "unknowns": {"type": "array", "items": {"$ref": "#/$defs/issue"}},
+    "plan_results": {"type": "array", "maxItems": 4, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["plan_id", "invested", "hold", "failure_codes", "unknown_codes"],
+      "properties": {
+        "plan_id": {"type": "string", "minLength": 1},
+        "invested": {"type": "string"},
+        "hold": {"type": "string"},
+        "failure_codes": {"type": "array", "items": {"type": "string"}},
+        "unknown_codes": {"type": "array", "items": {"type": "string"}}
+      }
+    }},
+    "source_witnesses": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["candidate_id", "snapshot_id", "raw_sha256", "fetched_at", "fact_locators"],
+      "properties": {
+        "candidate_id": {"type": "string", "minLength": 1},
+        "snapshot_id": {"$ref": "#/$defs/hash"},
+        "raw_sha256": {"$ref": "#/$defs/hash"},
+        "fetched_at": {"type": "string", "format": "date-time"},
+        "fact_locators": {"type": "object", "additionalProperties": false,
+                          "required": ["supply_apy", "available_cash"],
+                          "properties": {
+                            "supply_apy": {"type": "string", "pattern": "^/"},
+                            "available_cash": {"type": "string", "pattern": "^/"}
+                          }}
+      }
+    }},
+    "training_scope": {"enum": ["synthetic_constraint_only", "excluded_unreviewed"]},
+    "human_gold": {"const": false},
+    "optimality_proven": {"const": false},
+    "economic_net_estimate": {"type": "null"},
+    "product_actionable": {"const": false}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "issue": {
+      "type": "object", "additionalProperties": false,
+      "required": ["code", "plan_id", "subject", "details"],
+      "properties": {
+        "code": {"type": "string", "minLength": 1},
+        "plan_id": {"type": ["string", "null"]},
+        "subject": {"type": ["string", "null"]},
+        "details": {"type": "object", "additionalProperties": {"type": "string"}}
+      }
+    }
+  }
+}

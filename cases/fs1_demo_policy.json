@@ -1,0 +1,14 @@
+{
+  "policy_id": "demo-alpha-usdt",
+  "node_id": "owner-cherry-999573",
+  "network": "tron-mainnet-read",
+  "consent": "DEMO_SCENARIO",
+  "mode": "READ_ONLY",
+  "need": {
+    "asset": "USDT",
+    "amount": "1000",
+    "liquid_reserve": "500",
+    "horizon_days": 30,
+    "risk": "balanced"
+  }
+}

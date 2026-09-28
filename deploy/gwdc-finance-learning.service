@@ -1,0 +1,26 @@
+[Unit]
+Description=GWDC TRON observation and gated research learning
+After=network-online.target gwdc-finance-collector.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=gwdc-finance
+Group=gwdc-finance
+WorkingDirectory=/srv/skew/gwdc-financial-agent-20260924
+Environment=PYTHONPATH=/srv/skew/gwdc-financial-agent-20260924/src:/srv/skew/gwdc-financial-agent-20260924
+Environment=OMP_NUM_THREADS=4
+Environment=MKL_NUM_THREADS=4
+EnvironmentFile=-/etc/gwdc-finance/trongrid.env
+ExecStart=/srv/skew/gwdc-financial-agent-20260924/.venv/bin/python -m research.fdc.continual --data-dir /srv/skew/gwdc-financial-agent-20260924/data/live-read --registry /srv/skew/gwdc-financial-agent-20260924/config/sources.json --release-root /srv/skew/gwdc-financial-agent-20260924/data/real-tron --run-root /srv/skew/gwdc-financial-agent-20260924/data/runs/auto --state-dir /srv/skew/gwdc-financial-agent-20260924/data/learning --pages 2
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/skew/gwdc-financial-agent-20260924/data/live-read /srv/skew/gwdc-financial-agent-20260924/data/real-tron /srv/skew/gwdc-financial-agent-20260924/data/runs/auto /srv/skew/gwdc-financial-agent-20260924/data/learning
+CapabilityBoundingSet=
+AmbientCapabilities=
+MemoryMax=2G
+CPUQuota=50%
+TasksMax=64
+TimeoutStartSec=20min

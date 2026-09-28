@@ -1,0 +1,11 @@
+[Unit]
+Description=Hourly GWDC source-proven research case building
+
+[Timer]
+OnCalendar=*-*-* *:15:00 UTC
+Persistent=true
+RandomizedDelaySec=3min
+Unit=gwdc-finance-auto-cases.service
+
+[Install]
+WantedBy=timers.target

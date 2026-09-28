@@ -1,0 +1,10 @@
+[Unit]
+Description=Hourly GWDC BYON FS1 read-only decision checks
+
+[Timer]
+OnCalendar=*-*-* *:25:00 UTC
+Persistent=true
+Unit=gwdc-finance-fs1-runner.service
+
+[Install]
+WantedBy=timers.target

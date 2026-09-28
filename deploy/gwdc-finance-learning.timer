@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily GWDC TRON observation and research learning
+
+[Timer]
+OnCalendar=*-*-* 06:30:00 UTC
+Persistent=true
+RandomizedDelaySec=15min
+Unit=gwdc-finance-learning.service
+
+[Install]
+WantedBy=timers.target
