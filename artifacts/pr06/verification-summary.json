@@ -1,0 +1,49 @@
+{
+  "verified_at": "2026-09-28T13:40:25.572244+00:00",
+  "test_host": "Cherry Servers 999573 / charmed-weasel",
+  "test_path": "/srv/skew/gwdc-financial-agent-20260924/cache/gwdc2026-publish-worktree-20260928",
+  "targeted_scope": {
+    "pr06": [
+      "test_economic_tron_actions",
+      "test_economic_tx_graph"
+    ],
+    "direct_pr04_connection": [
+      "test_real_pr04_service_intent_connects_to_pr06_graph_without_authority"
+    ],
+    "direct_capability_connection": [
+      "capability hash, stage and action binding tests"
+    ],
+    "direct_vault_batch_connection": [
+      "non-atomic graph compatibility assessment"
+    ]
+  },
+  "targeted_tests": {
+    "tests": 15,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": true
+  },
+  "previously_validated_unrelated_suites_rerun": false,
+  "proofs": {
+    "missing_1000_usdd_detected": true,
+    "route_requires_intent_snapshot_scope_capacity_abi_code_evidence": true,
+    "expected_dependency_output_counted_as_observed_balance": false,
+    "approve_success_can_mask_supply_revert": false,
+    "protocol_false_and_nonzero_return_accepted": false,
+    "multi_transaction_atomic_claim": false,
+    "unverified_usdd_vault_calldata_executable": false,
+    "execution_authority": "NONE",
+    "signature_status": "NOT_REQUESTED",
+    "chain_status": "NOT_SUBMITTED"
+  },
+  "live_execution": {
+    "rpc_simulation_calls": 0,
+    "customer_signatures": 0,
+    "broadcasts": 0,
+    "actual_transactions": 0,
+    "acceptance": "NOT_MET",
+    "reason": "No trusted live action binding, route provider or RPC simulation adapter was configured; production capabilities remain unsupported."
+  },
+  "passed": true
+}
