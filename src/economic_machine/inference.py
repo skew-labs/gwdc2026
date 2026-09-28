@@ -12,12 +12,13 @@ from datetime import datetime
 
 from .compiler import _check_sandbox, compile_program
 from .state import normalize_state, state_root
-from .values import MachineError, canonical, decimal, digest, ident, require_keys, utc
+from .values import MachineError, canonical, decimal, decstr, digest, ident, require_keys, utc
 
 
 SCOPE_VERSION = "economic-inference-scope-1"
 DRAFT_VERSION = "economic-inference-draft-1"
 ASSESSMENT_VERSION = "economic-inference-assessment-1"
+OPINION_VERSION = "model-opinion-1"
 MAX_SCOPE_BYTES = 8192
 MAX_DRAFT_BYTES = 65536
 
@@ -168,4 +169,92 @@ def assess_inference(draft: dict, scope: dict, world: dict, *, at: str) -> dict:
               "registration_status": "NOT_REGISTERED",
               "execution_authority": "NONE", "chain_status": "NOT_SUBMITTED"}
     result["assessment_hash"] = digest(result)
+    return result
+
+
+def normalize_model_opinion(value: dict) -> dict:
+    """Validate a bounded prediction plugin result with no policy authority."""
+    require_keys(value, {"schema_version", "mode", "model_id", "model_revision",
+        "model_hash", "input_root", "target", "horizon_seconds", "scores",
+        "uncertainty_bps", "valid_from", "valid_until", "reason_codes"},
+        "ModelOpinionV1")
+    if value["schema_version"] != OPINION_VERSION:
+        raise MachineError("unsupported model opinion version")
+    if value["mode"] not in {"SHADOW", "NOT_USED"}:
+        raise MachineError("model opinion cannot enter the execution path")
+    for key in ("model_id", "model_revision", "target"):
+        ident(value[key], key)
+    for key in ("model_hash", "input_root"):
+        _hex_digest(value[key], key)
+    horizon = value["horizon_seconds"]
+    if type(horizon) is not int or not 1 <= horizon <= 365 * 86400:
+        raise MachineError("model opinion horizon outside bound")
+    scores = require_keys(value["scores"], {"expected_return_bps", "risk_bps",
+                                            "liquidity_bps"}, "model scores")
+    normalized_scores = {}
+    for key, score in scores.items():
+        if score is None:
+            normalized_scores[key] = None
+        else:
+            parsed = decimal(score, signed=key == "expected_return_bps")
+            if (key == "expected_return_bps" and abs(parsed) > 1_000_000) or (
+                    key != "expected_return_bps" and parsed > 1_000_000):
+                raise MachineError("model score outside bound")
+            normalized_scores[key] = decstr(parsed)
+    uncertainty = value["uncertainty_bps"]
+    if uncertainty is not None and (type(uncertainty) is not int
+                                    or not 0 <= uncertainty <= 10000):
+        raise MachineError("invalid model uncertainty")
+    start, end = utc(value["valid_from"]), utc(value["valid_until"])
+    if datetime.fromisoformat(start) >= datetime.fromisoformat(end):
+        raise MachineError("model opinion validity window is empty")
+    reasons = value["reason_codes"]
+    if (not isinstance(reasons, list) or not reasons or len(reasons) > 16
+            or len(reasons) != len(set(reasons))):
+        raise MachineError("bounded model opinion reasons required")
+    for reason in reasons:
+        ident(reason, "model opinion reason")
+    if value["mode"] == "NOT_USED" and any(score is not None for score in normalized_scores.values()):
+        raise MachineError("unused opinion cannot invent neutral scores")
+    return _bounded_json({**value, "scores": normalized_scores,
+                          "valid_from": start, "valid_until": end},
+                         MAX_DRAFT_BYTES, "model opinion")
+
+
+def deterministic_baseline_opinion(input_root: str, target: str,
+                                   horizon_seconds: int, *, valid_from: str,
+                                   valid_until: str) -> dict:
+    """Explicit abstention baseline; missing risk is null, never a zero-risk claim."""
+    model_hash = digest({"domain": "deterministic-model-opinion-baseline-1",
+                         "behavior": "ABSTAIN"})
+    return normalize_model_opinion({"schema_version": OPINION_VERSION,
+        "mode": "NOT_USED", "model_id": "deterministic-baseline",
+        "model_revision": "v1", "model_hash": model_hash,
+        "input_root": input_root, "target": target,
+        "horizon_seconds": horizon_seconds,
+        "scores": {"expected_return_bps": None, "risk_bps": None,
+                   "liquidity_bps": None}, "uncertainty_bps": None,
+        "valid_from": valid_from, "valid_until": valid_until,
+        "reason_codes": ["NO_PREDICTIVE_MODEL_USED"]})
+
+
+def bind_model_opinion(value: dict, *, expected_input_root: str, at: str) -> dict:
+    """Bind a shadow/unused opinion to input and time without consuming it."""
+    opinion = normalize_model_opinion(value)
+    expected = _hex_digest(expected_input_root, "expected input root")
+    moment = utc(at)
+    reasons = []
+    if opinion["input_root"] != expected:
+        reasons.append("INPUT_ROOT_MISMATCH")
+    if not (datetime.fromisoformat(opinion["valid_from"])
+            <= datetime.fromisoformat(moment)
+            < datetime.fromisoformat(opinion["valid_until"])):
+        reasons.append("OUTSIDE_VALIDITY")
+    status = "REJECTED" if reasons else opinion["mode"]
+    result = {"schema_version": "model-opinion-binding-1", "status": status,
+        "reason_codes": reasons or opinion["reason_codes"],
+        "opinion_hash": digest(opinion), "input_root": expected, "at": moment,
+        "optimizer_effect": "NONE", "execution_authority": "NONE",
+        "chain_status": "NOT_SUBMITTED"}
+    result["binding_hash"] = digest(result)
     return result

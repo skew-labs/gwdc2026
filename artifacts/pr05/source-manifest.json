@@ -1,0 +1,88 @@
+{
+  "method": "Physical lines excluding blank/comment-only lines and AST docstrings. Modified files report their full current meaningful size.",
+  "files": [
+    {
+      "path": "src/finance_service/model_provider.py",
+      "sha256": "1a21fb27de10f0909d3c38cf0166b3fc7f8551f6ba4b452de83cac9a49b9ef93",
+      "physical_lines": 179,
+      "meaningful_lines": 156,
+      "scope": "new_source"
+    },
+    {
+      "path": "src/finance_service/model_usage.py",
+      "sha256": "eb7769b9a0ce6b2e9d80f5799ffa180237620c8130aa53d51ffd859e18e94436",
+      "physical_lines": 105,
+      "meaningful_lines": 84,
+      "scope": "new_source"
+    },
+    {
+      "path": "src/finance_service/intent_service.py",
+      "sha256": "6c9f5fbe1aa05d8093fbf0b22ec563a63d281314aecede927f1030bf22f4fc1e",
+      "physical_lines": 180,
+      "meaningful_lines": 161,
+      "scope": "new_source"
+    },
+    {
+      "path": "src/finagent/qwen.py",
+      "sha256": "484db58f58ea5d0a9f12f07cb95560ccef45049f448675dbf937d9f94b8d91dc",
+      "physical_lines": 247,
+      "meaningful_lines": 219,
+      "scope": "modified_source"
+    },
+    {
+      "path": "src/economic_machine/inference.py",
+      "sha256": "1e206067942615af561079a676629cc883221f73382205c1ca602a24154c12d7",
+      "physical_lines": 260,
+      "meaningful_lines": 221,
+      "scope": "modified_source"
+    },
+    {
+      "path": "tests/test_qwen.py",
+      "sha256": "3b537bbae7ec5adaf82c5d9eb84b77a0e56ab10c9710c291377bbaebd5bc81e0",
+      "physical_lines": 69,
+      "meaningful_lines": 58,
+      "scope": "tests"
+    },
+    {
+      "path": "tests/test_model_provider.py",
+      "sha256": "072044e1c492897a64555e652cc77fed47eef1db5eaf86e528ccc6fbddf0154f",
+      "physical_lines": 94,
+      "meaningful_lines": 74,
+      "scope": "tests"
+    },
+    {
+      "path": "tests/test_model_usage.py",
+      "sha256": "968070c5853772882bf4291ea4768b7eda24249aca7b871b7211a63b27fee4b3",
+      "physical_lines": 41,
+      "meaningful_lines": 33,
+      "scope": "tests"
+    },
+    {
+      "path": "tests/test_economic_model_opinion.py",
+      "sha256": "70f980b8a91aefd9fed8a0e890c224da1bcd9faf071120ce1a995cc2e9dd5665",
+      "physical_lines": 37,
+      "meaningful_lines": 31,
+      "scope": "tests"
+    },
+    {
+      "path": "tests/test_finance_intent_service.py",
+      "sha256": "f724f1c45a91a3d7255d45079de06fe526bbfb9283b5613c2cfe019d9ff7f4bf",
+      "physical_lines": 167,
+      "meaningful_lines": 147,
+      "scope": "tests"
+    },
+    {
+      "path": "contracts/model_binding.template.json",
+      "sha256": "55c3d07da26e3bede3d503ab567cd87c2088ef75f0f6ffb6861868c207e260e2",
+      "physical_lines": 28,
+      "meaningful_lines": 28,
+      "scope": "contract"
+    }
+  ],
+  "totals": {
+    "new_source": 401,
+    "modified_source": 440,
+    "tests": 343,
+    "contract": 28
+  }
+}
