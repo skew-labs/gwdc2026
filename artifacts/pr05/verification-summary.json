@@ -1,0 +1,53 @@
+{
+  "verified_at": "2026-09-28T13:12:03.622982+00:00",
+  "test_host": "Cherry Servers 999573 / charmed-weasel",
+  "test_path": "/srv/skew/gwdc-financial-agent-20260924/cache/gwdc2026-publish-worktree-20260928",
+  "targeted_scope": {
+    "pr05": [
+      "test_qwen",
+      "test_model_provider",
+      "test_model_usage",
+      "test_economic_model_opinion",
+      "test_finance_intent_service"
+    ],
+    "direct_pr01_connection": [
+      "test_finance_mandate_service"
+    ],
+    "direct_pr04_connection": [
+      "test_finance_plan_service"
+    ],
+    "direct_existing_inference_connection": [
+      "test_economic_inference"
+    ]
+  },
+  "targeted_tests": {
+    "tests": 57,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": true
+  },
+  "previously_validated_unrelated_suites_rerun": false,
+  "proofs": {
+    "same_request_second_provider_calls": 0,
+    "invalid_output_mutates_mandate": false,
+    "confirmed_condition_change_changes_plan_commitment": true,
+    "model_optimizer_effect": "NONE",
+    "execution_authority": "NONE",
+    "chain_status": "NOT_SUBMITTED"
+  },
+  "live_provider": {
+    "verification_shell_env_present": {
+      "GWDC_QWEN_BASE_URL": false,
+      "GWDC_QWEN_MODEL_ID": false,
+      "GWDC_QWEN_API_KEY": false,
+      "KILN_API_KEY": false,
+      "FURIOSA_API_KEY": false
+    },
+    "actual_provider_calls": 0,
+    "successful_live_trace": false,
+    "acceptance": "NOT_MET",
+    "reason": "Qwen/Kiln runtime configuration absent from the verification shell"
+  },
+  "passed": true
+}
