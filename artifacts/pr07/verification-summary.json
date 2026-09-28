@@ -1,0 +1,58 @@
+{
+  "verified_at": "2026-09-28T15:34:55+00:00",
+  "test_host": "Cherry Servers 999573 / charmed-weasel",
+  "test_path": "/srv/skew/gwdc-financial-agent-20260924/cache/gwdc2026-publish-worktree-20260928",
+  "targeted_scope": {
+    "new_python_boundaries": [
+      "approval",
+      "wallet request",
+      "signed protobuf validation",
+      "TRON crypto recovery"
+    ],
+    "direct_pr06_connection": [
+      "ExecutionGraphV1",
+      "PreflightManifestV1",
+      "fresh account and snapshot commitments"
+    ],
+    "new_contract_boundaries": [
+      "fixed JustLend adapter",
+      "EconomicExecutionGuardV1"
+    ],
+    "unrelated_prior_suites_rerun": false
+  },
+  "tests": {
+    "python_boundary_tests": 12,
+    "isolated_evm_runtime_tests": 7,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "proofs": {
+    "amount_owner_target_fee_deadline_data_tampering_accepted": false,
+    "wrong_wallet_network_session_accepted": false,
+    "replay_accepted": false,
+    "guard_without_exact_simulation_accepted": false,
+    "reentry_accepted": false,
+    "false_return_or_protocol_error_accepted": false,
+    "short_position_or_residual_balance_accepted": false,
+    "allowance_left_after_success": false,
+    "signed_payload_status": "NOT_SUBMITTED",
+    "untrusted_guard_registry_entry_accepted": false
+  },
+  "tron_compilation": {
+    "official_pinned_compiler": true,
+    "compiler_signature_valid": true,
+    "compiler_key_locally_trusted": false,
+    "exact_abi_checked": true,
+    "execution": "NOT_TESTED_ON_TVM",
+    "deployment": "NONE",
+    "audit": "NONE"
+  },
+  "live_actions": {
+    "customer_signatures": 0,
+    "broadcasts": 0,
+    "deployments": 0,
+    "asset_movements": 0
+  },
+  "passed": true
+}

@@ -1,0 +1,105 @@
+{
+  "method": "Physical lines plus nonblank noncomment lines; Python AST docstrings and Solidity comments excluded. Modified files report full current meaningful size.",
+  "files": [
+    {
+      "path": "src/economic_machine/approval.py",
+      "sha256": "ae27d5a5444ebafcbe6d83c3cc8452b789db1aba28d01b6bcdbf6b22e417f97c",
+      "physical_lines": 417,
+      "meaningful_lines": 373,
+      "scope": "new_source"
+    },
+    {
+      "path": "src/economic_machine/signed_tx_validation.py",
+      "sha256": "5023c14a3929880b6d8c4fc7c4d376804c0a5ceb4c29e3f8ba3a6c19cf615798",
+      "physical_lines": 195,
+      "meaningful_lines": 171,
+      "scope": "new_source"
+    },
+    {
+      "path": "src/economic_machine/tron_crypto.py",
+      "sha256": "34db7e53b2db75e68c466e26a29619dd6b92275c24526bfc181a46c5ec4ea1df",
+      "physical_lines": 143,
+      "meaningful_lines": 118,
+      "scope": "new_source"
+    },
+    {
+      "path": "src/economic_machine/wallet_bridge.py",
+      "sha256": "ae419e418f3554cfca653fb248d8522ede54b1a18cac5626805437b122b4fbb1",
+      "physical_lines": 19,
+      "meaningful_lines": 11,
+      "scope": "new_source"
+    },
+    {
+      "path": "contracts/EconomicExecutionGuardV1.sol",
+      "sha256": "ab30c7738a561f72a55786720716d1769e0cb228fa302eaf764fcbd06e3de923",
+      "physical_lines": 194,
+      "meaningful_lines": 171,
+      "scope": "new_contract"
+    },
+    {
+      "path": "contracts/JustLendV1Adapter.sol",
+      "sha256": "3e81bff148ec16de76b69b61b25da5eb7aa17f1a197804aa7dbe3b6452ee8488",
+      "physical_lines": 130,
+      "meaningful_lines": 113,
+      "scope": "new_contract"
+    },
+    {
+      "path": "scripts/verify_execution_guard.py",
+      "sha256": "53b61f8e9c41b76805307383318f6fa1cecc3afd2236589c9550c69ec980420e",
+      "physical_lines": 94,
+      "meaningful_lines": 84,
+      "scope": "new_tooling"
+    },
+    {
+      "path": "tests/test_economic_approval.py",
+      "sha256": "00db4dc60865a338b7bf3d488daae176753cf36119cd3f72903feddbc993d309",
+      "physical_lines": 218,
+      "meaningful_lines": 191,
+      "scope": "tests"
+    },
+    {
+      "path": "tests/test_economic_signed_tx_validation.py",
+      "sha256": "5a56dda590eb36adb4c1715f271f0ad228613113571a138b6f2829911ce74baa",
+      "physical_lines": 170,
+      "meaningful_lines": 149,
+      "scope": "tests"
+    },
+    {
+      "path": "tests/test_economic_execution_guard_runtime.py",
+      "sha256": "7ae84edb4ad2bd75eac3c23f26784c2fe597d35506fb2bb9ba30a924e2842352",
+      "physical_lines": 198,
+      "meaningful_lines": 174,
+      "scope": "tests"
+    },
+    {
+      "path": "tests/fixtures/MockJustLendGuard.sol",
+      "sha256": "9cfb15762180f1a37c7c4dde2db027dd7be5a53e8ecdfdb075de2e1de47ebdd6",
+      "physical_lines": 180,
+      "meaningful_lines": 154,
+      "scope": "test_fixture"
+    },
+    {
+      "path": "IMPLEMENTATION_PR07_20260929.md",
+      "sha256": "51ac7f6b1d5e9ccc0545440351dd3fb10f1ab1339fd323dbeba0851ccd46d24f",
+      "physical_lines": 58,
+      "meaningful_lines": 38,
+      "scope": "documentation"
+    },
+    {
+      "path": "TRON_FURIOSA_10PR_PLAN_20260928.md",
+      "sha256": "49416699b6d3cacc6796852193e8f91acb43234110b53c23b40db2b402e9cbbf",
+      "physical_lines": 202,
+      "meaningful_lines": 121,
+      "scope": "modified_documentation"
+    }
+  ],
+  "totals": {
+    "new_source": 673,
+    "new_contract": 284,
+    "new_tooling": 84,
+    "tests": 514,
+    "test_fixture": 154,
+    "documentation": 38,
+    "modified_documentation": 121
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "verification_host": "Cherry Servers 999573 / charmed-weasel",
+  "tron_compiler": {
+    "source": "https://github.com/tronprotocol/solc-bin",
+    "binary_url": "https://raw.githubusercontent.com/tronprotocol/solc-bin/main/linux-amd64/solc-linux-amd64-v0.8.20+commit.5f1834b",
+    "version": "solc.tron 0.8.20+commit.5f1834bc.Linux.g++",
+    "sha256": "fa95cdeb30aaf521df75b87f57c6ffc1ee6fef5de190981a69cdb878da3a4e14",
+    "signature": "GOODSIG build_tron <build@tron.network>",
+    "valid_signature_fingerprint": "1254F859D2B1BD9F66E7107DF859BCB44A28290B",
+    "primary_key_fingerprint": "07B23298AEA4E006BD9A42DE785FB96D2C7C3CA5",
+    "local_key_trust": "UNDEFINED"
+  },
+  "isolated_evm_test_compiler": {
+    "source": "https://github.com/ethereum/solidity/releases/tag/v0.8.20",
+    "binary_url": "https://github.com/ethereum/solidity/releases/download/v0.8.20/solc-static-linux",
+    "version": "solc 0.8.20+commit.a1b79de6.Linux.g++",
+    "sha256": "0479d44fdf9c501c25337fdc540419f1593b884a87b47f023da4f1c700fda782",
+    "purpose": "EVM semantic tests only; not evidence of TVM execution"
+  },
+  "runtime": {
+    "eth-abi": "6.0.0",
+    "eth-tester": "0.14.0b1",
+    "eth-utils": "6.0.0",
+    "py-evm": "0.12.1b1"
+  }
+}
