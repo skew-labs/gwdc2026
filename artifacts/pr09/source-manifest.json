@@ -1,0 +1,62 @@
+{
+  "files": {
+    "IMPLEMENTATION_PR09_20260929.md": {
+      "lines": 67,
+      "sha256": "12004c68bdf58e7b89c1e6788c675cca4ce5b6642128408cbcae88c59982a575"
+    },
+    "TRON_FURIOSA_10PR_PLAN_20260928.md": {
+      "lines": 202,
+      "sha256": "71d1989c897741854a68ab8b768386cc1713b6b3ae472dbd0746252c50b631d4"
+    },
+    "db/migrations/009_finance_service.sql": {
+      "lines": 183,
+      "sha256": "3c8b317101eaab6d07195a9c327d2788779fbc127f1236eb97e90cf2868aa696"
+    },
+    "deploy/economic-service.service": {
+      "lines": 22,
+      "sha256": "367541590e4844ae8d990983ac21c7c1081aa4cb97a0bd4736b8772e75ecc181"
+    },
+    "pyproject.toml": {
+      "lines": 24,
+      "sha256": "959355dbc4ac414aac24e200e9e96bf143fbf9e07ec5bfc9fe5d56ad671dc137"
+    },
+    "src/finance_service/api.py": {
+      "lines": 109,
+      "sha256": "51658dbc1c80248bfae139781976528931085ce3009eea4002c05067bfdb1e0e"
+    },
+    "src/finance_service/auth.py": {
+      "lines": 159,
+      "sha256": "8ab9b22e92d4f81b33bfad6d272a919d19c905c372235f77e7a79cee656c7d18"
+    },
+    "src/finance_service/entrypoint.py": {
+      "lines": 35,
+      "sha256": "aadc7362ff8033b02d751bcc8059b8728333e4144c17062921fdead38bf1d486"
+    },
+    "src/finance_service/execution_service.py": {
+      "lines": 90,
+      "sha256": "728efa71b6ac18e4a9e8645f344887d4623329a112b042be7fa393afe491c6a0"
+    },
+    "src/finance_service/operational_repository.py": {
+      "lines": 668,
+      "sha256": "2f5de41e11d0cfd2bda4f29c7ba160860c0a4c8b13a3c78ac19e98cb1483c57f"
+    },
+    "src/finance_service/scheduler.py": {
+      "lines": 18,
+      "sha256": "6a941374726f3a599374ad4ba4b031746b856c42712d601bdb74ed208d95715f"
+    },
+    "src/finance_service/worker.py": {
+      "lines": 74,
+      "sha256": "dcc70d934ffba619ff0950aa9d2373650325c958ded662ba8973030408048c1d"
+    },
+    "tests/test_finance_service_operations.py": {
+      "lines": 351,
+      "sha256": "0a26afd69a9d9158f68639c48bb1da63916889400431ca71dd899ff7754c7757"
+    }
+  },
+  "line_counts": {
+    "docs": 269,
+    "implementation": 1336,
+    "infra": 46,
+    "tests": 351
+  }
+}

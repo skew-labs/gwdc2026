@@ -13,6 +13,8 @@ dependencies = []
 research = ["torch>=2.3,<3"]
 validation = ["jsonschema>=4.23,<5"]
 encoder = ["sentence-transformers>=6,<7"]
+service = ["fastapi>=0.115,<1", "uvicorn>=0.32,<1", "psycopg[binary]>=3.2,<4",
+           "httpx>=0.27,<1"]
 
 [project.scripts]
 gwdc-finance = "finagent.cli:main"

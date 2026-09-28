@@ -1,0 +1,22 @@
+[Unit]
+Description=GWDC hosted Economic Service verification instance
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=gwdc-finance
+Group=gwdc-finance
+WorkingDirectory=/srv/gwdc2026
+EnvironmentFile=/etc/gwdc/economic-service.env
+ExecStart=/srv/gwdc2026/.venv/bin/uvicorn finance_service.entrypoint:app --host 127.0.0.1 --port 8080 --workers 1
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/gwdc-finance
+
+[Install]
+WantedBy=multi-user.target
