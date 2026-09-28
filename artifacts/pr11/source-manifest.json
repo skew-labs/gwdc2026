@@ -1,0 +1,83 @@
+{
+  "files": {
+    "IMPLEMENTATION_PR11_20260929.md": {
+      "lines": 27,
+      "sha256": "8265e0dbd9863d05aa920fa911b2e23467da0933270fc83be1d4f95d21fa1d5c"
+    },
+    "TRON_FURIOSA_10PR_PLAN_20260928.md": {
+      "lines": 210,
+      "sha256": "a3403944b785dbc5575e2ec658a04a9aa326f92a838168a68d0d3fd6fbad256a"
+    },
+    "artifacts/pr11/migration-idempotence.log": {
+      "lines": 2,
+      "sha256": "bfe085a9db360368344c344c5568717c410d6dc1b94c6adfd45c2871483872d5"
+    },
+    "artifacts/pr11/postgres-runtime.json": {
+      "lines": 17,
+      "sha256": "afcf3502d6a4f2b5af2c60c967dbc23d32ffb776fd0516fb50b8bd6e9ecebadd"
+    },
+    "artifacts/pr11/ruff.log": {
+      "lines": 1,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "artifacts/pr11/service-health.json": {
+      "lines": 11,
+      "sha256": "f65684696138c3e08f464e54b48eb219e4432a5654a25608a89e01db33264825"
+    },
+    "artifacts/pr11/service-restart.json": {
+      "lines": 15,
+      "sha256": "e42a4e83d6c89ffe9a2eb7282e607a8becfe2d101132ed4226107b9328aaf95d"
+    },
+    "artifacts/pr11/static-checks.log": {
+      "lines": 2,
+      "sha256": "9607afbe511c8d6df88ddd8ff3f2a28b91556e9240fc545dc5fe0d6f20d693be"
+    },
+    "artifacts/pr11/targeted-tests.log": {
+      "lines": 38,
+      "sha256": "3e6b2b9502cd3761f14032e544be0116bc54cff6d48cff047fe811c1e14e5261"
+    },
+    "artifacts/pr11/verification-summary.json": {
+      "lines": 21,
+      "sha256": "9fd698564767c1ce3b865d8f74e0b0b706585daffbba5338bf823bbf069df043"
+    },
+    "db/migrations/011_finance_postgres_runtime.sql": {
+      "lines": 57,
+      "sha256": "0006f1e91831285213558668935c7004317285dbacbba3b55485e3cd1c6258b1"
+    },
+    "deploy/economic-service.service": {
+      "lines": 26,
+      "sha256": "5e11cd1970995abfb17543b0f7f6740e32ff84c1325ae44bfa893975807a6bdf"
+    },
+    "scripts/apply_postgres_migrations.py": {
+      "lines": 65,
+      "sha256": "e94bcbc2f8743df981882069c5b2afc824d359661c65c67f5a89a3be3ee6407b"
+    },
+    "src/finance_service/api.py": {
+      "lines": 155,
+      "sha256": "15f14c275ff364c9eeb7f625d9b8d97c152bedc0120f1b9aad9cf0650458bdf8"
+    },
+    "src/finance_service/entrypoint.py": {
+      "lines": 52,
+      "sha256": "b4960ce74da38d4df54469c6692a607e104b4cf911df024ba6b8e5cc5aa8d829"
+    },
+    "src/finance_service/operational_repository.py": {
+      "lines": 672,
+      "sha256": "4a2f10e11591e2d39f01f61d8f243c5d9e2ed5ecb7ba2a71e7309301ad190109"
+    },
+    "src/finance_service/postgres_repository.py": {
+      "lines": 684,
+      "sha256": "9394472d2cc7b5fe12bb196d767f5ee084d6dc6b826eacf12ae01383faf75f04"
+    },
+    "tests/test_finance_postgres_runtime.py": {
+      "lines": 199,
+      "sha256": "5e4f890e55636a75c20f5d0b631dc76edb4194f75236f6a9796855fe2c7ef2c7"
+    }
+  },
+  "line_counts": {
+    "docs": 237,
+    "evidence": 107,
+    "implementation": 1628,
+    "infra": 83,
+    "tests": 199
+  }
+}

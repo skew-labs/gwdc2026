@@ -200,3 +200,11 @@ flowchart LR
 3. **PR 09–10:** 지속 운영되는 대화형 웹서비스와 두 트랙 재현 증거를 완성한다. 기관 운용을 위한 외부 감사·장기간 장애/성과 검증은 별도다.
 
 각 merge는 이 지점에 도달했다는 실제 증거와 남은 제한을 보고한다. 계획서를 쓴 것, 소스를 만든 것, mock을 통과한 것, 실제 자산이 반영된 것은 각각 별개다.
+
+## PR 11 — PostgreSQL 16 운영 상태 고정
+
+초기 10개 PR 이후 첫 운영 hardening 단계다. PR09의 SQLite 기준 저장소를 실제 PostgreSQL 16 adapter로 대체 가능한 상태로 만들고, PR10 workspace가 쓰는 API entrypoint에 연결한다. API와 worker DSN을 분리하고 API 프로세스에 worker 자격증명이 들어오면 시작을 거부한다. RLS로 tenant/owner/wallet/network scope를 강제하며 작업 claim, 만료 lease 복구, routine scheduling, 공용 observation 갱신은 별도 worker 역할만 수행한다.
+
+상태와 hash-chain journal은 같은 transaction으로 갱신한다. migration은 파일 hash ledger와 advisory lock으로 적용하고 이미 적용한 파일의 drift를 거부한다. Cherry의 격리 PostgreSQL 16.15에서 비관리자 API/worker 역할, 동시 `SKIP LOCKED` claim, 동일 계정 직렬화, journal 변조 차단, 서비스 프로세스 재시작 뒤 레코드·작업 지속성을 실제로 검증한다.
+
+이 단계도 production 배포 완료가 아니다. 전역 journal lock과 전체 chain 검증은 대규모 write 경로의 병목이며, connection pool, secret rotation, TLS, managed backup/PITR, restore·failover·load/soak 검증이 남아 있다. 논리 snapshot은 WAL/PITR 백업으로 부르지 않는다. 고객 서명·broadcast·deploy·자산 이동은 계속 0건이다.

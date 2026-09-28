@@ -44,7 +44,15 @@ def create_app(*, session_verifier, repository, clock, product_service=None,
 
     @app.get("/healthz")
     def healthz():
-        return {"status": "ok", "execution_authority": "NONE"}
+        try:
+            storage = repository.health()
+        except Exception as exc:
+            raise HTTPException(status_code=503,
+                                detail="storage health check failed") from exc
+        if not storage["journal_integrity"]:
+            raise HTTPException(status_code=503,
+                                detail="storage journal integrity failed")
+        return {"status": "ok", "execution_authority": "NONE", "storage": storage}
 
     @app.get("/v1/records/{record_kind}/{record_id}")
     def get_record(record_kind: str, record_id: str,

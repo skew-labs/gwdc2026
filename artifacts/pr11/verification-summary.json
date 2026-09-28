@@ -1,0 +1,21 @@
+{
+  "actual_postgresql_16": "PASS",
+  "actual_transactions": 0,
+  "api_worker_credentials_separated": "PASS",
+  "asset_movements": 0,
+  "broadcasts": 0,
+  "customer_signatures": 0,
+  "deployments": 0,
+  "git_diff_check": "PASS",
+  "journal_tamper_health_503": "PASS",
+  "migration_hash_drift_rejected": "PASS",
+  "migration_idempotence": "PASS",
+  "production_deployment": "NOT_RUN",
+  "py_compile": "PASS",
+  "rls_cross_scope": "PASS",
+  "ruff": "PASS_NEW_AND_DIRECT_CONNECTION_FILES",
+  "service_restart_persistence": "PASS",
+  "status": "PASS",
+  "targeted_tests": 33,
+  "worker_concurrency": "PASS_4_DISTINCT_CLAIMS"
+}

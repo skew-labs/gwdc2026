@@ -1,0 +1,11 @@
+{
+  "execution_authority": "NONE",
+  "status": "ok",
+  "storage": {
+    "api_role": "SCOPED",
+    "backend": "POSTGRESQL",
+    "journal_integrity": true,
+    "server_version": 160015,
+    "worker_credential_loaded": false
+  }
+}
