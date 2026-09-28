@@ -25,6 +25,33 @@ LEG_KEYS = {"product_id", "policy_id", "policy_hash", "target_address",
             "deadline_epoch_seconds"}
 
 
+def assess_execution_graph_compatibility(graph: dict) -> dict:
+    """Make the old atomic vault boundary explicit for PR06 graphs.
+
+    The legacy vault batch accepts one input asset and executes 2-8 orders in
+    one atomic call.  A TRON execution graph contains sequential wallet calls,
+    approvals, conversions and delayed claims, so it must never be silently
+    flattened into that contract format.
+    """
+    if not isinstance(graph, dict) or graph.get("schema_version") != "economic-execution-graph-1":
+        raise MachineError("ExecutionGraphV1 required for compatibility check")
+    claimed = graph.get("graph_hash")
+    payload = dict(graph)
+    payload.pop("graph_hash", None)
+    if claimed != digest({"domain": "economic-execution-graph-1", "graph": payload}):
+        raise MachineError("execution graph commitment mismatch")
+    semantics = graph.get("execution_semantics")
+    if semantics != "ORDERED_MULTI_TRANSACTION_NON_ATOMIC":
+        raise MachineError("unknown execution graph semantics")
+    result = {"schema_version": "economic-vault-batch-compatibility-1",
+        "graph_hash": claimed, "compatible": False,
+        "reason_codes": ["NON_ATOMIC_ORDERED_GRAPH_CANNOT_USE_ATOMIC_VAULT_BATCH"],
+        "required_path": "PR07_DIRECT_WALLET_OR_BOUNDED_ADAPTER",
+        "conversion_status": "NOT_ATTEMPTED", "execution_authority": "NONE"}
+    result["assessment_hash"] = digest(result)
+    return result
+
+
 def _positive_uint(value: object, label: str) -> int:
     if (not isinstance(value, str) or len(value) > 78
             or re.fullmatch(r"[1-9][0-9]*", value) is None):

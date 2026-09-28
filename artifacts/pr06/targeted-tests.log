@@ -1,0 +1,23 @@
+HOST=Cherry Servers 999573 / charmed-weasel
+PATH=/srv/skew/gwdc-financial-agent-20260924/cache/gwdc2026-publish-worktree-20260928
+COMMAND=python3 -m py_compile PR06_FILES && PYTHONPATH=src:tests python3 -m unittest -v test_economic_tron_actions test_economic_tx_graph
+test_native_stake_is_not_encoded_as_smart_contract_call (test_economic_tron_actions.TronActionTests.test_native_stake_is_not_encoded_as_smart_contract_call) ... ok
+test_trc20_and_justlend_calls_have_fixed_abi_and_result_semantics (test_economic_tron_actions.TronActionTests.test_trc20_and_justlend_calls_have_fixed_abi_and_result_semantics) ... ok
+test_unverified_and_incomplete_vault_bindings_never_become_ready (test_economic_tron_actions.TronActionTests.test_unverified_and_incomplete_vault_bindings_never_become_ready) ... ok
+test_wrong_shape_and_nonpayable_value_are_rejected (test_economic_tron_actions.TronActionTests.test_wrong_shape_and_nonpayable_value_are_rejected) ... ok
+test_approve_success_supply_revert_and_fee_spike_are_separate_failures (test_economic_tx_graph.ExecutionGraphTests.test_approve_success_supply_revert_and_fee_spike_are_separate_failures) ... ok
+test_binding_from_another_capability_cannot_activate_product (test_economic_tx_graph.ExecutionGraphTests.test_binding_from_another_capability_cannot_activate_product) ... ok
+test_conversion_requires_quote_capacity_abi_and_code_evidence (test_economic_tx_graph.ExecutionGraphTests.test_conversion_requires_quote_capacity_abi_and_code_evidence) ... ok
+test_legacy_supply_and_unsupported_capability_stay_blocked (test_economic_tx_graph.ExecutionGraphTests.test_legacy_supply_and_unsupported_capability_stay_blocked) ... ok
+test_missing_one_thousand_asset_is_detected_without_route (test_economic_tx_graph.ExecutionGraphTests.test_missing_one_thousand_asset_is_detected_without_route) ... ok
+test_protocol_return_values_are_checked_even_when_rpc_says_success (test_economic_tx_graph.ExecutionGraphTests.test_protocol_return_values_are_checked_even_when_rpc_says_success) ... ok
+test_real_pr04_service_intent_connects_to_pr06_graph_without_authority (test_economic_tx_graph.ExecutionGraphTests.test_real_pr04_service_intent_connects_to_pr06_graph_without_authority) ... ok
+test_strx_stake_uses_native_trx_input_and_payable_call (test_economic_tx_graph.ExecutionGraphTests.test_strx_stake_uses_native_trx_input_and_payable_call) ... ok
+test_supply_graph_reserves_then_approves_then_supplies_without_atomic_claim (test_economic_tx_graph.ExecutionGraphTests.test_supply_graph_reserves_then_approves_then_supplies_without_atomic_claim) ... ok
+test_delayed_unstake_and_insufficient_vault_repay_are_explicit (test_economic_tx_graph.LifecycleTests.test_delayed_unstake_and_insufficient_vault_repay_are_explicit) ... ok
+test_liquidity_drop_is_caught_again_at_preflight (test_economic_tx_graph.LifecycleTests.test_liquidity_drop_is_caught_again_at_preflight) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.211s
+
+OK

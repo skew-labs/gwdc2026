@@ -1,0 +1,60 @@
+{
+  "method": "Physical lines plus nonblank noncomment lines excluding Python AST docstrings. Modified files report full current meaningful size.",
+  "files": [
+    {
+      "path": "src/economic_machine/tron_actions.py",
+      "sha256": "3d2097978a5ce30ee777297449543d34c9f614844f4ad6f653bc3fe2d090152e",
+      "physical_lines": 189,
+      "meaningful_lines": 161,
+      "scope": "new_source"
+    },
+    {
+      "path": "src/economic_machine/tx_graph.py",
+      "sha256": "77aea7bc31b9572cddab3bab411fd817beed43370fcdd87fd38187de054ac7ec",
+      "physical_lines": 847,
+      "meaningful_lines": 802,
+      "scope": "new_source"
+    },
+    {
+      "path": "src/economic_machine/preflight.py",
+      "sha256": "5cf93f7554ff11fc455363210e2756d8bcd6f15059552a3f4462a6b0102da0d2",
+      "physical_lines": 310,
+      "meaningful_lines": 278,
+      "scope": "new_source"
+    },
+    {
+      "path": "src/economic_machine/vault_batch.py",
+      "sha256": "8a442e2f9be518b069d2f00fc4b5955c55c4856ff15c524203ffb2db905e817c",
+      "physical_lines": 294,
+      "meaningful_lines": 263,
+      "scope": "modified_source"
+    },
+    {
+      "path": "tests/test_economic_tron_actions.py",
+      "sha256": "0e6e7feff142525bd2321f51d9651613f6501958da7a860b4ec5ccd6e8e6cd6e",
+      "physical_lines": 79,
+      "meaningful_lines": 65,
+      "scope": "tests"
+    },
+    {
+      "path": "tests/test_economic_tx_graph.py",
+      "sha256": "f79662ef08024c3557e916c8f9b033ccfcddf6e59eef0ed26f3e2ba1440af7bb",
+      "physical_lines": 393,
+      "meaningful_lines": 351,
+      "scope": "tests"
+    },
+    {
+      "path": "IMPLEMENTATION_PR06_20260928.md",
+      "sha256": "c08cf46bf8edcd28d842d95042e7b77718f5d9e196e396e12f60cebcad3db7d6",
+      "physical_lines": 67,
+      "meaningful_lines": 41,
+      "scope": "documentation"
+    }
+  ],
+  "totals": {
+    "new_source": 1241,
+    "modified_source": 263,
+    "tests": 416,
+    "documentation": 41
+  }
+}
