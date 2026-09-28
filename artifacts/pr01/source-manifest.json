@@ -1,0 +1,105 @@
+{
+  "generated_at": "2026-09-28T09:25:36.270448+00:00",
+  "host": "Cherry 84.32.71.168",
+  "root": "/srv/skew/gwdc-financial-agent-20260924",
+  "meaningful_line_definition": "nonblank source lines excluding full-line comments and docstrings",
+  "totals": {
+    "source": 568,
+    "tests": 474
+  },
+  "files": [
+    {
+      "path": "src/economic_machine/mandate.py",
+      "bytes": 11687,
+      "sha256": "4a7efc6bc3718298995a9c2e0b63cf5a4e63cf2d6f56adea4906678974f0156f",
+      "physical_lines": 215,
+      "meaningful_lines": 174
+    },
+    {
+      "path": "src/economic_machine/capabilities.py",
+      "bytes": 2948,
+      "sha256": "b1e085a264ca74425626ffeb269283f1fac75844d7b3b37873a10f583c073ba2",
+      "physical_lines": 53,
+      "meaningful_lines": 43
+    },
+    {
+      "path": "src/economic_machine/application.py",
+      "bytes": 5282,
+      "sha256": "1f933a88d12b0e05b4566bd47c20d1375458f3cee923690dd683affa91e03f4c",
+      "physical_lines": 89,
+      "meaningful_lines": 73
+    },
+    {
+      "path": "src/finance_service/__init__.py",
+      "bytes": 82,
+      "sha256": "d2803e4208d63c80885946a8edbb0753890cd453bd9c6072b990d6af3a19fcfe",
+      "physical_lines": 1,
+      "meaningful_lines": 0
+    },
+    {
+      "path": "src/finance_service/context.py",
+      "bytes": 1627,
+      "sha256": "b768148905852588c70b1af17379593612302498698a93537a025e0772554708",
+      "physical_lines": 45,
+      "meaningful_lines": 31
+    },
+    {
+      "path": "src/finance_service/repository.py",
+      "bytes": 2495,
+      "sha256": "bf43665041726167d824684a09e54d718bdbc40455d82c8ba0aa615e2bd42e3e",
+      "physical_lines": 65,
+      "meaningful_lines": 44
+    },
+    {
+      "path": "src/finance_service/mandate_service.py",
+      "bytes": 14023,
+      "sha256": "135b23a2edbdc69b0c73bf69a774e4568adf9a47fba9937925aa89896c71fa54",
+      "physical_lines": 255,
+      "meaningful_lines": 203
+    },
+    {
+      "path": "tests/test_economic_mandate.py",
+      "bytes": 12265,
+      "sha256": "83375dca99351bc6fdc75500dbced8015aec77ff470668fe518f8918ebce2aaa",
+      "physical_lines": 236,
+      "meaningful_lines": 202
+    },
+    {
+      "path": "tests/test_finance_mandate_service.py",
+      "bytes": 16885,
+      "sha256": "71567dd858d984f632afb4769d9ad4cd8d47dbaf1594225f1c3ae4e1f36ffc77",
+      "physical_lines": 314,
+      "meaningful_lines": 272
+    },
+    {
+      "path": "cases/economic_mandate_demo.json",
+      "bytes": 3532,
+      "sha256": "fdd5785556d4108ce57335b7b0992a8a74935a9bdf128457deed5ba188c01b59"
+    },
+    {
+      "path": "IMPLEMENTATION_PR01_20260928.md",
+      "bytes": 10128,
+      "sha256": "ece22213a2c13f04b1287e270fe6f6a100bfc426b6a1252b698bbd997e4b2455"
+    },
+    {
+      "path": "TRON_FURIOSA_10PR_PLAN_20260928.md",
+      "bytes": 26008,
+      "sha256": "a1cc2a71c63f56c1c2e77866c6ac37aed63052850104a5e0eaefe17922f28895"
+    },
+    {
+      "path": "README.md",
+      "bytes": 13130,
+      "sha256": "af24c42cfa3a6cc6d3fc9b2f154353e889f388eeafeb7263f042c08b77e69977"
+    }
+  ],
+  "private_key_marker_scan": "PASS",
+  "verification": {
+    "at": "2026-09-28T09:20:57.790148+00:00",
+    "scope": "economic core + mandate service + legacy server",
+    "tests": 185,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": true
+  }
+}

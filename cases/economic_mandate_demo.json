@@ -1,0 +1,57 @@
+{
+  "schema_version": "economic-mandate-1",
+  "mandate_id": "mandate-demo",
+  "revision": 1,
+  "scope": {
+    "tenant_id": "tenant-demo",
+    "owner_id": "owner-demo",
+    "wallet": "411111111111111111111111111111111111111111",
+    "network": "tron-nile"
+  },
+  "trace_id": "trace-demo",
+  "terms": {
+    "capital": [{"asset": "USDT", "amount": "10000"}],
+    "base_asset": "USDT",
+    "risk_profile": "cautious",
+    "horizon_seconds": 2592000,
+    "immediate_cash": {"kind": "BPS", "value": 3000},
+    "withdrawals": [{"after_seconds": 604800, "minimum": {"kind": "AMOUNT", "asset": "USDT", "amount": "5000"}}],
+    "price_exposure_caps_bps": {"TRX": 0, "USDD": 3000},
+    "protocol_caps_bps": {"justlend": 7000, "usdd": 3000},
+    "borrowing": {
+      "consent": false,
+      "max_debt": {"asset": "USDT", "amount": "0"},
+      "min_collateral_ratio_bps": 15000,
+      "liquidation_buffer_bps": 2000
+    },
+    "limits": {
+      "single_amount": {"asset": "USDT", "amount": "4000"},
+      "cumulative_amount": {"asset": "USDT", "amount": "7000"},
+      "fee_amount": {"asset": "USDT", "amount": "20"},
+      "daily_loss": {"asset": "USDT", "amount": "100"},
+      "stress_loss": {"asset": "USDT", "amount": "300"}
+    },
+    "allowed_actions": ["HOLD", "SUPPLY", "REDEEM"],
+    "effective_at": "2026-09-28T12:00:00Z",
+    "expires_at": "2026-09-28T13:00:00Z"
+  },
+  "source_messages": [{
+    "message_id": "confirmation-form-demo",
+    "text": "합성 확인 폼: 원금 10000 USDT, 기준 통화 USDT, 위험 cautious, 기간 30일, 즉시 현금 30%, 7일 뒤 누적 회수 가능액 5000 USDT. TRX 가격 노출 0%, USDD 30%; JustLend 70%, USDD 프로토콜 30%. 차입 미동의, 부채 0 USDT, 담보비율 하한 150%, 청산 완충 20%. 단건 4000 USDT, 누적 7000 USDT, 건별 비용 20 USDT, 일손실 100 USDT, 스트레스 손실 300 USDT. 허용 동작 HOLD SUPPLY REDEEM. 정책 유효 시각 2026-09-28T12:00:00Z, 만료 2026-09-28T13:00:00Z. 실제 사용자나 지갑이 아닌 테스트 자료입니다."
+  }],
+  "source_refs": {
+    "capital": [{"message_id": "confirmation-form-demo", "quote": "원금 10000 USDT"}],
+    "base_asset": [{"message_id": "confirmation-form-demo", "quote": "기준 통화 USDT"}],
+    "risk_profile": [{"message_id": "confirmation-form-demo", "quote": "위험 cautious"}],
+    "horizon_seconds": [{"message_id": "confirmation-form-demo", "quote": "기간 30일"}],
+    "immediate_cash": [{"message_id": "confirmation-form-demo", "quote": "즉시 현금 30%"}],
+    "withdrawals": [{"message_id": "confirmation-form-demo", "quote": "7일 뒤 누적 회수 가능액 5000 USDT"}],
+    "price_exposure_caps_bps": [{"message_id": "confirmation-form-demo", "quote": "TRX 가격 노출 0%, USDD 30%"}],
+    "protocol_caps_bps": [{"message_id": "confirmation-form-demo", "quote": "JustLend 70%, USDD 프로토콜 30%"}],
+    "borrowing": [{"message_id": "confirmation-form-demo", "quote": "차입 미동의, 부채 0 USDT, 담보비율 하한 150%, 청산 완충 20%"}],
+    "limits": [{"message_id": "confirmation-form-demo", "quote": "단건 4000 USDT, 누적 7000 USDT, 건별 비용 20 USDT, 일손실 100 USDT, 스트레스 손실 300 USDT"}],
+    "allowed_actions": [{"message_id": "confirmation-form-demo", "quote": "허용 동작 HOLD SUPPLY REDEEM"}],
+    "effective_at": [{"message_id": "confirmation-form-demo", "quote": "정책 유효 시각 2026-09-28T12:00:00Z"}],
+    "expires_at": [{"message_id": "confirmation-form-demo", "quote": "만료 2026-09-28T13:00:00Z"}]
+  }
+}

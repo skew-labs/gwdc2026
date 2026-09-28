@@ -2,6 +2,7 @@
 
 **2026-09-28 최신 제품 방향:** 고객 소유 노드/BYON/SSH·runner 가입을 제외하고 **Qwen3 32B + 일반 웹서비스 + Economic Machine + TronLink 승인**으로 통합한다. [통합 아키텍처·첨부 전체 대조·구현 격차](TRON_FURIOSA_UNIFIED_ARCHITECTURE_20260928.md)와 [의존관계·완료 기준을 정한 10개 PR 계획](TRON_FURIOSA_10PR_PLAN_20260928.md)이 현재 우선 명세다. 아래 과거 배포/연구 기록을 이 새 고객 흐름의 완료 증거로 해석하지 않는다.
 
+**10PR 구현 시작:** [PR 01 — 확인된 조건과 서비스 계약](IMPLEMENTATION_PR01_20260928.md)을 구현했다. Mandate/상품 capability, 계정 범위, 정책 revision·확인·취소, unsigned 검토안 무효화와 미결 hold 보존을 Cherry에서 검증했다. 신규 42개를 포함해 회귀 테스트 185개 통과. 실제 인증·PostgreSQL·지갑 거래는 후속 구현이다. [GitHub 저장소](https://github.com/skew-labs/gwdc2026)의 `pr01-confirmed-mandates`에서 이번 변경을 검토한다.
 
 데이터 입력을 제외한 별도 **Economic Machine 실행 코어**는 [구현·명령어·불변조건·검증표](MACHINE_ECONOMICS_CORE_20260925.md)에 있다. `src/economic_machine/`는 State/Opcode/Invariant/Transition/Receipt 및 Capital Sandbox를 구현한 독립 패키지이며, Cherry에서 가상 상태만으로 검증했다. 체인 거래 실행이나 실제 정산은 아직 연결되지 않았다.
 
