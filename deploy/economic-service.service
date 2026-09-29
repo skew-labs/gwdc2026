@@ -9,11 +9,12 @@ User=gwdc-finance
 Group=gwdc-finance
 WorkingDirectory=/srv/gwdc2026
 EnvironmentFile=/etc/gwdc/economic-service.env
-# This API unit accepts only FINANCE_SERVICE_POSTGRES_API_DSN. A worker process
-# receives FINANCE_SERVICE_POSTGRES_WORKER_DSN separately.
+# This API unit accepts only FINANCE_SERVICE_POSTGRES_API_DSN_FILE. The file
+# must be owned by the service account with mode 0600 and use sslmode=verify-full.
+# A worker process receives FINANCE_SERVICE_POSTGRES_WORKER_DSN_FILE separately.
 Environment=FINANCE_SERVICE_WEB_ROOT=/srv/gwdc2026/web
 Environment=FINANCE_SERVICE_DEMO_STORY_PATH=/srv/gwdc2026/cases/product_workspace_story.json
-ExecStart=/srv/gwdc2026/.venv/bin/uvicorn finance_service.entrypoint:app --host 127.0.0.1 --port 8080 --workers 1
+ExecStart=/srv/gwdc2026/.venv/bin/python -m uvicorn finance_service.entrypoint:app --host 127.0.0.1 --port 8080 --workers 1
 Restart=on-failure
 RestartSec=5
 NoNewPrivileges=true

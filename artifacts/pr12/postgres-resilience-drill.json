@@ -1,0 +1,30 @@
+{
+  "completed_at": "2026-09-29T03:15:17.682969+00:00",
+  "failover": {
+    "primary_fenced_before_promotion": true,
+    "primary_flush_lsn": "0/90020F0",
+    "promoted_markers": [
+      "PROMOTED_WRITE",
+      "REPLICATED"
+    ],
+    "promoted_write": true,
+    "source_backup_manifest_sha256": "d4a8c42ea82433e591641d809a9038e1974610452b521247f0bdcc112fe8cb7f",
+    "standby_backup_manifest_sha256": "11266b911d97fb73df8d09bb0370b2f24c24beed111078eafc32bb2ba7d82ea0",
+    "standby_replay_lsn": "0/90020F0",
+    "status": "PASS"
+  },
+  "pitr": {
+    "after_target_excluded": true,
+    "pitr_base_manifest_sha256": "38b82bec844536b170a950b29f70890bc22be49e361af37a6544196d7c15a3d2",
+    "restore_point_lsn": "0/8002158",
+    "restored_markers": [
+      "BEFORE_TARGET"
+    ],
+    "source_backup_manifest_sha256": "3da0f9f2165f53ad753991e860b59553d76733355e1f1054540a06c0141c7b21",
+    "status": "PASS"
+  },
+  "schema_version": "gwdc-postgres-resilience-drill-1",
+  "source_modified": false,
+  "started_at": "2026-09-29T03:15:15.089368+00:00",
+  "status": "PASS"
+}

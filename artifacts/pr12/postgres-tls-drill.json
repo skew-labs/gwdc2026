@@ -1,0 +1,14 @@
+{
+  "backup_manifest_sha256": "26959f0354add9ae2837818efbd805e210a6de9df95bcca43aeb1c0c77901da3",
+  "ca_certificate_sha256": "29e241d6f5b2921b892a079cac6c64772322777bd5c08f40c2efe2706272349a",
+  "cipher": "TLS_AES_256_GCM_SHA384",
+  "completed_at": "2026-09-29T03:23:52.922392+00:00",
+  "plaintext_rejected": true,
+  "schema_version": "gwdc-postgres-tls-drill-1",
+  "server_certificate_sha256": "6333dae8003e25df0c2934bf5ccd2c7d8ad9d0cdc1dc757c82f934ff0a138b6e",
+  "source_modified": false,
+  "sslmode": "verify-full",
+  "started_at": "2026-09-29T03:23:52.303248+00:00",
+  "status": "PASS",
+  "tls_version": "TLSv1.3"
+}

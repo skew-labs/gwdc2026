@@ -31,4 +31,17 @@ USDD Vault is represented as collateral, issued debt, stability fee, liquidation
 
 Use the checked-in PR10 branch in the authorized Cherry worktree. Run the story builder against the saved snapshot whose hash is recorded in `evidence-manifest.json`, then run `tests.test_finance_product_workspace` and the direct PR09 connection tests. Start the service with the checked-in story and web root, open the local HTTP endpoint, and verify the conversation, products, two plans, locked approval, null usage, employee statuses, and refresh restoration.
 
-The service must not be presented as deployed from this procedure. PostgreSQL apply/restore, wallet assertion verification, actual Qwen/Kiln inference, TronLink signature, broadcast, testnet transaction, live position, and realized performance remain external acceptance gates.
+The service must not be presented as deployed from this procedure. Production PostgreSQL deployment and off-host retention, wallet assertion verification, actual Qwen/Kiln inference, TronLink signature, broadcast, testnet transaction, live position, and realized performance remain external acceptance gates.
+
+## Hosted service reliability
+
+| Requirement | Current artifact | Status |
+| --- | --- | --- |
+| PostgreSQL role isolation, RLS and restart persistence | PR11 implementation and Cherry tests | VERIFIED_ISOLATED_CHERRY |
+| Bounded pool, timeout, metrics and alert checks | PR12 runtime, `/healthz`, `/metrics`, supervisor evidence | VERIFIED_ISOLATED_CHERRY |
+| TLS hostname and CA verification | `artifacts/pr12/postgres-tls-drill.json` | VERIFIED_ISOLATED_CLONE |
+| Physical backup, PITR and standby promotion | PR12 drill and backup implementation | VERIFIED_ISOLATED_CLONE |
+| Actual encrypted off-host retained backup | destination attestation required by code | NOT_MET_NO_DESTINATION |
+| Production RPO/RTO and public deployment | no production incident-domain test | NOT_MEASURED |
+
+PostgreSQL apply, PITR, failover, load and service secret rotation now have isolated Cherry evidence. They do not prove a production deployment or replace the missing Qwen, wallet and TRON execution evidence above.

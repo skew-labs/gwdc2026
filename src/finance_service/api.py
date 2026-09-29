@@ -25,10 +25,13 @@ def create_app(*, session_verifier, repository, clock, product_service=None,
                web_root=None, demo_story=None):
     try:
         from fastapi import FastAPI, Header, HTTPException
+        from fastapi.responses import PlainTextResponse
     except ImportError as exc:
         raise RuntimeError("install the service optional dependencies to run FastAPI") from exc
 
     app = FastAPI(title="GWDC Economic Service", version="0.9.0")
+    if hasattr(repository, "close"):
+        app.router.add_event_handler("shutdown", repository.close)
 
     def context(authorization):
         try:
@@ -53,6 +56,12 @@ def create_app(*, session_verifier, repository, clock, product_service=None,
             raise HTTPException(status_code=503,
                                 detail="storage journal integrity failed")
         return {"status": "ok", "execution_authority": "NONE", "storage": storage}
+
+    @app.get("/metrics", response_class=PlainTextResponse)
+    def metrics():
+        if not hasattr(repository, "prometheus_metrics"):
+            raise HTTPException(status_code=404, detail="runtime metrics unavailable")
+        return repository.prometheus_metrics()
 
     @app.get("/v1/records/{record_kind}/{record_id}")
     def get_record(record_kind: str, record_id: str,

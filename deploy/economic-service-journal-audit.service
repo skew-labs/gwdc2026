@@ -1,0 +1,17 @@
+[Unit]
+Description=GWDC finance journal full integrity audit
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=gwdc-finance
+Group=gwdc-finance
+WorkingDirectory=/srv/gwdc2026
+EnvironmentFile=/etc/gwdc/economic-service.env
+ExecStart=/srv/gwdc2026/.venv/bin/python scripts/deep_audit_finance_service.py --dsn-file ${FINANCE_SERVICE_POSTGRES_API_DSN_FILE}
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+

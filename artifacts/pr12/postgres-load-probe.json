@@ -1,0 +1,27 @@
+{
+  "asset_movements": 0,
+  "broadcasts": 0,
+  "completed_at": "2026-09-29T03:20:38.111107+00:00",
+  "completed_operations": 37345,
+  "duration_seconds": 60.02,
+  "errors": {},
+  "execution_authority": "NONE",
+  "journal_integrity": true,
+  "journal_streams": 256,
+  "journal_v2_events": 37345,
+  "latency_ms": {
+    "max": 112.578,
+    "p50": 24.111,
+    "p95": 40.251,
+    "p99": 50.877
+  },
+  "minimum_operations": 1000,
+  "operations_per_second": 622.214,
+  "pool_max_size": 16,
+  "schema_version": "gwdc-postgres-load-probe-1",
+  "scope_count": 256,
+  "started_at": "2026-09-29T03:19:37.244074+00:00",
+  "status": "PASS",
+  "transactions": 0,
+  "workers": 16
+}

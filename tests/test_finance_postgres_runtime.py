@@ -39,8 +39,15 @@ class PostgresRuntimeTests(unittest.TestCase):
         with self.psycopg.connect(self.admin_dsn, autocommit=True) as db:
             db.execute("TRUNCATE finance_service_outbox,finance_service_jobs,"
                 "finance_service_records,finance_public_observations,"
-                "finance_service_routines,finance_service_journal RESTART IDENTITY CASCADE")
-        self.repo = PostgresOperationalRepository(self.api_dsn, self.worker_dsn)
+                "finance_service_routines,finance_service_journal_heads,"
+                "finance_service_journal RESTART IDENTITY CASCADE")
+            db.execute("UPDATE finance_service_journal_audit SET integrity=true,"
+                       "audited_root=NULL,audited_at=NULL,failure_code=NULL")
+        self.repo = PostgresOperationalRepository(self.api_dsn, self.worker_dsn,
+            allow_insecure_localhost=True)
+
+    def tearDown(self):
+        self.repo.close()
 
     def enqueue(self, scope, subject, dependency, *, priority=0, max_attempts=3):
         return self.repo.enqueue_job(scope, role="VAULT", routine_id="treasury",
@@ -56,13 +63,16 @@ class PostgresRuntimeTests(unittest.TestCase):
             roles = dict(db.execute("SELECT rolname,rolsuper FROM pg_roles WHERE rolname IN "
                 "('pr11_api','pr11_worker')").fetchall())
         self.assertEqual([row[0] for row in migrations],
-                         ["009_finance_service", "011_finance_postgres_runtime"])
+                         ["009_finance_service", "011_finance_postgres_runtime",
+                          "012_finance_resilience", "013_finance_journal_audit"])
         self.assertTrue(all(len(row[1]) == 64 for row in migrations))
         self.assertEqual(roles, {"pr11_api": False, "pr11_worker": False})
-        api_only = PostgresOperationalRepository(self.api_dsn)
+        api_only = PostgresOperationalRepository(
+            self.api_dsn, allow_insecure_localhost=True)
         self.assertFalse(api_only.health()["worker_credential_loaded"])
         with self.assertRaisesRegex(MachineError, "worker DSN is required"):
             api_only.claim_job(worker_id="api-must-not-claim", at=AT)
+        api_only.close()
 
     def test_api_entrypoint_refuses_worker_credential(self):
         env = dict(os.environ)
@@ -99,10 +109,14 @@ class PostgresRuntimeTests(unittest.TestCase):
         with self.assertRaisesRegex(MachineError, "version conflict"):
             self.repo.put_record(SCOPE, "PLAN", "plan-1", {"value": 2},
                                  expected_version=0, at=AT)
-        restarted = PostgresOperationalRepository(self.api_dsn, self.worker_dsn)
-        self.assertEqual(restarted.get_record(SCOPE, "PLAN", "plan-1")["body"],
-                         {"value": 1})
-        self.assertEqual(restarted.health()["backend"], "POSTGRESQL")
+        restarted = PostgresOperationalRepository(self.api_dsn, self.worker_dsn,
+            allow_insecure_localhost=True)
+        try:
+            self.assertEqual(restarted.get_record(SCOPE, "PLAN", "plan-1")["body"],
+                             {"value": 1})
+            self.assertEqual(restarted.health()["backend"], "POSTGRESQL")
+        finally:
+            restarted.close()
         with self.psycopg.connect(self.api_dsn) as db:
             db.execute("SELECT set_config('app.finance_scope_hash',%s,true)",
                        (digest({"domain": "finance-service-scope-1",
@@ -129,8 +143,13 @@ class PostgresRuntimeTests(unittest.TestCase):
         lease_three = self.repo.claim_job(worker_id="worker-3",
             at="2026-09-29T03:00:05Z", lease_seconds=5)
         self.assertEqual(lease_three["job_id"], second["job_id"])
-        recovered = PostgresOperationalRepository(self.api_dsn, self.worker_dsn).claim_job(
-            worker_id="worker-4", at="2026-09-29T03:00:10Z", lease_seconds=5)
+        restarted = PostgresOperationalRepository(self.api_dsn, self.worker_dsn,
+            allow_insecure_localhost=True)
+        try:
+            recovered = restarted.claim_job(
+                worker_id="worker-4", at="2026-09-29T03:00:10Z", lease_seconds=5)
+        finally:
+            restarted.close()
         self.assertEqual(recovered["job_id"], second["job_id"])
         self.assertEqual(recovered["attempts"], 2)
 
@@ -141,8 +160,12 @@ class PostgresRuntimeTests(unittest.TestCase):
 
         def claim(index):
             barrier.wait()
-            repo = PostgresOperationalRepository(self.api_dsn, self.worker_dsn)
-            return repo.claim_job(worker_id="parallel-" + str(index), at=AT)
+            repo = PostgresOperationalRepository(self.api_dsn, self.worker_dsn,
+                allow_insecure_localhost=True)
+            try:
+                return repo.claim_job(worker_id="parallel-" + str(index), at=AT)
+            finally:
+                repo.close()
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
             leases = list(pool.map(claim, range(4)))
@@ -172,8 +195,16 @@ class PostgresRuntimeTests(unittest.TestCase):
         self.repo.put_record(SCOPE, "PLAN", "plan-1", {"value": 1},
                              expected_version=0, at=AT)
         with self.psycopg.connect(self.admin_dsn) as db:
+            with self.assertRaisesRegex(Exception, "append-only"):
+                db.execute("UPDATE finance_service_journal SET body_json='{}'::jsonb "
+                           "WHERE ordinal=1")
+            db.rollback()
+            db.execute("ALTER TABLE finance_service_journal DISABLE TRIGGER "
+                       "finance_service_journal_append_only")
             db.execute("UPDATE finance_service_journal SET body_json='{}'::jsonb "
                        "WHERE ordinal=1")
+            db.execute("ALTER TABLE finance_service_journal ENABLE TRIGGER "
+                       "finance_service_journal_append_only")
             db.commit()
         self.assertFalse(self.repo.verify_journal())
         self.assertFalse(self.repo.health()["journal_integrity"])
