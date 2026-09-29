@@ -1,0 +1,83 @@
+{
+  "authority": {
+    "asset_movements": 0,
+    "broadcasts": 0,
+    "contract_deployments": 0,
+    "customer_signatures": 0
+  },
+  "checks": {
+    "deep_audit": {
+      "head_mismatches": 0,
+      "sha256": "2a41ee4998507eb210b954eebf37c4af5324226d79bfdccdaecdaa119a111b0d",
+      "status": "PASS"
+    },
+    "load_probe": {
+      "completed_operations": 37345,
+      "errors": 0,
+      "operations_per_second": 622.214,
+      "p95_ms": 40.251,
+      "p99_ms": 50.877,
+      "sha256": "5d012484e7460fd8ac0a6aa3d0354b7ffddb6c40e41ac14c3bf46fb6f731a93f",
+      "status": "PASS"
+    },
+    "migration_idempotence": {
+      "migration_count": 4,
+      "sha256": "93a89bbedf550eb39773a186baed4405a23c6b1f76519e3954bb86b06c1d551c",
+      "status": "PASS"
+    },
+    "recovery": {
+      "failover": "PASS",
+      "pitr": "PASS",
+      "sha256": "bf4c0ef06632f4beeeb77174c56d8aa10d6c1c75dd437e9ea3fc4670e1ebb2d5",
+      "status": "PASS"
+    },
+    "secret_rotation": {
+      "generation_after": 2,
+      "generation_before": 1,
+      "service_restarted": false,
+      "sha256": "36a6ed7dc28b6db5034afa3b4ded7c569c9c81b7f2eeea3ee01d3ca93ddc0526",
+      "status": "PASS"
+    },
+    "source_manifest": {
+      "file_count": 24,
+      "sha256": "474d17989e2f1f920ff1c73061f4a7b195ec049049245ef82fef20d0c4c5c550",
+      "status": "PASS"
+    },
+    "static_checks": {
+      "sha256": "f789f06b51d0d78a404e5ef00c20b44d684b712c262e5f8d2eb58d64d828bfbb",
+      "status": "PASS"
+    },
+    "systemd_static": {
+      "production_paths_substituted": true,
+      "sha256": "b98d7bcd3a4ea214036ab4366c5c7b9f12117c90b40ca07d69c034a8ffc7556d",
+      "status": "PASS"
+    },
+    "targeted_tests": {
+      "count": 42,
+      "sha256": "94e909fc53ead5ad661c9008559bce5dbd606209a29d1676713e36c558b79406",
+      "status": "PASS"
+    },
+    "tls": {
+      "plaintext_rejected": true,
+      "sha256": "99758334e47267698be59bd1d05538a9daf94b9aad12cd4bc6a143155583257a",
+      "sslmode": "verify-full",
+      "status": "PASS"
+    }
+  },
+  "external_gaps": {
+    "actual_encrypted_off_host_backup": false,
+    "production_deployment": false,
+    "production_rpo_rto": null,
+    "qwen_actual_calls": 0,
+    "tron_live_transactions": 0
+  },
+  "schema_version": "gwdc-pr12-verification-summary-1",
+  "status": "PASS_WITH_EXTERNAL_GAPS",
+  "verification_host": {
+    "host_id": "999573",
+    "hostname": "charmed-weasel",
+    "project_root": "/srv/skew/gwdc-financial-agent-20260924",
+    "provider": "CHERRY_SERVERS"
+  },
+  "verified_commit": "52306be5afa569933cd7c1f28f0058d0cd859f82"
+}

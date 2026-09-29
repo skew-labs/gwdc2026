@@ -15,6 +15,9 @@ PR11의 전역 journal lock과 mutation 전 전체 chain scan을 scope별 stream
 - 복구 clone: `pg_verifybackup` 통과, restore point 이후 marker 제외, standby replay LSN 일치, primary fence 뒤 promotion, promoted write 성공.
 - 실제 FastAPI 프로세스: PostgreSQL health와 supervisor check 통과. 서비스 재시작 없이 DSN 파일을 `pr11_api`에서 `pr12_api_rotated`로 바꿨고 generation 1→2 및 실제 role 변화를 확인했다.
 - 전체 audit 작업: root와 head mismatch 0을 기록했다. systemd unit 문법 검사는 production 절대 경로를 검증 환경의 실행 경로로 치환한 사본에서 통과했다.
+- 코드 고정 커밋 `52306be5afa569933cd7c1f28f0058d0cd859f82`에서 PostgreSQL 17개, PR10 workspace 9개, PR09 운영 연결 16개, 합계 42개가 통과했다. 변경 Python Ruff, compileall, 제출·운영 JSON, 네 migration의 hash 고정 idempotent 재적용도 통과했다.
+
+PR11 대비 의미 있는 delta는 운영 코드·migration·unit·검증 도구 1,592줄 추가/84줄 삭제, 테스트 297줄 추가/12줄 삭제다. 문서와 생성 evidence는 이 수치에서 제외했다.
 
 증거 원문은 `artifacts/pr12`에 있다. 테스트용 CA와 localhost 허용은 격리 TLS/서비스 시험에만 사용했다. 저장된 artifact에는 DSN, password, session secret, tenant, wallet이 없다.
 

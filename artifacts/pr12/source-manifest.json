@@ -1,0 +1,136 @@
+{
+  "base_commit": "142530cffeadbd8596755bc9e8a1b7118aa5037a",
+  "file_count": 24,
+  "files": [
+    {
+      "bytes": 1966,
+      "path": "db/migrations/012_finance_resilience.sql",
+      "sha256": "595849f0fe64d9596fc7c5cb19a7f825368fb48e7d62a2e88a883902750d0753"
+    },
+    {
+      "bytes": 553,
+      "path": "db/migrations/013_finance_journal_audit.sql",
+      "sha256": "e92c3bc871710db00d4a10f0dbd0e8ab0b6f3785bba5c45c4e64c5cfc8f23869"
+    },
+    {
+      "bytes": 724,
+      "path": "deploy/economic-service-backup.service",
+      "sha256": "1a5ea3ad01d179a2f1b4f613480ed7d74566ba70d6d06cc830ca66547a69a630"
+    },
+    {
+      "bytes": 192,
+      "path": "deploy/economic-service-backup.timer",
+      "sha256": "c17c2af1c27da1cc6dd2768522547411a8a6b397662771c08fdfd78e80751ce6"
+    },
+    {
+      "bytes": 429,
+      "path": "deploy/economic-service-health.service",
+      "sha256": "3ee438a00d2aab4c8c8b9f1d5a0a1530d5af9dc589abdd75cee3fa329f1fc782"
+    },
+    {
+      "bytes": 175,
+      "path": "deploy/economic-service-health.timer",
+      "sha256": "cc14cd77e7764be83f1136924f0d833932d0401a908da3337f45b859cb216bd3"
+    },
+    {
+      "bytes": 463,
+      "path": "deploy/economic-service-journal-audit.service",
+      "sha256": "2d6d4380c05278aa6358266e2c001286ad3698c5ed2abd4cfe77618f40f88902"
+    },
+    {
+      "bytes": 176,
+      "path": "deploy/economic-service-journal-audit.timer",
+      "sha256": "f1c31bc2e7d7ae8a7a55d2239b7a92bc76b33268c8cc2d74632196f645828729"
+    },
+    {
+      "bytes": 959,
+      "path": "deploy/economic-service.service",
+      "sha256": "9b9aa95eaca974bd6b64ad898d3d41226c75605b54b290bcfe51b4eb9e94d9dc"
+    },
+    {
+      "bytes": 698,
+      "path": "pyproject.toml",
+      "sha256": "d2cee46f95cd86118e723e3bebb4b092ae72b0855b527ead1cf8e5fbcd00712e"
+    },
+    {
+      "bytes": 4653,
+      "path": "scripts/apply_postgres_migrations.py",
+      "sha256": "75de58d0c24e13614d2ecf3814b52379760509e458b2f6dbbae7ea91d1af1d04"
+    },
+    {
+      "bytes": 2333,
+      "path": "scripts/check_finance_service.py",
+      "sha256": "786eeed37836940cfe973fc2155b14f3c58b25b4a8195ca467fcdcc8f6080248"
+    },
+    {
+      "bytes": 1318,
+      "path": "scripts/deep_audit_finance_service.py",
+      "sha256": "72698620f6c1d46a7d6559866c2b68d04fd21df40c2953be73aef650e8c16187"
+    },
+    {
+      "bytes": 6159,
+      "path": "scripts/postgres_load_probe.py",
+      "sha256": "360cea4807fa4508ccbdae268acb9d43108f2bcad4744fc70489dc8410f5861a"
+    },
+    {
+      "bytes": 3618,
+      "path": "scripts/postgres_physical_backup.py",
+      "sha256": "ec8984ab5793f656d4ea02093295ea0888255705ab9a6da8227e3dbef85c1673"
+    },
+    {
+      "bytes": 14283,
+      "path": "scripts/postgres_resilience_drill.py",
+      "sha256": "c2701741beaf4cdf38401a3719c4c9639701d091d6573fa9def43239c1f9ee38"
+    },
+    {
+      "bytes": 5418,
+      "path": "scripts/postgres_tls_drill.py",
+      "sha256": "750307d9fbe99aaa1e0c34c82c6ad2cec20b31825b759b02355a7d6f5dcd0a97"
+    },
+    {
+      "bytes": 1426,
+      "path": "src/finance_service/alerts.py",
+      "sha256": "bcf557ec5853cf2b060df725ab3cf402f62cf1c4dbadfdd03f87816401128763"
+    },
+    {
+      "bytes": 7553,
+      "path": "src/finance_service/api.py",
+      "sha256": "0533c47a2d0432b350bafbfa1717d5f12840e69b159a79d02f8c046e9db829dd"
+    },
+    {
+      "bytes": 2746,
+      "path": "src/finance_service/entrypoint.py",
+      "sha256": "03f833e6404111158165d73f6c6578fb2ed170e71468f641cbb6d386a573a024"
+    },
+    {
+      "bytes": 51042,
+      "path": "src/finance_service/postgres_repository.py",
+      "sha256": "be5389d36f10ad70df59c99b7934fbd4355bdc2c206ad0a0d3e97986a8449e3d"
+    },
+    {
+      "bytes": 13070,
+      "path": "src/finance_service/postgres_runtime.py",
+      "sha256": "b4a3647e74897a6ef18d18a6f6d71e9478f514c56b37f37afb14544c1e89e6d2"
+    },
+    {
+      "bytes": 12141,
+      "path": "tests/test_finance_postgres_resilience.py",
+      "sha256": "9b12aed24054fa554c08ad8a4cc8fce0dd58e3d9b28a21f4f0b8eb2cefb92f4c"
+    },
+    {
+      "bytes": 12034,
+      "path": "tests/test_finance_postgres_runtime.py",
+      "sha256": "6afcb0742504564459a60c6026e7628aa271b88d8635a881661e189bb360fbaa"
+    }
+  ],
+  "production_delta": {
+    "added": 1592,
+    "deleted": 84
+  },
+  "schema_version": "gwdc-pr12-source-manifest-1",
+  "test_delta": {
+    "added": 297,
+    "deleted": 12
+  },
+  "verified_commit": "52306be5afa569933cd7c1f28f0058d0cd859f82"
+}

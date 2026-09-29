@@ -48,8 +48,23 @@
     },
     {
       "name": "PR12 PostgreSQL secret rotation",
-      "sha256": "55f1e5aa9d116167b9a7fbe945f10aa88dc727177c3554e2fd5903a56f402a08",
+      "sha256": "36a6ed7dc28b6db5034afa3b4ded7c569c9c81b7f2eeea3ee01d3ca93ddc0526",
       "status": "VERIFIED_ISOLATED_CHERRY"
+    },
+    {
+      "name": "PR12 exact-commit targeted tests",
+      "sha256": "94e909fc53ead5ad661c9008559bce5dbd606209a29d1676713e36c558b79406",
+      "status": "VERIFIED_ISOLATED_CHERRY"
+    },
+    {
+      "name": "PR12 systemd static verification",
+      "sha256": "b98d7bcd3a4ea214036ab4366c5c7b9f12117c90b40ca07d69c034a8ffc7556d",
+      "status": "VERIFIED_ISOLATED_CHERRY"
+    },
+    {
+      "name": "PR12 verification summary",
+      "sha256": "98594015434a19d567e1ced099f847de4abfb0ade70f552bf385f67f62f617b4",
+      "status": "PASS_WITH_EXTERNAL_GAPS"
     }
   ],
   "broadcasts": 0,
