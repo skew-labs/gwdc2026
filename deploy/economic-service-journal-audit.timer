@@ -1,0 +1,11 @@
+[Unit]
+Description=Audit the GWDC finance journal every five minutes
+
+[Timer]
+OnBootSec=2m
+OnUnitActiveSec=5m
+AccuracySec=15s
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -25,6 +25,46 @@
       "name": "PR09 hosted service",
       "sha256": "5a957276dfe16ec67dc0686f69f08cb49f37051318c9be697cd55dccdd7fe556",
       "status": "VERIFIED_REPLAY"
+    },
+    {
+      "name": "PR11 PostgreSQL runtime",
+      "sha256": "8265e0dbd9863d05aa920fa911b2e23467da0933270fc83be1d4f95d21fa1d5c",
+      "status": "VERIFIED_ISOLATED_CHERRY"
+    },
+    {
+      "name": "PR12 PostgreSQL PITR and failover drill",
+      "sha256": "bf4c0ef06632f4beeeb77174c56d8aa10d6c1c75dd437e9ea3fc4670e1ebb2d5",
+      "status": "VERIFIED_ISOLATED_CHERRY"
+    },
+    {
+      "name": "PR12 PostgreSQL TLS drill",
+      "sha256": "99758334e47267698be59bd1d05538a9daf94b9aad12cd4bc6a143155583257a",
+      "status": "VERIFIED_ISOLATED_CHERRY"
+    },
+    {
+      "name": "PR12 PostgreSQL load probe",
+      "sha256": "5d012484e7460fd8ac0a6aa3d0354b7ffddb6c40e41ac14c3bf46fb6f731a93f",
+      "status": "VERIFIED_ISOLATED_CHERRY"
+    },
+    {
+      "name": "PR12 PostgreSQL secret rotation",
+      "sha256": "36a6ed7dc28b6db5034afa3b4ded7c569c9c81b7f2eeea3ee01d3ca93ddc0526",
+      "status": "VERIFIED_ISOLATED_CHERRY"
+    },
+    {
+      "name": "PR12 exact-commit targeted tests",
+      "sha256": "94e909fc53ead5ad661c9008559bce5dbd606209a29d1676713e36c558b79406",
+      "status": "VERIFIED_ISOLATED_CHERRY"
+    },
+    {
+      "name": "PR12 systemd static verification",
+      "sha256": "b98d7bcd3a4ea214036ab4366c5c7b9f12117c90b40ca07d69c034a8ffc7556d",
+      "status": "VERIFIED_ISOLATED_CHERRY"
+    },
+    {
+      "name": "PR12 verification summary",
+      "sha256": "98594015434a19d567e1ced099f847de4abfb0ade70f552bf385f67f62f617b4",
+      "status": "PASS_WITH_EXTERNAL_GAPS"
     }
   ],
   "broadcasts": 0,
@@ -49,6 +89,19 @@
   "qwen_actual_calls": 0,
   "qwen_latency_ms": null,
   "qwen_token_usage": null,
+  "hosted_service_operations": {
+    "actual_off_host_backup": false,
+    "load_errors": 0,
+    "load_operations": 37345,
+    "load_p95_ms": 40.251,
+    "load_p99_ms": 50.877,
+    "load_requests_per_second": 622.214,
+    "pitr": "PASS_ISOLATED_CLONE",
+    "production_rpo_rto": null,
+    "secret_rotation_without_restart": true,
+    "standby_promotion": "PASS_ISOLATED_CLONE",
+    "tls_verify_full": "PASS_ISOLATED_CLONE"
+  },
   "run_a_comparison_hash": "f40deda0afed61611aa502f4c02295c4e1cbe671623c44006dc0ddfd429e5f4d",
   "run_b_comparison_hash": "3506f665bfd67a1247dba659074801b3505d702666c61a37c6693268814dcb21",
   "schema_version": "dual-track-evidence-manifest-1",

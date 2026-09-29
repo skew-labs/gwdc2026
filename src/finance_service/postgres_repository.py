@@ -8,6 +8,7 @@ Neither connection carries signing or chain execution authority.
 
 import json
 import secrets
+import time
 from contextlib import contextmanager
 from copy import deepcopy
 from datetime import datetime, timedelta
@@ -15,6 +16,7 @@ from pathlib import Path
 
 from economic_machine.values import MachineError, canonical, digest, ident, utc
 
+from .alerts import evaluate_storage_alerts
 from .operational_repository import (
     ROLES,
     ROUTINE_STATES,
@@ -22,6 +24,12 @@ from .operational_repository import (
     _hash,
     _reject_sensitive,
     _scope,
+)
+from .postgres_runtime import (
+    DsnSecretSource,
+    PostgresPoolRuntime,
+    PostgresRuntimePolicy,
+    RuntimeMetrics,
 )
 
 
@@ -60,56 +68,138 @@ def _normalized_row(row):
 class PostgresOperationalRepository:
     """RLS-scoped API state plus worker leases on PostgreSQL 16 or newer."""
 
-    def __init__(self, api_dsn, worker_dsn=None):
-        if not isinstance(api_dsn, str) or not api_dsn.strip():
-            raise MachineError("PostgreSQL API DSN is required")
-        if worker_dsn is not None and (not isinstance(worker_dsn, str)
-                                       or not worker_dsn.strip()):
-            raise MachineError("invalid PostgreSQL worker DSN")
-        self.api_dsn = api_dsn
-        self.worker_dsn = worker_dsn
+    MAX_DEEP_AUDIT_AGE_SECONDS = 600
+
+    def __init__(self, api_dsn=None, worker_dsn=None, *, api_dsn_file=None,
+                 worker_dsn_file=None, runtime_policy=None,
+                 allow_insecure_localhost=False, pool_runtime=None):
+        if pool_runtime is None:
+            api_source = DsnSecretSource(value=api_dsn, path=api_dsn_file,
+                                         label="PostgreSQL API DSN")
+            worker_source = None
+            if worker_dsn is not None or worker_dsn_file is not None:
+                worker_source = DsnSecretSource(value=worker_dsn, path=worker_dsn_file,
+                                                label="PostgreSQL worker DSN")
+            pool_runtime = PostgresPoolRuntime(api_source, worker_source,
+                policy=runtime_policy or PostgresRuntimePolicy(),
+                allow_insecure_localhost=allow_insecure_localhost)
+        if not isinstance(pool_runtime, PostgresPoolRuntime):
+            raise MachineError("invalid PostgreSQL pool runtime")
+        self.runtime = pool_runtime
+        self.metrics = RuntimeMetrics()
         with self.connect() as db:
-            version = db.execute("SHOW server_version_num").fetchone()["server_version_num"]
+            identity = db.execute("SELECT current_user AS role,"
+                "current_setting('server_version_num') AS server_version_num").fetchone()
+            version = identity["server_version_num"]
+            self.api_role = identity["role"]
             self.server_version = int(version)
             if self.server_version < 160000:
                 raise MachineError("PostgreSQL 16 or newer is required")
             required = db.execute(
                 "SELECT to_regclass('finance_service_records') AS records,"
                 "to_regclass('finance_service_jobs') AS jobs,"
-                "to_regclass('finance_service_journal') AS journal").fetchone()
+                "to_regclass('finance_service_journal') AS journal,"
+                "to_regclass('finance_service_journal_heads') AS heads,"
+                "to_regclass('finance_service_journal_audit') AS audit").fetchone()
             if any(required[key] is None for key in required):
                 raise MachineError("finance service PostgreSQL migrations are incomplete")
+        if self.runtime.worker_source is not None:
+            with self.connect(worker=True) as db:
+                worker = db.execute("SELECT current_user AS role,"
+                    "pg_has_role(current_user,'gwdc_finance_worker','member') "
+                    "AS authorized").fetchone()
+            if worker["role"] == self.api_role or not worker["authorized"]:
+                self.close()
+                raise MachineError("PostgreSQL API and worker roles must be separated")
+            self.worker_role = worker["role"]
+        else:
+            self.worker_role = None
+        self.verify_journal()
 
     @contextmanager
-    def connect(self, *, scope_hash=None, worker=False):
-        psycopg, dict_row, _ = _driver()
-        if worker and self.worker_dsn is None:
-            raise MachineError("PostgreSQL worker DSN is required for cross-scope operation")
-        dsn = self.worker_dsn if worker else self.api_dsn
-        db = psycopg.connect(dsn, row_factory=dict_row, autocommit=False)
+    def connect(self, *, scope_hash=None, worker=False, repeatable_read=False):
+        role = "worker" if worker else "api"
+        started = time.monotonic()
+        failed = False
+        pool_timeout = False
         try:
-            if scope_hash is not None:
-                _hash(scope_hash, "database scope hash")
-                db.execute("SELECT set_config('app.finance_scope_hash', %s, true)",
-                           (scope_hash,))
-            yield db
-            db.commit()
-        except Exception:
-            db.rollback()
+            with self.runtime.connection(worker=worker) as db:
+                if repeatable_read:
+                    db.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY")
+                db.execute("SELECT set_config('statement_timeout',%s,true),"
+                    "set_config('lock_timeout',%s,true),"
+                    "set_config('idle_in_transaction_session_timeout',%s,true)",
+                    (str(self.runtime.policy.statement_timeout_ms),
+                     str(self.runtime.policy.lock_timeout_ms),
+                     str(self.runtime.policy.idle_transaction_timeout_ms)))
+                identity = db.execute("SELECT current_user AS role,"
+                    "pg_has_role(current_user,'gwdc_finance_api','member') AS api,"
+                    "pg_has_role(current_user,'gwdc_finance_worker','member') AS worker"
+                    ).fetchone()
+                if worker and not identity["worker"]:
+                    raise MachineError("PostgreSQL worker role is not authorized")
+                if not worker and (not identity["api"] or identity["worker"]):
+                    raise MachineError("PostgreSQL API role is not scope-only")
+                if worker:
+                    self.worker_role = identity["role"]
+                else:
+                    self.api_role = identity["role"]
+                if scope_hash is not None:
+                    _hash(scope_hash, "database scope hash")
+                    db.execute("SELECT set_config('app.finance_scope_hash', %s, true)",
+                               (scope_hash,))
+                yield db
+                db.commit()
+        except Exception as exc:
+            failed = True
+            pool_timeout = type(exc).__name__ in {"PoolTimeout", "TooManyRequests"}
             raise
         finally:
-            db.close()
+            self.metrics.transaction(role, time.monotonic() - started,
+                                     failed=failed, pool_timeout=pool_timeout)
 
     @staticmethod
-    def _lock_journal(db):
-        db.execute("SELECT pg_advisory_xact_lock(hashtextextended(%s,0))",
-                   ("finance-service-journal-v1",))
+    def _legacy_root(db):
+        row = db.execute("SELECT event_hash FROM finance_service_journal "
+            "WHERE journal_version=1 ORDER BY ordinal DESC LIMIT 1").fetchone()
+        return "0" * 64 if row is None else row["event_hash"]
+
+    @classmethod
+    def _stream_id(cls, scope_hash):
+        return "public" if scope_hash is None else _hash(scope_hash, "journal scope hash")
+
+    @classmethod
+    def _stream_genesis(cls, db, stream_id):
+        return digest({"domain": "finance-service-journal-stream-genesis-1",
+                       "legacy_root": cls._legacy_root(db), "stream_id": stream_id})
+
+    @classmethod
+    def _lock_stream(cls, db, scope_hash):
+        stream_id = cls._stream_id(scope_hash)
+        genesis = cls._stream_genesis(db, stream_id)
+        db.execute("INSERT INTO finance_service_journal_heads"
+            "(stream_id,sequence,event_hash) VALUES (%s,0,%s) "
+            "ON CONFLICT (stream_id) DO NOTHING", (stream_id, genesis))
+        head = db.execute("SELECT * FROM finance_service_journal_heads "
+                          "WHERE stream_id=%s FOR UPDATE", (stream_id,)).fetchone()
+        latest = db.execute("SELECT stream_sequence,event_hash FROM "
+            "finance_service_journal WHERE journal_version=2 AND stream_id=%s "
+            "ORDER BY stream_sequence DESC LIMIT 1", (stream_id,)).fetchone()
+        if latest is None:
+            valid = head["sequence"] == 0 and head["event_hash"] == genesis
+        else:
+            valid = (head["sequence"] == latest["stream_sequence"]
+                     and head["event_hash"] == latest["event_hash"])
+        if not valid:
+            raise MachineError("service journal stream head mismatch")
+        return stream_id, head
 
     @staticmethod
     def _verify_journal_db(db):
         previous = "0" * 64
         rows = db.execute(
-            "SELECT * FROM finance_service_journal ORDER BY ordinal").fetchall()
+            "SELECT * FROM finance_service_journal WHERE journal_version=1 "
+            "ORDER BY ordinal").fetchall()
         for expected, raw in enumerate(rows, 1):
             row = _normalized_row(raw)
             body = _json_value(row["body_json"])
@@ -122,55 +212,184 @@ class PostgresOperationalRepository:
                         {"domain": "finance-service-journal-event-1", "event": event})):
                 return False
             previous = row["event_hash"]
+        legacy_root = previous
+        heads = {row["stream_id"]: row for row in db.execute(
+            "SELECT * FROM finance_service_journal_heads ORDER BY stream_id").fetchall()}
+        stream_rows = db.execute("SELECT * FROM finance_service_journal "
+            "WHERE journal_version=2 ORDER BY stream_id,stream_sequence").fetchall()
+        sequences = {}
+        hashes = {}
+        for raw in stream_rows:
+            row = _normalized_row(raw)
+            stream_id = row["stream_id"]
+            expected_sequence = sequences.get(stream_id, 0) + 1
+            prior = hashes.get(stream_id, digest({
+                "domain": "finance-service-journal-stream-genesis-1",
+                "legacy_root": legacy_root, "stream_id": stream_id}))
+            body = _json_value(row["body_json"])
+            event = {"event_id": row["event_id"], "event_kind": row["event_kind"],
+                "scope_hash": row["scope_hash"], "input_hash": row["input_hash"],
+                "output_hash": row["output_hash"], "body": body,
+                "previous_hash": row["previous_hash"]}
+            calculated = digest({"domain": "finance-service-journal-event-2",
+                "stream_id": stream_id, "stream_sequence": expected_sequence,
+                "event": event})
+            if (row["stream_sequence"] != expected_sequence
+                    or row["previous_hash"] != prior
+                    or row["event_hash"] != calculated):
+                return False
+            sequences[stream_id], hashes[stream_id] = expected_sequence, calculated
+        if set(heads) != set(sequences):
+            return False
+        for stream_id, sequence in sequences.items():
+            if (heads[stream_id]["sequence"] != sequence
+                    or heads[stream_id]["event_hash"] != hashes[stream_id]):
+                return False
         return True
 
     @classmethod
-    def _prepare_mutation(cls, db):
-        cls._lock_journal(db)
-        if not cls._verify_journal_db(db):
+    def _prepare_mutation(cls, db, scope_hash):
+        audit = db.execute("SELECT integrity FROM finance_service_journal_audit "
+                           "WHERE singleton=true").fetchone()
+        if audit is None or not audit["integrity"]:
             raise MachineError("service journal integrity failed; mutation denied")
 
-    @staticmethod
-    def _append(db, event_id, event_kind, scope_hash, input_hash, output_hash, body):
+    @classmethod
+    def _assert_read_safe(cls, db, scope_hash):
+        audit = db.execute("SELECT integrity FROM finance_service_journal_audit "
+                           "WHERE singleton=true").fetchone()
+        if audit is None or not audit["integrity"]:
+            raise MachineError("service journal integrity failed; read denied")
+        stream_id = cls._stream_id(scope_hash)
+        row = db.execute("SELECT head.sequence,head.event_hash,"
+            "latest.stream_sequence,latest.latest_hash FROM "
+            "finance_service_journal_heads head LEFT JOIN LATERAL "
+            "(SELECT stream_sequence,event_hash AS latest_hash FROM "
+            "finance_service_journal WHERE journal_version=2 AND stream_id=head.stream_id "
+            "ORDER BY stream_sequence DESC LIMIT 1) latest ON true "
+            "WHERE head.stream_id=%s", (stream_id,)).fetchone()
+        if row is not None and (row["sequence"] != row["stream_sequence"]
+                                or row["event_hash"] != row["latest_hash"]):
+            raise MachineError("service journal stream head mismatch; read denied")
+
+    @classmethod
+    def _append(cls, db, event_id, event_kind, scope_hash, input_hash, output_hash, body):
         _, _, Jsonb = _driver()
         event_id = ident(event_id, "service event id")
         event_kind = ident(event_kind, "service event kind")
         _hash(input_hash, "service event input hash")
         _hash(output_hash, "service event output hash")
-        prior = db.execute("SELECT ordinal,event_hash FROM finance_service_journal "
-                           "ORDER BY ordinal DESC LIMIT 1").fetchone()
-        ordinal = 1 if prior is None else prior["ordinal"] + 1
-        previous = "0" * 64 if prior is None else prior["event_hash"]
-        event = {"ordinal": ordinal, "event_id": event_id, "event_kind": event_kind,
+        stream_id, head = cls._lock_stream(db, scope_hash)
+        sequence, previous = head["sequence"] + 1, head["event_hash"]
+        event = {"event_id": event_id, "event_kind": event_kind,
             "scope_hash": scope_hash, "input_hash": input_hash,
             "output_hash": output_hash, "body": body, "previous_hash": previous}
-        event_hash = digest({"domain": "finance-service-journal-event-1", "event": event})
+        event_hash = digest({"domain": "finance-service-journal-event-2",
+                             "stream_id": stream_id,
+                             "stream_sequence": sequence, "event": event})
         db.execute("INSERT INTO finance_service_journal "
             "(event_id,event_kind,scope_hash,input_hash,output_hash,body_json,"
-            "previous_hash,event_hash) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
+            "previous_hash,event_hash,journal_version,stream_id,stream_sequence) "
+            "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,2,%s,%s)",
             (event_id, event_kind, scope_hash, input_hash, output_hash, Jsonb(body),
-             previous, event_hash))
+             previous, event_hash, stream_id, sequence))
+        db.execute("UPDATE finance_service_journal_heads SET sequence=%s,event_hash=%s,"
+                   "updated_at=clock_timestamp() WHERE stream_id=%s",
+                   (sequence, event_hash, stream_id))
         return event_hash
 
     def verify_journal(self):
+        with self.connect(repeatable_read=True) as db:
+            integrity = self._verify_journal_db(db)
+            root = self._journal_root_db(db) if integrity else None
         with self.connect() as db:
-            return self._verify_journal_db(db)
+            db.execute("UPDATE finance_service_journal_audit SET integrity=%s,"
+                "audited_root=%s,audited_at=clock_timestamp(),failure_code=%s "
+                "WHERE singleton=true", (integrity, root,
+                    None if integrity else "HASH_CHAIN_MISMATCH"))
+            return integrity
+
+    @classmethod
+    def _journal_root_db(cls, db):
+        heads = [{"stream_id": row["stream_id"], "sequence": row["sequence"],
+                  "event_hash": row["event_hash"]} for row in db.execute(
+            "SELECT * FROM finance_service_journal_heads ORDER BY stream_id").fetchall()]
+        return digest({"domain": "finance-service-journal-root-2",
+                       "legacy_root": cls._legacy_root(db), "streams": heads})
 
     def journal_root(self):
-        with self.connect() as db:
+        with self.connect(repeatable_read=True) as db:
             if not self._verify_journal_db(db):
                 raise MachineError("service journal integrity failed")
-            row = db.execute("SELECT event_hash FROM finance_service_journal "
-                             "ORDER BY ordinal DESC LIMIT 1").fetchone()
-        return "0" * 64 if row is None else row["event_hash"]
+            root = self._journal_root_db(db)
+        return root
+
+    @classmethod
+    def _quick_journal_status(cls, db):
+        audit = db.execute("SELECT integrity,audited_root,audited_at,failure_code "
+            "FROM finance_service_journal_audit WHERE singleton=true").fetchone()
+        mismatches = db.execute("SELECT "
+            "(SELECT count(*) FROM finance_service_journal_heads head "
+            "LEFT JOIN LATERAL (SELECT stream_sequence,event_hash FROM "
+            "finance_service_journal WHERE journal_version=2 "
+            "AND stream_id=head.stream_id ORDER BY stream_sequence DESC LIMIT 1) "
+            "latest ON true WHERE latest.stream_sequence IS NULL "
+            "OR head.sequence IS DISTINCT FROM latest.stream_sequence "
+            "OR head.event_hash IS DISTINCT FROM latest.event_hash) + "
+            "(SELECT count(DISTINCT journal.stream_id) FROM finance_service_journal journal "
+            "LEFT JOIN finance_service_journal_heads head "
+            "ON head.stream_id=journal.stream_id WHERE journal.journal_version=2 "
+            "AND head.stream_id IS NULL) AS count").fetchone()["count"]
+        audited_at = None if audit is None else audit["audited_at"]
+        age_seconds = None
+        if audited_at is not None:
+            age_seconds = max(0.0, (datetime.now(audited_at.tzinfo)
+                                    - audited_at).total_seconds())
+        fresh = (age_seconds is not None
+                 and age_seconds <= cls.MAX_DEEP_AUDIT_AGE_SECONDS)
+        quick_integrity = bool(audit and audit["integrity"] and mismatches == 0)
+        return {"quick_integrity": quick_integrity,
+                "deep_audit_fresh": fresh,
+                "deep_audit_age_seconds": age_seconds,
+                "audited_at": _timestamp(audited_at),
+                "audited_root": None if audit is None else audit["audited_root"],
+                "failure_code": None if audit is None else audit["failure_code"],
+                "head_mismatches": mismatches}
 
     def health(self):
         with self.connect() as api:
-            api.execute("SELECT 1").fetchone()
+            status = self._quick_journal_status(api)
+        pool_stats = self.runtime.stats()
+        journal_integrity = (status["quick_integrity"]
+                             and status["deep_audit_fresh"])
+        alerts = evaluate_storage_alerts(
+            journal_integrity=status["quick_integrity"],
+            journal_audit_fresh=status["deep_audit_fresh"],
+            pool_stats=pool_stats, metrics=self.metrics.snapshot())
         return {"backend": "POSTGRESQL", "server_version": self.server_version,
-                "api_role": "SCOPED",
-                "worker_credential_loaded": self.worker_dsn is not None,
-                "journal_integrity": self.verify_journal()}
+                "api_role": "SCOPED", "api_database_role": self.api_role,
+                "worker_credential_loaded": self.worker_role is not None,
+                "credential_generation": pool_stats["generation"],
+                "journal_integrity": journal_integrity,
+                "journal_mode": "PARTITIONED_STREAM_V2",
+                "journal_deep_audit": {
+                    "fresh": status["deep_audit_fresh"],
+                    "age_seconds": status["deep_audit_age_seconds"],
+                    "audited_at": status["audited_at"],
+                    "audited_root": status["audited_root"],
+                    "failure_code": status["failure_code"],
+                    "head_mismatches": status["head_mismatches"],
+                },
+                "alerts": alerts}
+
+    def prometheus_metrics(self):
+        return self.metrics.prometheus(self.runtime.stats())
+
+    def reload_credentials(self):
+        return self.runtime.reload(force=True)
+
+    def close(self):
+        self.runtime.close()
 
     def put_record(self, scope, record_kind, record_id, body, *, expected_version, at):
         _, _, Jsonb = _driver()
@@ -184,7 +403,7 @@ class PostgresOperationalRepository:
         _reject_sensitive(body, "record")
         at, body_hash = utc(at), digest(body)
         with self.connect(scope_hash=scope_hash) as db:
-            self._prepare_mutation(db)
+            self._prepare_mutation(db, scope_hash)
             db.execute("SELECT pg_advisory_xact_lock(hashtextextended(%s,0))",
                        (scope_hash + ":" + kind + ":" + record_id,))
             row = db.execute("SELECT version,body_hash,updated_at FROM "
@@ -221,8 +440,7 @@ class PostgresOperationalRepository:
         kind = ident(record_kind, "record kind")
         record_id = ident(record_id, "record id")
         with self.connect(scope_hash=scope_hash) as db:
-            if not self._verify_journal_db(db):
-                raise MachineError("service journal integrity failed; read denied")
+            self._assert_read_safe(db, scope_hash)
             row = db.execute("SELECT * FROM finance_service_records WHERE scope_hash=%s "
                 "AND record_kind=%s AND record_id=%s",
                 (scope_hash, kind, record_id)).fetchone()
@@ -263,7 +481,7 @@ class PostgresOperationalRepository:
             "job_kind": job_kind, "subject_id": subject_id,
             "dependency_hash": dependency_hash})
         with self.connect(scope_hash=scope_hash, worker=scope is None) as db:
-            self._prepare_mutation(db)
+            self._prepare_mutation(db, scope_hash)
             db.execute("SELECT pg_advisory_xact_lock(hashtextextended(%s,0))",
                        ("job:" + job_id,))
             row = db.execute("SELECT * FROM finance_service_jobs WHERE job_id=%s",
@@ -335,7 +553,6 @@ class PostgresOperationalRepository:
             raise MachineError("unsupported worker role")
         lease_end = (datetime.fromisoformat(at) + timedelta(seconds=lease_seconds)).isoformat()
         with self.connect(worker=True) as db:
-            self._prepare_mutation(db)
             self._recover_expired_leases(db, at)
             expired = db.execute("SELECT * FROM finance_service_jobs WHERE status IN "
                 "('PENDING','RETRY_WAIT') AND expires_at<=%s ORDER BY job_id FOR UPDATE",
@@ -384,11 +601,11 @@ class PostgresOperationalRepository:
         _reject_sensitive(result, "result")
         result_hash = digest(result)
         with self.connect(worker=True) as db:
-            self._prepare_mutation(db)
             row = db.execute("SELECT * FROM finance_service_jobs WHERE job_id=%s FOR UPDATE",
                              (job_id,)).fetchone()
             if row is None:
                 raise MachineError("job not found")
+            self._prepare_mutation(db, row["scope_hash"])
             if row["status"] == "SUCCEEDED":
                 if row["result_hash"] != result_hash:
                     raise MachineError("completed job result conflict")
@@ -417,13 +634,13 @@ class PostgresOperationalRepository:
                 1 <= base_backoff_seconds <= 600):
             raise MachineError("invalid retry policy")
         with self.connect(worker=True) as db:
-            self._prepare_mutation(db)
             row = db.execute("SELECT * FROM finance_service_jobs WHERE job_id=%s FOR UPDATE",
                              (job_id,)).fetchone()
             if (row is None or row["status"] != "LEASED" or row["lease_owner"] != worker_id
                     or row["lease_token"] != lease_token
                     or datetime.fromisoformat(at) >= row["lease_expires_at"]):
                 raise MachineError("active matching worker lease required")
+            self._prepare_mutation(db, row["scope_hash"])
             delay = min(3600, base_backoff_seconds * (2 ** (row["attempts"] - 1)))
             retry_at = (datetime.fromisoformat(at) + timedelta(seconds=delay)).isoformat()
             expires_at = row["expires_at"].isoformat()
@@ -454,8 +671,7 @@ class PostgresOperationalRepository:
         if type(limit) is not int or not 1 <= limit <= 500:
             raise MachineError("invalid job list limit")
         with self.connect(scope_hash=scope_hash) as db:
-            if not self._verify_journal_db(db):
-                raise MachineError("service journal integrity failed; read denied")
+            self._assert_read_safe(db, scope_hash)
             rows = db.execute("SELECT * FROM finance_service_jobs WHERE scope_hash=%s "
                 "ORDER BY created_at DESC,job_id LIMIT %s", (scope_hash, limit)).fetchall()
         return [self._job(row) for row in rows]
@@ -472,7 +688,7 @@ class PostgresOperationalRepository:
             raise MachineError("public observation validity window is empty")
         value_hash = digest(value)
         with self.connect(worker=True) as db:
-            self._prepare_mutation(db)
+            self._prepare_mutation(db, None)
             row = db.execute("SELECT * FROM finance_public_observations WHERE source_id=%s "
                 "AND observation_key=%s FOR UPDATE", (source_id, observation_key)).fetchone()
             if (row is not None and row["value_hash"] == value_hash
@@ -510,8 +726,7 @@ class PostgresOperationalRepository:
     def schedule_expired_observations(self, *, at):
         at = utc(at)
         with self.connect(worker=True) as db:
-            if not self._verify_journal_db(db):
-                raise MachineError("service journal integrity failed; read denied")
+            self._assert_read_safe(db, None)
             rows = db.execute("SELECT * FROM finance_public_observations WHERE "
                 "valid_until<=%s ORDER BY source_id,observation_key", (at,)).fetchall()
         jobs = []
@@ -542,7 +757,7 @@ class PostgresOperationalRepository:
         next_due_at, at = utc(next_due_at), utc(at)
         dependency_hash = _hash(dependency_hash, "routine dependency hash")
         with self.connect(scope_hash=scope_hash) as db:
-            self._prepare_mutation(db)
+            self._prepare_mutation(db, scope_hash)
             db.execute("INSERT INTO finance_service_routines "
                 "(scope_hash,scope_json,role,routine_id,responsibility,status,"
                 "interval_seconds,next_due_at,dependency_hash,updated_at) VALUES "
@@ -586,7 +801,7 @@ class PostgresOperationalRepository:
             next_due = (datetime.fromisoformat(at) + timedelta(
                 seconds=row["interval_seconds"])).isoformat()
             with self.connect(worker=True) as db:
-                self._prepare_mutation(db)
+                self._prepare_mutation(db, row["scope_hash"])
                 changed = db.execute("UPDATE finance_service_routines SET next_due_at=%s,"
                     "updated_at=%s WHERE scope_hash=%s AND routine_id=%s AND next_due_at=%s",
                     (next_due, at, row["scope_hash"], row["routine_id"],
@@ -603,8 +818,7 @@ class PostgresOperationalRepository:
     def list_routines(self, scope):
         scope, scope_hash = _scope(scope)
         with self.connect(scope_hash=scope_hash) as db:
-            if not self._verify_journal_db(db):
-                raise MachineError("service journal integrity failed; read denied")
+            self._assert_read_safe(db, scope_hash)
             rows = db.execute("SELECT * FROM finance_service_routines WHERE scope_hash=%s "
                               "ORDER BY role,routine_id", (scope_hash,)).fetchall()
         return [{"scope": scope, "role": row["role"], "routine_id": row["routine_id"],
@@ -648,8 +862,7 @@ class PostgresOperationalRepository:
 
     def export_verified_snapshot(self, destination):
         destination = Path(destination)
-        with self.connect(worker=True) as db:
-            self._lock_journal(db)
+        with self.connect(worker=True, repeatable_read=True) as db:
             if not self._verify_journal_db(db):
                 raise MachineError("service journal integrity failed before export")
             tables = {}
@@ -659,7 +872,8 @@ class PostgresOperationalRepository:
                     ("finance_service_outbox", "event_id"),
                     ("finance_public_observations", "source_id,observation_key"),
                     ("finance_service_routines", "scope_hash,routine_id"),
-                    ("finance_service_journal", "ordinal")):
+                    ("finance_service_journal", "ordinal"),
+                    ("finance_service_journal_heads", "stream_id")):
                 rows = db.execute(f"SELECT * FROM {name} ORDER BY {order}").fetchall()
                 normalized = []
                 for row in rows:
@@ -669,7 +883,7 @@ class PostgresOperationalRepository:
                             item[key] = _json_value(item[key])
                     normalized.append(item)
                 tables[name] = normalized
-            root = self.journal_root()
+            root = self._journal_root_db(db)
         payload = {"schema_version": "finance-postgres-logical-snapshot-1",
                    "journal_root": root, "tables": tables}
         snapshot_hash = digest(payload)

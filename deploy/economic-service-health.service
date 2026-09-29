@@ -1,0 +1,16 @@
+[Unit]
+Description=GWDC economic service health and critical-alert check
+After=economic-service.service
+
+[Service]
+Type=oneshot
+User=gwdc-finance
+Group=gwdc-finance
+WorkingDirectory=/srv/gwdc2026
+EnvironmentFile=/etc/gwdc/economic-service.env
+ExecStart=/srv/gwdc2026/.venv/bin/python scripts/check_finance_service.py --url ${FINANCE_SERVICE_HEALTH_URL}
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+

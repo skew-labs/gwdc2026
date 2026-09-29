@@ -1,0 +1,8 @@
+{
+  "calendar_expression": "*-*-* 00,06,12,18:00:00 UTC",
+  "production_paths_substituted_for_static_check": true,
+  "schema_version": "gwdc-systemd-static-verification-1",
+  "status": "PASS",
+  "unit_count": 7,
+  "verified_commit": "52306be5afa569933cd7c1f28f0058d0cd859f82"
+}

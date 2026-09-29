@@ -27,13 +27,23 @@ def build_app():
     except ValueError as exc:
         raise RuntimeError("invalid session HMAC base64") from exc
     postgres_api_dsn = os.environ.get("FINANCE_SERVICE_POSTGRES_API_DSN")
+    postgres_api_dsn_file = os.environ.get("FINANCE_SERVICE_POSTGRES_API_DSN_FILE")
     postgres_worker_dsn = os.environ.get("FINANCE_SERVICE_POSTGRES_WORKER_DSN")
-    if postgres_worker_dsn:
+    postgres_worker_dsn_file = os.environ.get("FINANCE_SERVICE_POSTGRES_WORKER_DSN_FILE")
+    if postgres_worker_dsn or postgres_worker_dsn_file:
         raise RuntimeError("API service must not load the PostgreSQL worker DSN")
-    if postgres_api_dsn:
+    if postgres_api_dsn and postgres_api_dsn_file:
+        raise RuntimeError("API service received multiple PostgreSQL DSN sources")
+    if postgres_api_dsn or postgres_api_dsn_file:
         from .postgres_repository import PostgresOperationalRepository
 
-        repository = PostgresOperationalRepository(postgres_api_dsn)
+        local_test = os.environ.get(
+            "FINANCE_SERVICE_POSTGRES_ALLOW_INSECURE_LOCALHOST") == "1"
+        if postgres_api_dsn and not local_test:
+            raise RuntimeError("hosted API PostgreSQL DSN must use an owner-only file")
+        repository = PostgresOperationalRepository(postgres_api_dsn,
+            api_dsn_file=postgres_api_dsn_file,
+            allow_insecure_localhost=local_test)
     else:
         path = Path(_required("FINANCE_SERVICE_REFERENCE_SQLITE_PATH"))
         repository = OperationalRepository(path)

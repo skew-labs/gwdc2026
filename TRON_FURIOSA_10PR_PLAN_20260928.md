@@ -4,7 +4,7 @@
 
 기존 모듈을 지우고 새로 만드는 계획이 아니다. 기존 계산/검증 자산을 하나의 사용자 흐름으로 연결한다. 새 데이터셋·학습, NIC/FPGA 최적화, 외부 검증자 네트워크는 이 10개 PR의 범위 밖이다. ALPHA/VAULT/WATCH는 서버 안의 역할과 작업 기록이다.
 
-**2026-09-29 진행:** PR 01–09는 순서대로 구현·검증해 [GitHub 저장소](https://github.com/skew-labs/gwdc2026)에 검토 가능한 PR로 올렸다. PR 10 [대화형 자산관리 workspace와 제출 증거](IMPLEMENTATION_PR10_20260929.md)도 구현했으며 Cherry 직접 연결 테스트 25개와 실제 브라우저·새로고침·모바일·콘솔 검증을 통과했다. exact commit 검증 증거는 `artifacts/pr10`에 포함한다. 실제 PostgreSQL server, Qwen/Kiln, 지갑 서명, 테스트넷 거래는 아직 검증하지 않았고 고객 서명·broadcast·배포·실자산 실행은 수행하지 않았다.
+**2026-09-29 진행:** PR 01–10은 순서대로 구현·검증해 [GitHub 저장소](https://github.com/skew-labs/gwdc2026)에 검토 가능한 PR로 올렸다. PR11은 실제 PostgreSQL 16.15에서 역할 분리·RLS·작업 복구를 검증했다. PR12는 pool/TLS/secret rotation, scope별 journal, 빠른 health와 정기 전체 감사, metrics/alerts, physical backup/PITR/failover/load 경로를 구현하고 Cherry 격리 시험을 통과했다. exact commit 검증 증거는 `artifacts/pr12`에 포함한다. 실제 off-host backup 목적지, Qwen/Kiln, 지갑 서명, 테스트넷 거래는 아직 검증하지 않았고 고객 서명·broadcast·배포·실자산 실행은 수행하지 않았다.
 
 ## 완료 기준과 공통 규칙
 
@@ -208,3 +208,11 @@ flowchart LR
 상태와 hash-chain journal은 같은 transaction으로 갱신한다. migration은 파일 hash ledger와 advisory lock으로 적용하고 이미 적용한 파일의 drift를 거부한다. Cherry의 격리 PostgreSQL 16.15에서 비관리자 API/worker 역할, 동시 `SKIP LOCKED` claim, 동일 계정 직렬화, journal 변조 차단, 서비스 프로세스 재시작 뒤 레코드·작업 지속성을 실제로 검증한다.
 
 이 단계도 production 배포 완료가 아니다. 전역 journal lock과 전체 chain 검증은 대규모 write 경로의 병목이며, connection pool, secret rotation, TLS, managed backup/PITR, restore·failover·load/soak 검증이 남아 있다. 논리 snapshot은 WAL/PITR 백업으로 부르지 않는다. 고객 서명·broadcast·deploy·자산 이동은 계속 0건이다.
+
+## PR 12 — PostgreSQL 운영 복구와 부하 경로
+
+PR11에서 남긴 전역 journal 병목을 scope별 stream/head로 분할하고 mutation/read hot path의 전체 scan을 제거한다. 전체 hash 감사는 5분 timer로 분리하고 10분 넘게 감사되지 않으면 health가 실패한다. bounded API/worker pool, statement/lock/idle timeout, owner-only·no-symlink DSN 파일, `verify-full` TLS, 무중단 pool 교체, sanitized metrics와 critical supervisor check를 추가한다.
+
+physical backup은 off-host·encrypted destination attestation, `pg_basebackup`, `pg_verifybackup`, partial cleanup과 원자 publish를 요구한다. schema migration은 hash ledger와 위험 등급을 기록하고 destructive SQL을 PITR 증거 없이 거부한다. Cherry에서 실제 TLS 강제, 60초 부하, 목표시점 복구, standby replay/promotion, FastAPI secret rotation을 검증한다. 구현과 증거는 [PR12 문서](IMPLEMENTATION_PR12_20260929.md)와 `artifacts/pr12`에 기록한다.
+
+이 PR도 운영 배포 완료가 아니다. 실제 off-host backup 목적지와 production RPO/RTO는 남아 있다. Qwen/Kiln, Furiosa energy, 고객 지갑, TRON transaction acceptance도 별도 공백으로 유지한다.

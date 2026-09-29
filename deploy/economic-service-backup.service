@@ -1,0 +1,18 @@
+[Unit]
+Description=Verified GWDC PostgreSQL physical backup
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=gwdc-finance
+Group=gwdc-finance
+WorkingDirectory=/srv/gwdc2026
+EnvironmentFile=/etc/gwdc/economic-service.env
+ExecStart=/srv/gwdc2026/.venv/bin/python scripts/postgres_physical_backup.py --pg-bin ${FINANCE_POSTGRES_BIN} --dsn-file ${FINANCE_POSTGRES_BACKUP_DSN_FILE} --backup-root ${FINANCE_BACKUP_ROOT} --evidence-root ${FINANCE_BACKUP_EVIDENCE_ROOT} --destination-attestation ${FINANCE_BACKUP_DESTINATION_ATTESTATION}
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/gwdc-finance/backups /var/lib/gwdc-finance/backup-evidence
+

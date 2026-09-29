@@ -1,0 +1,10 @@
+gwdc_finance_api_transactions_total 5
+gwdc_finance_pool_timeouts_total 0
+gwdc_finance_transaction_failures_total 0
+gwdc_finance_worker_transactions_total 0
+gwdc_finance_transaction_duration_ms_total{role="api"} 4.760
+gwdc_finance_transaction_duration_ms_total{role="worker"} 0.000
+gwdc_finance_pool_pool_size{role="api"} 1
+gwdc_finance_pool_pool_available{role="api"} 1
+gwdc_finance_pool_requests_waiting{role="api"} 0
+gwdc_finance_pool_requests_num{role="api"} 5
