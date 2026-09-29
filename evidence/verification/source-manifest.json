@@ -461,7 +461,7 @@
     },
     {
       "path": "frontend/src/components/MandateEditor.tsx",
-      "sha256": "389dccf78ec2384db028887ece45495f2f2062f9501fafe7786c060475b3abf4"
+      "sha256": "0b6e6c9e40e3d4e3a519fb3a72af8e36ec57b092b85acc48a10cc4eeeeea83c3"
     },
     {
       "path": "frontend/src/components/NileFunding.tsx",

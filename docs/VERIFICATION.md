@@ -20,6 +20,16 @@ The repository also contains contract compilation/runtime verification code, Pos
 
 Real Qwen3-32B requests through Kiln, persistent conversations, condition editing/confirmation, authenticated financial integration, plan review, native supply/redemption signing, durable reconciliation, Watch and expected/actual accounting have been exercised during development. Historical records retain the state they observed; current scope is summarized here and in the root README.
 
+## Internal flow check — September 30
+
+- Extended local suite: 597 backend tests discovered, 549 passed, 48 skipped; all 52 frontend tests passed. Type checking and production build passed. Skipped tests require dedicated PostgreSQL test databases or pinned Solidity compilers and are not counted as passing.
+- Live Qwen3 extracted an isolated 300 TRX / 365 day / 20% cash / no-borrowing request with no execution authority. The current Nile comparison enumerated 101 candidates and returned `NO_TWO_VIABLE_PLANS`. The observed jTRX annual yield fraction was `0.000002652496477862`; the test explicitly reserved 15 TRX entry and 15 TRX exit costs. This is a rejection example, not a successful two-plan investment demonstration.
+- An actual production Watch queue job fetched fresh Nile state and completed with `HOLD`. The existing schedule and financial conditions were preserved. A separate synthetic test exercised an `ADJUST` notification and its UI path to a new portfolio review; it is not evidence of a live adjustment opportunity.
+- The actual UI components displayed captured portfolio accounting and the live-data rejection. Isolated component scenarios exercised two-plan selection, expired withdrawal refresh, approval/wallet-handoff callbacks and account alerts. These callbacks did not open a real wallet or submit a transaction.
+- A sparse-policy editor defect was fixed: omitted USDD/protocol caps now reopen as zero, consistent with the core's deny-by-default interpretation. Explicit caps remain unchanged; a new policy still requires user input. Three regression tests cover this boundary.
+
+These checks do not establish a continuous live two-plan → new transaction → performance → adjustment recording. A viable funded scenario and user wallet signature are still needed for that demonstration.
+
 ## Remaining limits
 
 - Mainnet USDD full live lifecycle has not been verified end to end. Guarded execution and regression coverage are not a substitute for that evidence.

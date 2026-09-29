@@ -2,13 +2,18 @@
   "schema": "faat-publication-verification-v1",
   "verified_at": "2026-09-30",
   "backend": {
-    "tests": 63,
-    "status": "PASS",
-    "command": "PYTHONPATH=src:tests python -m unittest test_native_execution test_native_adjustments test_native_performance test_performance_periods test_wallet_encoding test_machine_worker test_usdd_workflow test_usdd_execution test_usdd_comparison"
+    "tests_discovered": 597,
+    "tests_passed": 549,
+    "tests_skipped": 48,
+    "failures": 0,
+    "errors": 0,
+    "status": "PASS_WITH_SKIPS",
+    "command": "PYTHONPATH=src:tests python -m unittest discover -s tests",
+    "environment": "OpenSSL 3; research, validation and contracts Python dependencies installed. Dedicated PostgreSQL test DSNs and pinned Solidity compilers not configured."
   },
   "frontend": {
-    "tests": 49,
-    "files": 9,
+    "tests": 52,
+    "files": 10,
     "status": "PASS",
     "command": "pnpm test"
   },
@@ -26,5 +31,5 @@
     "mode": "PUBLIC_RPC_REFRESH",
     "manifest": "../nile/manifest.json"
   },
-  "scope": "Product regression suite, frontend type/build checks and public Nile receipts. Not a full mainnet or production resilience certification."
+  "scope": "Extended local tests, frontend type/build checks, live read-only Nile/Qwen verification, production Watch job and captured receipts. 48 environment-dependent tests skipped. UI scenarios are explicitly isolated. No new financial transaction was submitted."
 }

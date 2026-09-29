@@ -1,18 +1,19 @@
 
- RUN  v3.2.7 frontend
+ RUN  v3.2.7 <workspace>/outputs/machine-frontend
 
- ✓ tests/submission.test.ts (7 tests) 3ms
- ✓ tests/conversation.test.ts (8 tests) 32ms
- ✓ tests/balance-performance.test.tsx (3 tests) 21ms
- ✓ tests/transport.test.ts (4 tests) 122ms
- ✓ tests/guards.test.ts (9 tests) 28ms
- ✓ tests/wallet.test.ts (7 tests) 63ms
- ✓ tests/withdrawal.test.tsx (3 tests) 12ms
- ✓ tests/server.test.ts (7 tests) 711ms
- ✓ tests/conversation-gateway.test.ts (1 test) 1733ms
-   ✓ persists cards, deduplicates retries, isolates conversations, and grounds portfolio chat without a model call  1418ms
+ ✓ tests/conversation.test.ts (8 tests) 19ms
+ ✓ tests/balance-performance.test.tsx (3 tests) 20ms
+ ✓ tests/transport.test.ts (4 tests) 63ms
+ ✓ tests/mandate-editor.test.tsx (3 tests) 14ms
+ ✓ tests/submission.test.ts (7 tests) 2ms
+ ✓ tests/wallet.test.ts (7 tests) 69ms
+ ✓ tests/guards.test.ts (9 tests) 23ms
+ ✓ tests/withdrawal.test.tsx (3 tests) 10ms
+ ✓ tests/server.test.ts (7 tests) 709ms
+ ✓ tests/conversation-gateway.test.ts (1 test) 1755ms
+   ✓ persists cards, deduplicates retries, isolates conversations, and grounds portfolio chat without a model call  1439ms
 
- Test Files  9 passed (9)
-      Tests  49 passed (49)
-   Start at  07:07:31
-   Duration  2.21s (transform 382ms, setup 0ms, collect 1.76s, tests 2.72s, environment 1ms, prepare 471ms)
+ Test Files  10 passed (10)
+      Tests  52 passed (52)
+   Start at  08:28:12
+   Duration  2.23s (transform 326ms, setup 0ms, collect 1.91s, tests 2.68s, environment 1ms, prepare 454ms)

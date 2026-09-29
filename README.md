@@ -124,7 +124,7 @@ pnpm build
 
 Tests with synthetic receipts demonstrate rejection/recovery logic; they do not constitute a live mainnet transaction. PostgreSQL resilience drills and research training have additional environment requirements. [Verification guide](docs/VERIFICATION.md).
 
-GitHub Actions runs these offline product checks and the frontend build. The publication check passed **63 backend tests and 49 frontend tests**; exact commands and results are in [`evidence/verification/`](evidence/verification). Re-read the two demonstrated Nile receipts with `python scripts/verify_nile_receipts.py --refresh`, or omit `--refresh` to validate the checked-in captures without a network request. This script never signs or broadcasts.
+GitHub Actions runs these offline product checks and the frontend build. The extended check passed **549 backend tests and 52 frontend tests**, with **48 backend tests skipped** because their dedicated PostgreSQL environment or pinned compiler was unavailable; exact commands and results are in [`evidence/verification/`](evidence/verification). Re-read the two demonstrated Nile receipts with `python scripts/verify_nile_receipts.py --refresh`, or omit `--refresh` to validate the checked-in captures without a network request. This script never signs or broadcasts.
 
 ## Data and research
 

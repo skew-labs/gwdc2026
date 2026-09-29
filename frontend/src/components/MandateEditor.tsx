@@ -69,13 +69,13 @@ export function MandateEditor({
     initial(c ? c.max_trx_exposure_bps / 100 : undefined),
   );
   const [usdd, setUsdd] = useState(
-    initial(t ? t.price_exposure_caps_bps.USDD / 100 : undefined),
+    initial(t ? (t.price_exposure_caps_bps.USDD ?? 0) / 100 : undefined),
   );
   const [justlend, setJustlend] = useState(
-    initial(t ? t.protocol_caps_bps.justlend / 100 : undefined),
+    initial(t ? (t.protocol_caps_bps.justlend ?? 0) / 100 : undefined),
   );
   const [vault, setVault] = useState(
-    initial(t ? t.protocol_caps_bps.usdd / 100 : undefined),
+    initial(t ? (t.protocol_caps_bps.usdd ?? 0) / 100 : undefined),
   );
   const [debt, setDebt] = useState(
     typeof p.borrowing_consent === "boolean"
