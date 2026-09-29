@@ -152,7 +152,7 @@ def reconcile_position(graph, approved, execution, before_account,
         expected = int(condition["amount_base_units"])
         _check(checks, "ALLOWANCE_EQUALS", actual == expected,
                expected=str(expected), actual=None if actual is None else str(actual))
-    elif operation in {"JUSTLEND_SUPPLY", "JUSTLEND_REDEEM_SHARES",
+    elif operation in {"JUSTLEND_SUPPLY", "JUSTLEND_SUPPLY_TRX", "JUSTLEND_REDEEM_SHARES",
                        "JUSTLEND_REDEEM_UNDERLYING", "STRX_STAKE"}:
         if len(step["inputs"]) != 1 or len(step["expected_outputs"]) != 1:
             raise MachineError("position action requires one input and output")
@@ -165,14 +165,16 @@ def reconcile_position(graph, approved, execution, before_account,
         input_before, input_after = balances_before.get(input_key), balances_after.get(input_key)
         amount, minimum = int(item_in["amount_base_units"]), int(
             item_out["amount_base_units"])
-        if operation in {"JUSTLEND_SUPPLY", "STRX_STAKE"}:
+        if operation in {"JUSTLEND_SUPPLY", "JUSTLEND_SUPPLY_TRX", "STRX_STAKE"}:
             if input_before is None or input_after is None:
                 reasons.append("COMPLETE_INPUT_BALANCE_REQUIRED")
             spent = None if input_before is None or input_after is None else input_before-input_after
             shares = None if before_position is None or after_position is None else int(
                 after_position["shares_base_units"])-int(before_position["shares_base_units"])
             deltas.update(input_balance_delta=_delta(spent), share_delta=_delta(shares))
-            exact_input = operation == "JUSTLEND_SUPPLY"
+            exact_input = operation in {"JUSTLEND_SUPPLY", "JUSTLEND_SUPPLY_TRX"}
+            if operation == "JUSTLEND_SUPPLY_TRX":
+                amount += int(execution["resource_receipt"]["total_fee_sun"])
             _check(checks, "INPUT_DECREASE", spent is not None and (
                 spent == amount if exact_input else spent >= amount),
                 expected=(str(amount) if exact_input else ">=" + str(amount)),
@@ -184,6 +186,11 @@ def reconcile_position(graph, approved, execution, before_account,
                 reasons.append("COMPLETE_OUTPUT_BALANCE_REQUIRED")
             received = (None if output_key not in balances_before or output_key not in balances_after
                         else balances_after[output_key]-balances_before[output_key])
+            # A native redemption credits TRX and pays its network fee in TRX.
+            # Compare gross protocol proceeds, while retaining the actual fee in
+            # the receipt. Token redemptions must not receive this adjustment.
+            if received is not None and item_out['asset'] == 'TRX' and item_out.get('token_address') is None:
+                received += int(execution['resource_receipt']['total_fee_sun'])
             share_change = None if before_position is None or after_position is None else int(
                 before_position["shares_base_units"])-int(after_position["shares_base_units"])
             underlying_change = None if before_position is None or after_position is None else int(

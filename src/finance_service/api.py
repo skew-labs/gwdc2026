@@ -22,7 +22,8 @@ def _public_job(job):
 
 
 def create_app(*, session_verifier, repository, clock, product_service=None,
-               web_root=None, demo_story=None):
+               web_root=None, demo_story=None, agent_intent_service=None,
+               wallet_auth_service=None, tron_proof_service=None):
     try:
         from fastapi import FastAPI, Header, HTTPException
         from fastapi.responses import PlainTextResponse
@@ -62,6 +63,43 @@ def create_app(*, session_verifier, repository, clock, product_service=None,
         if not hasattr(repository, "prometheus_metrics"):
             raise HTTPException(status_code=404, detail="runtime metrics unavailable")
         return repository.prometheus_metrics()
+
+    if wallet_auth_service is not None:
+        @app.post("/v1/auth/challenges")
+        def create_wallet_challenge(request: dict):
+            if set(request) != {"address", "network"}:
+                raise HTTPException(status_code=422,
+                                    detail="exact wallet challenge fields required")
+            return call(lambda: wallet_auth_service.challenge(
+                request["address"], request["network"]))
+
+        @app.post("/v1/auth/sessions")
+        def create_wallet_session(request: dict):
+            if set(request) != {"address", "network", "nonce", "signature"}:
+                raise HTTPException(status_code=422,
+                                    detail="exact wallet session fields required")
+            return call(lambda: wallet_auth_service.verify(request["address"],
+                request["network"], request["nonce"], request["signature"]))
+
+    if agent_intent_service is not None:
+        @app.post("/v1/agent/intent")
+        def propose_agent_intent(request: dict,
+                                 authorization: str = Header(alias="Authorization")):
+            if set(request) != {"message"}:
+                raise HTTPException(status_code=422,
+                                    detail="exact agent intent fields required")
+            ctx = context(authorization)
+            return call(lambda: agent_intent_service.propose(ctx, request["message"]))
+
+    if tron_proof_service is not None:
+        @app.post("/v1/tron/wallet-proofs")
+        def verify_tron_wallet_proof(request: dict,
+                                     authorization: str = Header(alias="Authorization")):
+            if set(request) != {"txid"}:
+                raise HTTPException(status_code=422,
+                                    detail="exact TRON wallet proof fields required")
+            ctx = context(authorization)
+            return call(lambda: tron_proof_service.verify(ctx, request["txid"]))
 
     @app.get("/v1/records/{record_kind}/{record_id}")
     def get_record(record_kind: str, record_id: str,

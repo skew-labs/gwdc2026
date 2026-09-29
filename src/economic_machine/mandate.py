@@ -19,8 +19,8 @@ NETWORKS = {"tron-mainnet", "tron-nile", "tron-shasta"}
 SCOPE_KEYS = {"tenant_id", "owner_id", "wallet", "network"}
 ACTIONS = {"HOLD", "SWAP", "SUPPLY", "REDEEM", "STAKE", "UNSTAKE", "CLAIM",
            "DELEGATE_ENERGY", "REVOKE_DELEGATION", "OPEN_VAULT", "ADD_COLLATERAL",
-           "MINT_USDD", "REPAY", "WITHDRAW_COLLATERAL"}
-BORROW_ACTIONS = {"OPEN_VAULT", "MINT_USDD"}
+           "MINT_USDD", "BORROW", "REPAY", "WITHDRAW_COLLATERAL"}
+BORROW_ACTIONS = {"OPEN_VAULT", "MINT_USDD", "BORROW"}
 TERM_KEYS = {"capital", "base_asset", "risk_profile", "horizon_seconds", "immediate_cash",
              "withdrawals", "price_exposure_caps_bps", "protocol_caps_bps",
              "borrowing", "limits", "allowed_actions", "effective_at", "expires_at"}

@@ -120,7 +120,7 @@ class IntentService:
                 "response_sha256": cached["response_sha256"],
                 "energy": {"kind": "UNMEASURED", "joules": None,
                            "measurement_source": None}},
-                outcome="CACHE_HIT", cache="HIT"))
+                outcome="CACHE_HIT", cache="HIT"), scope=scope)
             return self._result(context, prior, answer, message, request_hash, event)
         messages = intent_messages(message, prior["terms"])
         try:
@@ -131,7 +131,7 @@ class IntentService:
                 metadata = {**response, "response_sha256": response.get("response_sha256")}
                 event = self.usage.append(self._usage(context, at, request_hash, policy,
                     metadata, outcome="FAILED", cache="MISS",
-                    error_code="INVALID_MODEL_OUTPUT"))
+                    error_code="INVALID_MODEL_OUTPUT"), scope=scope)
                 return {"schema_version": "intent-service-result-1",
                     "status": "MODEL_OUTPUT_REJECTED", "reason_codes": ["INVALID_MODEL_OUTPUT"],
                     "questions": [], "candidate": None, "candidate_draft_hash": None,
@@ -139,7 +139,8 @@ class IntentService:
                     "execution_authority": "NONE", "chain_status": "NOT_SUBMITTED"}
         except ModelProviderError as exc:
             event = self.usage.append(self._usage(context, at, request_hash, policy,
-                exc.metadata, outcome="FAILED", cache="MISS", error_code=exc.code))
+                exc.metadata, outcome="FAILED", cache="MISS", error_code=exc.code),
+                scope=scope)
             return {"schema_version": "intent-service-result-1",
                 "status": "MODEL_UNAVAILABLE", "reason_codes": [exc.code],
                 "questions": [], "candidate": None, "candidate_draft_hash": None,
@@ -151,7 +152,7 @@ class IntentService:
                 "model_revision": response.get("model_revision"),
                 "response_sha256": response["response_sha256"]}
         event = self.usage.append(self._usage(context, at, request_hash, policy, response,
-            outcome="SUCCEEDED", cache="MISS"))
+            outcome="SUCCEEDED", cache="MISS"), scope=scope)
         return self._result(context, prior, answer, message, request_hash, event)
 
     def _result(self, context, prior, answer, message, request_hash, event):

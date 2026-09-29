@@ -1,0 +1,34 @@
+[Unit]
+Description=GWDC 2026 WHOLLET submission service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=gwdc-finance
+Group=gwdc-finance
+WorkingDirectory=/srv/skew/gwdc-financial-agent-20260924
+EnvironmentFile=/etc/gwdc/economic-service-pr13.env
+Environment=PYTHONPATH=/srv/skew/gwdc-financial-agent-20260924/src:/srv/skew/gwdc-financial-agent-20260924
+Environment=FINANCE_SERVICE_WEB_ROOT=/srv/skew/gwdc-financial-agent-20260924/web
+Environment=FINANCE_SERVICE_DEMO_STORY_PATH=/srv/skew/gwdc-financial-agent-20260924/cases/product_workspace_story.json
+Environment=FINANCE_SERVICE_PUBLIC_DOMAIN=gwdc.84-32-71-168.nip.io
+Environment=GWDC_QWEN_BASE_URL=https://api.bricksum.com/v1
+Environment=GWDC_QWEN_MODEL_ID=qwen3-32b
+Environment=GWDC_QWEN_API_KEY_FILE=/srv/skew/gwdc-financial-agent-20260924/secrets/kiln.key
+ExecStart=/srv/skew/gwdc-financial-agent-20260924/.venv/bin/python -m uvicorn finance_service.entrypoint:app --host 127.0.0.1 --port 18083 --workers 1 --proxy-headers --forwarded-allow-ips=127.0.0.1
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/gwdc-finance/pr13
+CapabilityBoundingSet=
+AmbientCapabilities=
+MemoryMax=1G
+CPUQuota=50%
+TasksMax=64
+
+[Install]
+WantedBy=multi-user.target

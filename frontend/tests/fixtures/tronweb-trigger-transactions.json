@@ -1,0 +1,123 @@
+[
+  {
+    "name": "supply",
+    "request": {
+      "owner_address": "4177952ce83ca3cad9f7adcfabeda85bd2f1f52008",
+      "contract_address": "4166de0d4dbe8ca9865423ceccacc699c682d4cc94",
+      "ref_block_bytes": "1234",
+      "ref_block_hash": "1234567890abcdef",
+      "timestamp_ms": 1790700000000,
+      "expiration_ms": 1790700180000,
+      "fee_limit_sun": "14000000",
+      "call_value_sun": "1000000",
+      "data_hex": "1249c58b"
+    },
+    "transaction": {
+      "visible": false,
+      "txID": "e774ee6d540792a4b6f40caaeda90c99984cd9a2ec90bb4a79bbaf0f22312b6b",
+      "raw_data_hex": "0a02123422081234567890abcdef40a0a4b1f08e345a71081f126d0a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412380a154177952ce83ca3cad9f7adcfabeda85bd2f1f5200812154166de0d4dbe8ca9865423ceccacc699c682d4cc9418c0843d22041249c58b7080a6a6f08e34900180bfd606",
+      "raw_data": {
+        "ref_block_bytes": "1234",
+        "ref_block_hash": "1234567890abcdef",
+        "expiration": 1790700180000,
+        "timestamp": 1790700000000,
+        "fee_limit": 14000000,
+        "contract": [
+          {
+            "type": "TriggerSmartContract",
+            "parameter": {
+              "type_url": "type.googleapis.com/protocol.TriggerSmartContract",
+              "value": {
+                "owner_address": "4177952ce83ca3cad9f7adcfabeda85bd2f1f52008",
+                "contract_address": "4166de0d4dbe8ca9865423ceccacc699c682d4cc94",
+                "call_value": 1000000,
+                "data": "1249c58b"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "serializer": "TronWeb 6.5.1 txJsonToPb"
+  },
+  {
+    "name": "redeem",
+    "request": {
+      "owner_address": "4177952ce83ca3cad9f7adcfabeda85bd2f1f52008",
+      "contract_address": "4166de0d4dbe8ca9865423ceccacc699c682d4cc94",
+      "ref_block_bytes": "1234",
+      "ref_block_hash": "1234567890abcdef",
+      "timestamp_ms": 1790700000000,
+      "expiration_ms": 1790700180000,
+      "fee_limit_sun": "14000000",
+      "call_value_sun": "0",
+      "data_hex": "db006a7500000000000000000000000000000000000000000000000000000002153fc5c7"
+    },
+    "transaction": {
+      "visible": false,
+      "txID": "98eab31b45ff6c883dea3c67cb10cadfc20f55f7f6b05eade69d381bbbf78c11",
+      "raw_data_hex": "0a02123422081234567890abcdef40a0a4b1f08e345a8e01081f1289010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412540a154177952ce83ca3cad9f7adcfabeda85bd2f1f5200812154166de0d4dbe8ca9865423ceccacc699c682d4cc942224db006a7500000000000000000000000000000000000000000000000000000002153fc5c77080a6a6f08e34900180bfd606",
+      "raw_data": {
+        "ref_block_bytes": "1234",
+        "ref_block_hash": "1234567890abcdef",
+        "expiration": 1790700180000,
+        "timestamp": 1790700000000,
+        "fee_limit": 14000000,
+        "contract": [
+          {
+            "type": "TriggerSmartContract",
+            "parameter": {
+              "type_url": "type.googleapis.com/protocol.TriggerSmartContract",
+              "value": {
+                "owner_address": "4177952ce83ca3cad9f7adcfabeda85bd2f1f52008",
+                "contract_address": "4166de0d4dbe8ca9865423ceccacc699c682d4cc94",
+                "data": "db006a7500000000000000000000000000000000000000000000000000000002153fc5c7"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "serializer": "TronWeb 6.5.1 txJsonToPb"
+  },
+  {
+    "name": "approve_usdd",
+    "request": {
+      "owner_address": "4177952ce83ca3cad9f7adcfabeda85bd2f1f52008",
+      "contract_address": "4166de0d4dbe8ca9865423ceccacc699c682d4cc94",
+      "ref_block_bytes": "1234",
+      "ref_block_hash": "1234567890abcdef",
+      "timestamp_ms": 1790700000000,
+      "expiration_ms": 1790700180000,
+      "fee_limit_sun": "14000000",
+      "call_value_sun": "0",
+      "data_hex": "095ea7b300000000000000000000000066de0d4dbe8ca9865423ceccacc699c682d4cc940000000000000000000000000000000000000000000000000000000023c34600"
+    },
+    "transaction": {
+      "visible": false,
+      "txID": "768d31bc95765c98ce37ce0b02f9ff942ad2f340a1160d39a9cc86ee216f0e02",
+      "raw_data_hex": "0a02123422081234567890abcdef40a0a4b1f08e345aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a154177952ce83ca3cad9f7adcfabeda85bd2f1f5200812154166de0d4dbe8ca9865423ceccacc699c682d4cc942244095ea7b300000000000000000000000066de0d4dbe8ca9865423ceccacc699c682d4cc940000000000000000000000000000000000000000000000000000000023c346007080a6a6f08e34900180bfd606",
+      "raw_data": {
+        "ref_block_bytes": "1234",
+        "ref_block_hash": "1234567890abcdef",
+        "expiration": 1790700180000,
+        "timestamp": 1790700000000,
+        "fee_limit": 14000000,
+        "contract": [
+          {
+            "type": "TriggerSmartContract",
+            "parameter": {
+              "type_url": "type.googleapis.com/protocol.TriggerSmartContract",
+              "value": {
+                "owner_address": "4177952ce83ca3cad9f7adcfabeda85bd2f1f52008",
+                "contract_address": "4166de0d4dbe8ca9865423ceccacc699c682d4cc94",
+                "data": "095ea7b300000000000000000000000066de0d4dbe8ca9865423ceccacc699c682d4cc940000000000000000000000000000000000000000000000000000000023c34600"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "serializer": "TronWeb 6.5.1 txJsonToPb"
+  }
+]

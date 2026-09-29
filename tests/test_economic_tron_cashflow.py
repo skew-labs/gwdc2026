@@ -243,7 +243,7 @@ class TronCashflowTests(unittest.TestCase):
         with self.assertRaisesRegex(MachineError,'token atom'):
             self.evaluate()
         self.q['principal']='1000';self.q['prices_base']['USDT']='0.99'
-        with self.assertRaisesRegex(MachineError,'base price'):
+        with self.assertRaisesRegex(MachineError,'base (asset )?price'):
             self.evaluate()
 
     def test_calculation_replay_rejects_forged_result_and_changed_conditions(self):

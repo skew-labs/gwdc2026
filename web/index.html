@@ -24,7 +24,7 @@
     </aside>
 
     <main class="chat-panel">
-      <header class="chat-head"><div><span class="eyebrow">PRIVATE WEALTH DESK</span><h1>내 자산관리 팀</h1></div><div class="network-pill"><span></span> TRON</div></header>
+      <header class="chat-head"><div><span class="eyebrow">PRIVATE WEALTH DESK</span><h1>내 자산관리 팀</h1></div><div class="head-actions"><button id="wallet-connect" class="wallet-connect" type="button">지갑 연결</button><div class="network-pill"><span></span> TRON</div></div></header>
       <div id="turns" class="turns" aria-live="polite">
         <article class="turn assistant">
           <div class="sender"><span class="agent-icon alpha mini">A</span><strong>ALPHA</strong><time>지금</time></div>
@@ -34,7 +34,7 @@
       </div>
       <footer class="composer-wrap">
         <form id="chat-form" class="composer"><label class="sr-only" for="message">자산 운용 조건</label><textarea id="message" rows="2" maxlength="2000" placeholder="예: 10,000 USDT 중 30%는 바로 쓸 수 있게 남겨줘"></textarea><button id="send" type="submit" aria-label="메시지 보내기">↑</button></form>
-        <p>현재 공개 데모는 historical replay입니다. 실제 Qwen 호출·지갑 서명·체인 거래를 수행하지 않습니다.</p>
+        <p>지갑 서명은 로그인에만 사용됩니다. Qwen은 조건 초안만 만들며 배분·승인·거래 권한을 갖지 않습니다.</p>
       </footer>
     </main>
 

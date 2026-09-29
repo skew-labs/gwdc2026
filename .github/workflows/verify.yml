@@ -1,0 +1,48 @@
+name: Verify faat
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  finance:
+    name: Finance guards and captured receipts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e '.[service,contracts,validation]'
+      - name: Product regression suite (offline)
+        env:
+          PYTHONPATH: src:tests
+        run: >-
+          python -m unittest
+          test_native_execution test_native_adjustments test_native_performance
+          test_performance_periods test_wallet_encoding test_machine_worker
+          test_usdd_workflow test_usdd_execution test_usdd_comparison
+      - name: Validate captured Nile receipts without broadcasting
+        run: python scripts/verify_nile_receipts.py
+
+  frontend:
+    name: Workspace, wallet and frontend build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.19.0'
+      - run: corepack enable
+      - run: corepack prepare pnpm@11.19.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - run: pnpm build

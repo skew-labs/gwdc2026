@@ -525,7 +525,9 @@ def compile_execution_graph(intent: dict, snapshot: dict, account: dict,
         operation = None
         arguments = []
         call_value = "0"
-        if name.startswith("justlend.v1."):
+        if name == "justlend.v1.jTRX" and token["asset"] == "TRX" and token["address"] is None:
+            operation, call_value = "JUSTLEND_SUPPLY_TRX", str(required)
+        elif name.startswith("justlend.v1."):
             operation, arguments = "JUSTLEND_SUPPLY", [str(required)]
         elif name == "justlend.strx":
             operation, call_value = "STRX_STAKE", str(required)

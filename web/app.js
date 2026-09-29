@@ -2,7 +2,10 @@ const byId = (id) => document.getElementById(id);
 const turns = byId("turns");
 const workspace = byId("workspace");
 const workspaceBody = byId("workspace-body");
-const state = {story: null, selectedPlan: null};
+const state = {story: null, selectedPlan: null,
+  sessionToken: sessionStorage.getItem("whollet:session") || null,
+  wallet: sessionStorage.getItem("whollet:wallet") || null,
+  network: sessionStorage.getItem("whollet:network") || null};
 
 function el(tag, className, text) {
   const item = document.createElement(tag);
@@ -54,7 +57,12 @@ function addTurn(kind, sender, message, action) {
   if (action) {
     const button = el("button", "suggestion", action.label);
     button.type = "button";
-    button.addEventListener("click", action.run);
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      try { await action.run(); }
+      catch (error) { addTurn("assistant error", "WATCH", error.message); }
+      finally { button.disabled = false; }
+    });
     article.append(button);
   }
   turns.append(article);
@@ -67,6 +75,154 @@ async function getJson(path) {
   try { body = await response.json(); } catch { body = {}; }
   if (!response.ok) throw new Error(body.detail || body.error || "서비스 응답을 확인할 수 없습니다.");
   return body;
+}
+
+async function postJson(path, body, token = null) {
+  const headers = {"Content-Type": "application/json"};
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const response = await fetch(path, {method: "POST", headers,
+    body: JSON.stringify(body), cache: "no-store", credentials: "same-origin"});
+  let result;
+  try { result = await response.json(); } catch { result = {}; }
+  if (!response.ok) throw new Error(result.detail || result.error || "서비스 요청에 실패했습니다.");
+  return result;
+}
+
+function walletProvider() {
+  if (window.tron?.isTronLink) return window.tron;
+  if (window.tronLink) return window.tronLink;
+  return null;
+}
+
+function walletNetwork(tronWeb) {
+  const host = String(tronWeb?.fullNode?.host || "").toLowerCase();
+  if (host.includes("nile")) return "tron-nile";
+  if (host.includes("shasta")) return "tron-shasta";
+  return "tron-mainnet";
+}
+
+function updateWalletButton() {
+  const button = byId("wallet-connect");
+  if (!state.wallet) {
+    button.textContent = "지갑 연결";
+    button.classList.remove("connected");
+    return;
+  }
+  button.textContent = `${state.wallet.slice(0, 5)}…${state.wallet.slice(-4)}`;
+  button.classList.add("connected");
+}
+
+async function connectWallet() {
+  const provider = walletProvider();
+  if (!provider) throw new Error("TronLink를 찾지 못했습니다. TronLink가 설치된 브라우저에서 열어주세요.");
+  await provider.request({method: "eth_requestAccounts"});
+  const tronWeb = provider.tronWeb || window.tronWeb;
+  const address = tronWeb?.defaultAddress?.base58;
+  if (!address) throw new Error("TronLink에서 이 사이트의 지갑 접근을 허용해 주세요.");
+  const network = walletNetwork(tronWeb);
+  const challenge = await postJson("/v1/auth/challenges", {address, network});
+  let signature;
+  try {
+    signature = await tronWeb.trx.signMessageV2(challenge.message);
+  } catch {
+    throw new Error("로그인 서명이 취소되었습니다. 자산 이동이나 거래는 발생하지 않았습니다.");
+  }
+  const session = await postJson("/v1/auth/sessions", {
+    address, network, nonce: challenge.nonce, signature});
+  state.sessionToken = session.session_token;
+  state.wallet = session.wallet_base58;
+  state.network = session.network;
+  sessionStorage.setItem("whollet:session", state.sessionToken);
+  sessionStorage.setItem("whollet:wallet", state.wallet);
+  sessionStorage.setItem("whollet:network", state.network);
+  updateWalletButton();
+  toast("지갑 소유권 확인 완료 · 거래 권한 없음");
+  if (network === "tron-nile") {
+    addTurn("assistant", "VAULT",
+      "Nile에서 지갑→같은 지갑 1 SUN 전송으로 서명·전파·solid receipt 경로를 검증할 수 있습니다. TronLink가 정확한 거래를 다시 보여준 뒤에만 진행됩니다.",
+      {label: "Nile 1 SUN 실행 증거 만들기 →", run: runNileProof});
+  } else {
+    addTurn("assistant", "VAULT",
+      `${network} 지갑 소유권을 확인했습니다. 실행 증거는 실자산을 건드리지 않도록 Nile에서만 허용합니다.`);
+  }
+  return session;
+}
+
+async function requireSession() {
+  if (state.sessionToken) return state.sessionToken;
+  await connectWallet();
+  return state.sessionToken;
+}
+
+function intentSummary(result) {
+  const labels = {
+    capital: "운용 금액", base_asset: "기준 자산", risk_profile: "위험 성향",
+    horizon_seconds: "운용 기간", immediate_cash: "즉시 보유", withdrawals: "출금 조건",
+    borrowing_consent: "차입 동의", max_debt: "최대 부채"};
+  return Object.keys(result.patch || {}).map((key) => labels[key] || key).join(" · ");
+}
+
+async function runAgent(message) {
+  const token = await requireSession();
+  const result = await postJson("/v1/agent/intent", {message}, token);
+  if (result.status === "MODEL_UNAVAILABLE") {
+    addTurn("assistant error", "WATCH",
+      `Qwen 제공자가 요청을 받지 못했습니다. ${result.reason_codes.join(", ")} · 사용 기록 ${shortHash(result.usage_event_id)}`);
+    return;
+  }
+  if (result.status === "MODEL_OUTPUT_REJECTED") {
+    addTurn("assistant error", "WATCH",
+      `모델 응답이 금융 입력 규격을 통과하지 못해 폐기했습니다. ${result.reason_codes.join(", ")}`);
+    return;
+  }
+  if (result.status === "NEEDS_INFORMATION") {
+    const extracted = intentSummary(result);
+    addTurn("assistant", "ALPHA",
+      `${extracted ? `${extracted}을 근거 문장에 묶었습니다. ` : ""}${result.questions[0]?.question || "조건을 더 알려주세요."}`);
+    return;
+  }
+  if (result.status === "DRAFT_READY") {
+    addTurn("assistant", "ALPHA",
+      `${intentSummary(result)}을 조건 초안으로 만들었습니다. 이 초안에는 배분·승인·서명·거래 권한이 없습니다.`,
+      {label: "검증된 TRON 배분 기록 비교 →", run: () => loadReplay()});
+    return;
+  }
+  addTurn("assistant", "ALPHA", "명시적으로 바뀐 금융 조건을 찾지 못했습니다. 금액·단위·기간·출금 조건을 알려주세요.");
+}
+
+async function runNileProof() {
+  if (!state.sessionToken || state.network !== "tron-nile") {
+    throw new Error("Nile로 인증된 지갑 세션이 필요합니다.");
+  }
+  const provider = walletProvider();
+  const tronWeb = provider?.tronWeb || window.tronWeb;
+  const address = tronWeb?.defaultAddress?.base58;
+  if (!tronWeb || address !== state.wallet || walletNetwork(tronWeb) !== "tron-nile") {
+    throw new Error("현재 TronLink의 Nile 계정이 인증된 계정과 다릅니다.");
+  }
+  let signed;
+  try {
+    const transaction = await tronWeb.transactionBuilder.sendTrx(address, 1, address);
+    signed = await tronWeb.trx.sign(transaction);
+  } catch {
+    addTurn("assistant", "VAULT", "거래 서명이 취소되었습니다. 전송은 발생하지 않았습니다.");
+    return;
+  }
+  const broadcast = await tronWeb.trx.sendRawTransaction(signed);
+  if (!broadcast?.result) throw new Error(broadcast?.message || "Nile 노드가 거래를 수락하지 않았습니다.");
+  const txid = signed.txID || broadcast.txid || broadcast.transaction?.txID;
+  if (!/^[0-9a-fA-F]{64}$/.test(txid || "")) throw new Error("전파된 거래 ID를 확인할 수 없습니다.");
+  let proof;
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    proof = await postJson("/v1/tron/wallet-proofs", {txid}, state.sessionToken);
+    if (proof.status === "SOLID_EXECUTED" || proof.status === "SOLID_EXECUTION_FAILED") break;
+    await new Promise((resolve) => window.setTimeout(resolve, 3000));
+  }
+  const message = proof.status === "SOLID_EXECUTED"
+    ? `Nile 거래가 solid block ${proof.block_number}에서 확인됐습니다. tx ${shortHash(txid)} · 증거 ${shortHash(proof.evidence_hash)}`
+    : `거래 ${shortHash(txid)}를 전파했습니다. 현재 상태 ${proof.status}이며 성공으로 표시하지 않습니다.`;
+  addTurn(proof.status === "SOLID_EXECUTION_FAILED" ? "assistant error" : "assistant",
+    "WATCH", message);
 }
 
 function metric(label, value, tone = "") {
@@ -295,8 +451,22 @@ byId("chat-form").addEventListener("submit", async (event) => {
   addTurn("user", "", message);
   input.value = "";
   byId("send").disabled = true;
-  await loadReplay();
-  byId("send").disabled = false;
+  try {
+    await runAgent(message);
+  } catch (error) {
+    addTurn("assistant error", "WATCH", error.message);
+    if (/session|Bearer|expired/i.test(error.message)) {
+      state.sessionToken = null;
+      sessionStorage.removeItem("whollet:session");
+    }
+  } finally {
+    byId("send").disabled = false;
+  }
+});
+
+byId("wallet-connect").addEventListener("click", async () => {
+  try { await connectWallet(); }
+  catch (error) { addTurn("assistant error", "WATCH", error.message); }
 });
 
 for (const button of document.querySelectorAll("[data-role]")) {
@@ -313,3 +483,4 @@ getJson("/healthz").then((health) => {
 }).catch(() => { byId("service-state").textContent = "서비스 연결 실패"; });
 
 if (localStorage.getItem("whollet:last-story")) loadReplay({announce: false});
+updateWalletButton();

@@ -631,23 +631,10 @@ class OperationalRepository:
                            payload, expected_benefit_base_units,
                            estimated_cost_base_units, last_completed_at,
                            cooldown_seconds, at, expires_at):
-        def amount(value, label):
-            if not isinstance(value, str) or re.fullmatch(r"0|[1-9][0-9]*", value) is None:
-                raise MachineError("invalid " + label)
-            return int(value)
-        benefit = amount(expected_benefit_base_units, "rebalance benefit")
-        cost = amount(estimated_cost_base_units, "rebalance cost")
-        if type(cooldown_seconds) is not int or not 0 <= cooldown_seconds <= 604800:
-            raise MachineError("invalid rebalance cooldown")
+        from .rebalance_gate import rebalance_reasons
         at = utc(at)
-        reasons = []
-        if benefit <= cost:
-            reasons.append("EXPECTED_BENEFIT_NOT_ABOVE_COST")
-        if last_completed_at is not None:
-            cooldown_end = datetime.fromisoformat(utc(last_completed_at)) + timedelta(
-                seconds=cooldown_seconds)
-            if datetime.fromisoformat(at) < cooldown_end:
-                reasons.append("REBALANCE_COOLDOWN_ACTIVE")
+        reasons = rebalance_reasons(expected_benefit_base_units, estimated_cost_base_units,
+            last_completed_at, cooldown_seconds, at)
         if reasons:
             return {"status": "HELD", "reason_codes": reasons,
                     "execution_authority": "NONE"}

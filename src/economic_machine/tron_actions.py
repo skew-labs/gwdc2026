@@ -25,6 +25,7 @@ BLOCKED = "UNVERIFIED_COMPOSITE"
 CATALOG = {
     "TRC20_APPROVE": (SMART, "approve(address,uint256)", ("address", "uint256"),
                       False, "BOOL_TRUE", True),
+    "JUSTLEND_SUPPLY_TRX": (SMART, "mint()", (), True, "RECEIPT_SUCCESS", True),
     "JUSTLEND_SUPPLY": (SMART, "mint(uint256)", ("uint256",),
                         False, "UINT_ZERO", True),
     "JUSTLEND_REDEEM_SHARES": (SMART, "redeem(uint256)", ("uint256",),
@@ -147,8 +148,8 @@ def compile_action(binding: dict, arguments: list, *, call_value_sun: str,
         raise MachineError("positive fee limit required")
     if call_value and not payable:
         raise MachineError("nonpayable action cannot carry TRX")
-    if payable and operation == "STRX_STAKE" and call_value == 0:
-        raise MachineError("sTRX deposit needs positive call value")
+    if payable and operation in {"STRX_STAKE", "JUSTLEND_SUPPLY_TRX"} and call_value == 0:
+        raise MachineError("native deposit needs positive call value")
     if transport == SMART and binding["target_address"] is None:
         raise MachineError("smart-contract action target missing")
     status = "READY_FOR_SIMULATION"

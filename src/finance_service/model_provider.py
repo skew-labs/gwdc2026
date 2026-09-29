@@ -38,20 +38,36 @@ class QwenProviderConfig:
     model_id: str
     provider: str = "kiln"
     timeout_seconds: int = 30
-    max_output_tokens: int = 800
+    max_output_tokens: int = 1600
     max_retries: int = 1
 
     @classmethod
     def from_environment(cls):
-        required = ("GWDC_QWEN_BASE_URL", "GWDC_QWEN_API_KEY", "GWDC_QWEN_MODEL_ID")
-        if any(not os.environ.get(key) for key in required):
+        required = ("GWDC_QWEN_BASE_URL", "GWDC_QWEN_MODEL_ID")
+        direct = os.environ.get("GWDC_QWEN_API_KEY")
+        key_file = os.environ.get("GWDC_QWEN_API_KEY_FILE")
+        if any(not os.environ.get(key) for key in required) or bool(direct) == bool(key_file):
             raise ModelProviderError("NOT_CONFIGURED", {
                 "provider": "kiln", "model_id": os.environ.get("GWDC_QWEN_MODEL_ID"),
                 "attempts": 0, "latency_ms": 0, "request_id": None,
                 "model_revision": None, "input_tokens": None,
                 "output_tokens": None, "response_sha256": None,
             })
-        return cls(os.environ["GWDC_QWEN_BASE_URL"], os.environ["GWDC_QWEN_API_KEY"],
+        if key_file:
+            from .postgres_runtime import read_owner_file
+
+            value, _ = read_owner_file(key_file, label="Qwen API credential", max_size=4096)
+            api_key = value.strip()
+            if not api_key or "\n" in api_key or "\r" in api_key:
+                raise ModelProviderError("NOT_CONFIGURED", {
+                    "provider": "kiln", "model_id": os.environ.get("GWDC_QWEN_MODEL_ID"),
+                    "attempts": 0, "latency_ms": 0, "request_id": None,
+                    "model_revision": None, "input_tokens": None,
+                    "output_tokens": None, "response_sha256": None,
+                })
+        else:
+            api_key = direct
+        return cls(os.environ["GWDC_QWEN_BASE_URL"], api_key,
                    os.environ["GWDC_QWEN_MODEL_ID"])
 
     def validate(self):
@@ -137,7 +153,8 @@ class OpenAICompatibleQwenProvider:
         request = urllib.request.Request(
             self.config.base_url.rstrip("/") + "/chat/completions", data=encoded,
             headers={"Authorization": "Bearer " + self.config.api_key,
-                     "Content-Type": "application/json"}, method="POST")
+                     "Content-Type": "application/json",
+                     "User-Agent": "EconomicMachine/1.0"}, method="POST")
         started = self._monotonic()
         attempts = 0
         while True:
@@ -149,7 +166,7 @@ class OpenAICompatibleQwenProvider:
                     if len(raw) > MAX_RESPONSE_BYTES:
                         raise ModelProviderError("RESPONSE_TOO_LARGE",
                             self._metadata(attempts, started, response=response))
-                    body = json.loads(raw.decode("utf-8"))
+                    body = json.loads(raw.decode("utf-8"), parse_float=str)
                 choices = body.get("choices")
                 if not isinstance(choices, list) or len(choices) != 1:
                     raise ValueError("choices")
@@ -160,15 +177,25 @@ class OpenAICompatibleQwenProvider:
                     raise ModelProviderError("TOOL_CALL_REJECTED",
                         self._metadata(attempts, started, body, response))
                 return {"content": message["content"],
-                        **self._metadata(attempts, started, body, response)}
+                        **self._metadata(attempts, started, body, response),
+                        "response_sha256": hashlib.sha256(raw).hexdigest()}
             except ModelProviderError:
                 raise
             except urllib.error.HTTPError as exc:
-                code = "RATE_LIMITED" if exc.code == 429 else "HTTP_ERROR"
-                if exc.code == 429 and attempts <= self.config.max_retries:
+                codes = {
+                    400: "BAD_REQUEST",
+                    401: "AUTHENTICATION_FAILED",
+                    402: "PAYMENT_REQUIRED",
+                    403: "PROVIDER_FORBIDDEN_OR_SUSPENDED",
+                    404: "MODEL_OR_ENDPOINT_NOT_FOUND",
+                    429: "RATE_LIMITED",
+                }
+                code = codes.get(exc.code, "PROVIDER_UNAVAILABLE" if 500 <= exc.code < 600
+                                 else "HTTP_ERROR")
+                if (exc.code == 429 or 500 <= exc.code < 600) and attempts <= self.config.max_retries:
                     continue
                 raise ModelProviderError(code,
-                    self._metadata(attempts, started, body, response)) from exc
+                    self._metadata(attempts, started, body, exc)) from exc
             except (TimeoutError, urllib.error.URLError) as exc:
                 if attempts <= self.config.max_retries:
                     continue
@@ -177,3 +204,14 @@ class OpenAICompatibleQwenProvider:
             except (UnicodeDecodeError, json.JSONDecodeError, ValueError, TypeError, KeyError) as exc:
                 raise ModelProviderError("MALFORMED_RESPONSE",
                     self._metadata(attempts, started, body, response)) from exc
+
+
+class UnavailableQwenProvider:
+    """Keep the product healthy while reporting an exact configuration failure."""
+
+    def __init__(self, error: ModelProviderError):
+        self.error = error
+
+    def complete(self, messages: list[dict]) -> dict:
+        OpenAICompatibleQwenProvider._messages(messages)
+        raise ModelProviderError(self.error.code, dict(self.error.metadata))

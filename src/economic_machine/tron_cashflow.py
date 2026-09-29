@@ -56,15 +56,15 @@ class BoundFacts:
         return quantity(fact['value'], signed=True)
 
 
-def _price(quote, asset):
+def _price(quote, asset, base_asset="USDT"):
     prices = quote['prices_base']
     if not isinstance(prices, dict) or not set(prices) <= {'USDT', 'USDD', 'TRX'}:
         raise MachineError('only explicit USDT/USDD/TRX base prices supported')
     for value in prices.values():
         if quantity(value) <= 0:
             raise MachineError('positive price assumption required')
-    if prices.get('USDT') != '1':
-        raise MachineError('USDT base price must be exactly one')
+    if prices.get(base_asset) != '1':
+        raise MachineError('base asset price must be exactly one')
     if asset not in prices:
         raise Unavailable('PRICE_ASSUMPTION_MISSING:' + asset)
     return quantity(prices[asset])
@@ -81,7 +81,7 @@ def _quote(snapshot, terms, quote, facts, capital):
     is_vault = name.startswith('usdd.vault.')
     is_native = name == 'tron.native.stake'
     is_strx = name == 'justlend.strx'
-    is_supply = name in {'justlend.v1.jUSDT', 'justlend.v1.jUSDD', 'justlend.v1.jUSDDOLD'}
+    is_supply = name in {'justlend.v1.jUSDT', 'justlend.v1.jUSDD', 'justlend.v1.jUSDDOLD', 'justlend.v1.jTRX'}
     if not (is_vault or is_native or is_strx or is_supply):
         raise Unavailable('UNSUPPORTED_PRODUCT')
     if is_supply and not product['new_supply_allowed']:
@@ -102,7 +102,7 @@ def _quote(snapshot, terms, quote, facts, capital):
     decimals = 6 if asset in {'TRX', 'USDT'} else cap['token']['decimals']
     if amount != rounded(amount, decimals):
         raise MachineError('principal contains a fractional underlying token atom')
-    price = _price(quote, asset)
+    price = _price(quote, asset, terms["base_asset"])
     principal = rounded(amount * price, liability=True)
     costs = dict(require_keys(quote['costs_base'], {'entry', 'exit', 'conversion', 'network'}, 'costs'))
     resource_detail = None
@@ -113,7 +113,7 @@ def _quote(snapshot, terms, quote, facts, capital):
         resource_detail = transaction_costs(resources['window'], resources['transactions'], {
             'sun_per_energy': _whole(facts.get('tron.chain.getEnergyFee', 'sun_per_energy')),
             'sun_per_byte': _whole(facts.get('tron.chain.getTransactionFee', 'sun_per_byte')),
-            'trx_price_base': decstr(_price(quote, 'TRX'))})
+            'trx_price_base': decstr(_price(quote, 'TRX', terms['base_asset']))})
         costs['network'] = resource_detail['cost_base']
     reasons, exposures = [], {asset: principal}
     if cap['action'] not in terms['allowed_actions']:
@@ -140,7 +140,7 @@ def _quote(snapshot, terms, quote, facts, capital):
         ceiling = facts.get(name + '.type_debt_ceiling', 'USDD')
         if type_debt + debt > ceiling:
             reasons.append('VAULT_TYPE_DEBT_CEILING')
-        usdd_px = _price(quote, 'USDD')
+        usdd_px = _price(quote, 'USDD', terms['base_asset'])
         detail = vault_cashflow(collateral_base=decstr(principal), deployed_usdd=v['deployed_usdd'],
             stored_debt_usdd=v['stored_debt_usdd'], fee_rate=fee_rate, fee_age_seconds=v['fee_age_seconds'],
             horizon_seconds=horizon, destination_rate=destination_rate, usdd_price_base=decstr(usdd_px),
@@ -203,9 +203,13 @@ def _quote(snapshot, terms, quote, facts, capital):
                 raise Unavailable('STRX_EXIT_QUEUE_UNKNOWN')
             curve = recovery_curve(decstr(amount), quote['exit_tranches'])
         else:
-            detail['reward'] = reward_income(decstr(amount), rate(decstr(facts.get(name + '.reward_apy', 'annual_fraction'))),
-                horizon, claim_after_seconds=quote['reward_claim_seconds'], haircut_bps=quote['reward_haircut_bps'],
-                decimals=cap['token']['decimals'])
+            if quote['reward_haircut_bps'] == 10000 and name + '.reward_apy' not in snapshot['facts']:
+                detail['reward'] = {'status':'EXCLUDED_BY_FULL_HAIRCUT', 'observed_annual_fraction':None,
+                    'claimable_income':'0', 'gross_income':None}
+            else:
+                detail['reward'] = reward_income(decstr(amount), rate(decstr(facts.get(name + '.reward_apy', 'annual_fraction'))),
+                    horizon, claim_after_seconds=quote['reward_claim_seconds'], haircut_bps=quote['reward_haircut_bps'],
+                    decimals=cap['token']['decimals'])
             # Mining APY is a notional return on supplied value; no USDD=USDT
             # peg is invented. Haircut/claim time describe conversion proceeds.
             income += quantity(detail['reward']['claimable_income']) * price
@@ -262,7 +266,7 @@ def calculate_tron_cashflows(record, snapshot, assumptions, *, assembler, at):
     age = (datetime.fromisoformat(at) - datetime.fromisoformat(snapshot['as_of'])).total_seconds()
     if not 0 <= age <= assembler.config['max_age_seconds']:
         raise MachineError('snapshot is stale or from the future')
-    directory = next(c for c in snapshot['captures'] if c['source_id'] == 'justlend_contracts')
+    directory = next(c for c in snapshot['captures'] if c['source_id'] == snapshot.get('registry_source_id', 'justlend_contracts'))
     registry_age = (datetime.fromisoformat(at) - datetime.fromisoformat(directory['received_at'])).total_seconds()
     if directory['error'] or not 0 <= registry_age <= assembler.config['max_registry_age_seconds']:
         raise MachineError('product registry is stale or unavailable')
@@ -273,8 +277,10 @@ def calculate_tron_cashflows(record, snapshot, assumptions, *, assembler, at):
     if not isinstance(quotes, list) or not 1 <= len(quotes) <= 16:
         raise MachineError('bounded independent quote list required')
     asset, capital, _ = single_asset_budget(mandate)
-    if asset != 'USDT':
-        raise MachineError('cashflow base must be USDT')
+    if asset not in {'USDT', 'TRX'}:
+        raise MachineError('cashflow base must be USDT or TRX')
+    if asset == 'TRX' and any(q.get('product_id') != 'justlend.v1.jTRX' or q.get('prices_base') != {'TRX':'1'} for q in quotes):
+        raise MachineError('TRX base is restricted to native jTRX without conversion')
     results, seen = [], set()
     for quote in quotes:
         require_keys(quote, QUOTE_KEYS, 'TRON cashflow quote')

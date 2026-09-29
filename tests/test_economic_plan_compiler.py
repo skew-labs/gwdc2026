@@ -57,6 +57,21 @@ class PlanCompilerTests(unittest.TestCase):
                              request_value or self.request,
                              assembler=self.assembler, at=at)
 
+    def test_costs_exceeding_yield_abstain_without_relaxing_policy(self):
+        # 0% native supply yield must not turn a fee-paying test into an investment.
+        captures = copy.deepcopy(self.captures)
+        modify(captures, "justlend_markets_v1", lambda payload: [r.update(supplyRate="0") for r in payload["data"]["tokenList"]])
+        snap = self.assembler.assemble(captures, as_of=AT)
+        q = quote("justlend.v1.jUSDT")
+        q["reward_haircut_bps"] = 10000
+        req = request(snap, [template("justlend.v1.jUSDT", quoted=q)])
+        original = copy.deepcopy(self.raw)
+        result = self.compare(snapshot=snap, request_value=req)
+        self.assertEqual(result["status"], "NO_TWO_VIABLE_PLANS")
+        self.assertEqual(result["plans"], [])
+        self.assertGreater(result["exclusion_histogram"]["NET_BENEFIT_NOT_POSITIVE"], 0)
+        self.assertEqual(self.raw, original)
+
     def test_two_plans_are_deterministic_complete_and_policy_compliant(self):
         first = self.compare()
         self.assertEqual(first, self.compare())
@@ -214,6 +229,21 @@ class PlanCompilerTests(unittest.TestCase):
         req = request(self.snapshot, [template("justlend.v1.jUSDT", maximum=0)])
         with self.assertRaisesRegex(MachineError, "stale"):
             self.compare(request_value=req, at="2026-09-28T12:16:00Z")
+
+    def test_review_and_verify_later_preserve_committed_comparison(self):
+        comparison = self.compare()
+        intent = compile_plan_intent(comparison, self.record, self.snapshot, self.request,
+            selected_plan="GROWTH", assembler=self.assembler,
+            at="2026-09-28T12:02:00Z", valid_until="2026-09-28T12:04:00Z")
+        self.assertEqual(intent["comparison_hash"], comparison["comparison_hash"])
+        self.assertTrue(verify_plan_intent(intent, comparison, self.record, self.snapshot,
+            self.request, assembler=self.assembler, at="2026-09-28T12:03:00Z"))
+        self.assertFalse(verify_plan_intent(intent, comparison, self.record, self.snapshot,
+            self.request, assembler=self.assembler, at="2026-09-28T12:04:00Z"))
+        with self.assertRaises(MachineError):
+            compile_plan_intent(comparison, self.record, self.snapshot, self.request,
+                selected_plan="GROWTH", assembler=self.assembler,
+                at="2026-09-28T12:03:00Z", valid_until="2026-09-28T12:07:00Z")
 
 
 if __name__ == "__main__":

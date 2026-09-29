@@ -2,8 +2,12 @@
 
 import io
 import json
+import os
+import tempfile
 import unittest
 import urllib.error
+from pathlib import Path
+from unittest.mock import patch
 
 from economic_machine.values import MachineError
 from finance_service.model_provider import (ModelProviderError,
@@ -46,6 +50,13 @@ def config(**changes):
 
 
 class ModelProviderTests(unittest.TestCase):
+    def test_provider_fractional_cost_preserves_exact_response_hash(self):
+        import hashlib
+        body = b'{"choices":[{"message":{"content":"{}"}}],"usage":{"prompt_tokens":9,"completion_tokens":5,"cost":0.00021}}'
+        result = OpenAICompatibleQwenProvider(config(), opener=QueueOpener(Response(body))).complete([{"role":"user","content":"test"}])
+        self.assertEqual(result["response_sha256"], hashlib.sha256(body).hexdigest())
+        self.assertEqual(result["input_tokens"], 9)
+
     def test_success_preserves_nullable_usage_and_request_identity(self):
         body = json.dumps({"id": "request-one", "choices": [{"message": {
             "content": "{}"}}]}).encode()
@@ -76,6 +87,36 @@ class ModelProviderTests(unittest.TestCase):
             OpenAICompatibleQwenProvider(config(), opener=timeout).complete(
                 [{"role": "user", "content": "a"}])
         self.assertEqual(timeout.calls, 2)
+
+    def test_http_failures_are_specific_and_only_transient_statuses_retry(self):
+        for status, code, calls in ((400, "BAD_REQUEST", 1),
+                                    (401, "AUTHENTICATION_FAILED", 1),
+                                    (402, "PAYMENT_REQUIRED", 1),
+                                    (403, "PROVIDER_FORBIDDEN_OR_SUSPENDED", 1),
+                                    (404, "MODEL_OR_ENDPOINT_NOT_FOUND", 1),
+                                    (503, "PROVIDER_UNAVAILABLE", 2)):
+            errors = [urllib.error.HTTPError("https://kiln.invalid", status, "failure", {},
+                                            io.BytesIO()) for _ in range(calls)]
+            opener = QueueOpener(*errors)
+            with self.subTest(status=status), self.assertRaisesRegex(ModelProviderError, code):
+                OpenAICompatibleQwenProvider(config(), opener=opener).complete(
+                    [{"role": "user", "content": "a"}])
+            self.assertEqual(opener.calls, calls)
+
+    def test_environment_supports_owner_only_secret_file_without_key_in_env(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "qwen.key"
+            path.write_text("file-secret\n")
+            path.chmod(0o600)
+            environment = {"GWDC_QWEN_BASE_URL": "https://api.bricksum.com/v1",
+                "GWDC_QWEN_MODEL_ID": "qwen3-32b", "GWDC_QWEN_API_KEY_FILE": str(path)}
+            with patch.dict(os.environ, environment, clear=True):
+                loaded = QwenProviderConfig.from_environment()
+            self.assertEqual(loaded.api_key, "file-secret")
+            with patch.dict(os.environ, {**environment, "GWDC_QWEN_API_KEY": "duplicate"},
+                             clear=True), self.assertRaisesRegex(ModelProviderError,
+                                                                 "NOT_CONFIGURED"):
+                QwenProviderConfig.from_environment()
 
     def test_tool_call_malformed_json_and_wrong_model_fail_closed(self):
         tools = json.dumps({"choices": [{"message": {"content": "{}",

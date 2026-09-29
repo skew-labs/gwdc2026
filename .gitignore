@@ -1,23 +1,26 @@
-# Generated data, machine-local state and dependency caches stay on Cherry.
-data/
-cache/
+node_modules/
 .venv/
 venv/
 __pycache__/
 *.py[cod]
 *.egg-info/
-build/
 dist/
-node_modules/
+build/
+coverage/
+*.tsbuildinfo
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 .DS_Store
-
-# Never commit credentials, signing material or local databases.
+.data/
+.local/
+data/
+cache/
+artifacts/
 .env
 .env.*
 !.env.example
+!.env.server.example
 *.pem
 *.key
 *.p12
@@ -25,42 +28,5 @@ node_modules/
 *.keystore
 *.sqlite*
 *.db
-
-# Only the small, reviewed PR 01 verification evidence is versioned.
-artifacts/*
-!artifacts/pr01/
-artifacts/pr01/*
-!artifacts/pr01/source-manifest.json
-!artifacts/pr01/core-regression-summary.json
-!artifacts/pr01/core-regression-tests.log
-
-# Reviewed PR 02 summaries; raw captures and databases remain on Cherry.
-!artifacts/pr02/
-artifacts/pr02/*
-!artifacts/pr02/source-manifest.json
-!artifacts/pr02/core-regression-summary.json
-!artifacts/pr02/core-regression-tests.log
-!artifacts/pr02/pipeline-tests.log
-!artifacts/pr02/live-manifest.json
-!artifacts/pr02/upstream-sources.json
-
-# Reviewed PR 03 financial calculations; full replay inputs remain on Cherry.
-!artifacts/pr03/
-artifacts/pr03/*
-!artifacts/pr03/source-manifest.json
-!artifacts/pr03/core-regression-summary.json
-!artifacts/pr03/core-regression-tests.log
-!artifacts/pr03/pipeline-tests.log
-!artifacts/pr03/replay-summary.json
-!artifacts/pr03/arithmetic-vectors.json
-
-# Reviewed PR 04 plan comparison and prepare-only intent evidence.
-!artifacts/pr04/
-artifacts/pr04/*
-!artifacts/pr04/source-manifest.json
-!artifacts/pr04/regression-summary.json
-!artifacts/pr04/core-regression-tests.log
-!artifacts/pr04/pipeline-tests.log
-!artifacts/pr04/replay-summary.json
-!artifacts/pr04/comparison.json
-!artifacts/pr04/intent.json
+*.log
+*.pptx

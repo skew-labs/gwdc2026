@@ -17,7 +17,7 @@ from .tron_cashflow import VERSION as CASHFLOW_VERSION, calculate_tron_cashflows
 from .values import MachineError, decimal, decstr, digest, ident, require_keys, utc
 
 
-VERSION = "economic-plan-comparison-1"
+VERSION = "economic-plan-comparison-2"
 REQUEST_VERSION = "economic-plan-request-1"
 INTENT_VERSION = "economic-plan-intent-1"
 MAX_CANDIDATES = 4096
@@ -206,6 +206,7 @@ def _adjustments(histogram):
         "TURNOVER_LIMIT": "RAISE_TURNOVER_CAP_OR_STAY_CLOSER_TO_CURRENT_WEIGHTS",
         "PRODUCT": "RAISE_PRODUCT_CAP_OR_ADD_ANOTHER_PRODUCT",
         "NO_INVESTED_CAPITAL": "LOWER_MINIMUM_INVESTMENT_EXPECTATION",
+        "NET_BENEFIT_NOT_POSITIVE": "KEEP_CASH_OR_REVIEW_COSTS_AND_HORIZON",
     }
     hints = {mapping[reason] for reason in histogram if reason in mapping}
     return sorted(hints)
@@ -249,6 +250,10 @@ def _evaluate_candidate(record, snapshot, assembler, request, book, weights, sce
                      for row in rows if "accounting" in row), Decimal(0))
     net_income = sum((decimal(row["accounting"]["net_income_base"], signed=True)
                       for row in rows if "accounting" in row), Decimal(0))
+    # Investment entry must improve on retaining cash after all modeled costs.
+    # This is not the gate for an emergency exit or a repair of an existing position.
+    if net_income <= 0:
+        reasons.append("NET_BENEFIT_NOT_POSITIVE")
     cash = capital - required
     immediate = reserve_amount(terms["immediate_cash"], capital_text)
     if cash < immediate or cash < 0:
@@ -342,7 +347,7 @@ def _validate_snapshot_time(snapshot, assembler, at):
     if not 0 <= age <= assembler.config["max_age_seconds"]:
         raise MachineError("snapshot is stale or from the future")
     directory = next((item for item in snapshot["captures"]
-                      if item["source_id"] == "justlend_contracts"), None)
+                      if item["source_id"] == snapshot.get("registry_source_id", "justlend_contracts")), None)
     if directory is None:
         raise MachineError("product registry capture missing")
     registry_age = (datetime.fromisoformat(at)
@@ -441,7 +446,14 @@ def verify_comparison(result, record, snapshot, request, *, assembler, at):
 
 def compile_plan_intent(comparison, record, snapshot, request, *, selected_plan,
                         assembler, at, valid_until):
-    expected = compare_plans(record, snapshot, request, assembler=assembler, at=at)
+    # Replay the reviewed calculation at its committed evaluation time. A later
+    # user click must not change its comparison hash merely because time passed.
+    now = datetime.fromisoformat(utc(at))
+    compared_at = datetime.fromisoformat(utc(comparison.get("at")))
+    if not compared_at <= now < compared_at + timedelta(seconds=request["max_plan_age_seconds"]):
+        raise MachineError("reviewed comparison expired or is from the future")
+    _validate_snapshot_time(snapshot, assembler, at)
+    expected = compare_plans(record, snapshot, request, assembler=assembler, at=comparison["at"])
     if comparison != expected or comparison["status"] != "COMPARISON_READY":
         raise MachineError("plan comparison does not replay or is not ready")
     plan = next((item for item in comparison["plans"] if item["name"] == selected_plan), None)
@@ -449,7 +461,7 @@ def compile_plan_intent(comparison, record, snapshot, request, *, selected_plan,
         raise MachineError("selected plan is not one of the compared plans")
     mandate = confirmed_mandate(record, utc(at))
     start, end = datetime.fromisoformat(utc(at)), datetime.fromisoformat(utc(valid_until))
-    maximum = start + timedelta(seconds=request["max_plan_age_seconds"])
+    maximum = compared_at + timedelta(seconds=request["max_plan_age_seconds"])
     if not start < end <= min(maximum, datetime.fromisoformat(mandate["terms"]["expires_at"])):
         raise MachineError("plan intent expiry exceeds policy or plan lifetime")
     cashflow_book = {row["product_id"]: row for row in plan["cashflows"]}
@@ -491,8 +503,13 @@ def verify_plan_intent(intent, comparison, record, snapshot, request, *, assembl
     if not isinstance(intent, dict) or intent.get("schema_version") != INTENT_VERSION:
         return False
     try:
+        now = datetime.fromisoformat(utc(at))
+        if not datetime.fromisoformat(intent["as_of"]) <= now < datetime.fromisoformat(intent["valid_until"]):
+            return False
+        confirmed_mandate(record, utc(at))
+        _validate_snapshot_time(snapshot, assembler, at)
         return intent == compile_plan_intent(
             comparison, record, snapshot, request, selected_plan=intent["selected_plan"],
-            assembler=assembler, at=at, valid_until=intent["valid_until"])
+            assembler=assembler, at=intent["as_of"], valid_until=intent["valid_until"])
     except (MachineError, KeyError, TypeError, ValueError, ZeroDivisionError):
         return False

@@ -89,7 +89,7 @@ class InMemoryModelUsageStore:
         self._events = {}
         self._lock = RLock()
 
-    def append(self, raw: dict) -> dict:
+    def append(self, raw: dict, *, scope=None) -> dict:
         event = normalize_usage_event(raw)
         with self._lock:
             existing = self._events.get(event["event_id"])
@@ -103,3 +103,20 @@ class InMemoryModelUsageStore:
         with self._lock:
             return [deepcopy(item) for item in self._events.values()
                     if item["trace_id"] == trace_id]
+
+
+class OperationalModelUsageStore:
+    """Persist privacy-minimized receipts in the scoped operational journal."""
+
+    def __init__(self, repository):
+        self.repository = repository
+
+    def append(self, raw: dict, *, scope=None) -> dict:
+        if scope is None:
+            raise MachineError("model usage persistence requires authenticated scope")
+        event = normalize_usage_event(raw)
+        record = self.repository.put_record(scope, "MODEL_USAGE", "usage-" + event["event_id"], event,
+            expected_version=0, at=event["occurred_at"])
+        if record["body"] != event:
+            raise MachineError("stored model usage commitment mismatch")
+        return deepcopy(event)

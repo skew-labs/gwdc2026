@@ -1,0 +1,643 @@
+{
+  "schema": "faat-source-manifest-v1",
+  "algorithm": "sha256",
+  "scope": "Published runtime source, contracts, migrations and dependency manifests",
+  "files": [
+    {
+      "path": "src/economic_machine/__init__.py",
+      "sha256": "e33a811cf99df08363868a8dfaa193a4768ea56e18b0eda479b96d552f4db3ff"
+    },
+    {
+      "path": "src/economic_machine/application.py",
+      "sha256": "1f933a88d12b0e05b4566bd47c20d1375458f3cee923690dd683affa91e03f4c"
+    },
+    {
+      "path": "src/economic_machine/approval.py",
+      "sha256": "ae27d5a5444ebafcbe6d83c3cc8452b789db1aba28d01b6bcdbf6b22e417f97c"
+    },
+    {
+      "path": "src/economic_machine/authenticated_basket.py",
+      "sha256": "c768ec72215efdf71714fb12fde4b8bff127797a241b5d8e4ca8c6cbb20d18eb"
+    },
+    {
+      "path": "src/economic_machine/basket.py",
+      "sha256": "faf0685d137dffa1ed2d75bf7871a4c72d0d95f975b3c498785926b496268bae"
+    },
+    {
+      "path": "src/economic_machine/capabilities.py",
+      "sha256": "b1e085a264ca74425626ffeb269283f1fac75844d7b3b37873a10f583c073ba2"
+    },
+    {
+      "path": "src/economic_machine/chain_binding.py",
+      "sha256": "61b8ce5815f6918875502d6a4a07e35a942da624032e73ca6dee13179862c3b5"
+    },
+    {
+      "path": "src/economic_machine/cli.py",
+      "sha256": "4263f9e27ccc62dd365059636bf8939aa36c7879285240821ec5298e4e0f3f79"
+    },
+    {
+      "path": "src/economic_machine/compiler.py",
+      "sha256": "25978e30231e4a1c4a9483f9976f2129398c1e3973586fd7d838a4da50d53035"
+    },
+    {
+      "path": "src/economic_machine/execution_evidence.py",
+      "sha256": "6b2b67525d880081a891764a86999bd990a3de700e5593886f1ff0a89264cffd"
+    },
+    {
+      "path": "src/economic_machine/execution_ledger.py",
+      "sha256": "5dee07125fa8cc5a1b5023303088f67d6d409d6cc0f4375c001cd83205e8177e"
+    },
+    {
+      "path": "src/economic_machine/grid_search.py",
+      "sha256": "5d39f0c2bc3c0c80482444f795d57bc21acec2303b079b310c5e8fce2eab1307"
+    },
+    {
+      "path": "src/economic_machine/inference.py",
+      "sha256": "1e206067942615af561079a676629cc883221f73382205c1ca602a24154c12d7"
+    },
+    {
+      "path": "src/economic_machine/journal.py",
+      "sha256": "a55fb38c9ca390aafd8f6f5e777a32dff2ecaae86df3f5539149eb3d51e2b4e5"
+    },
+    {
+      "path": "src/economic_machine/kernel.py",
+      "sha256": "1ba78dbeba8ad39023db64306b4acca6a368b6da94c75246936736fe1b9e3741"
+    },
+    {
+      "path": "src/economic_machine/liquidity.py",
+      "sha256": "04aba9054ddebd7b0c0b1b4cd96e287465bbc5b9fda6992b7355d888dc13f4dd"
+    },
+    {
+      "path": "src/economic_machine/mandate.py",
+      "sha256": "3b88865d7eb936bc88044666d7153d6dd4ea43a2f99a6d9f6f7e86351d8a4815"
+    },
+    {
+      "path": "src/economic_machine/performance.py",
+      "sha256": "6204a9dcfde2d5cf6cffb060a354f0eefee91f6d0d7df68fcb28f00817e8f796"
+    },
+    {
+      "path": "src/economic_machine/plan_compiler.py",
+      "sha256": "c484977d831bcad79fbd5a7ae1b31bc96f2cc3b3b4492d96026a08613a51449d"
+    },
+    {
+      "path": "src/economic_machine/portfolio.py",
+      "sha256": "91977d48327b9b233aee619f58de712fbc5bcd2323c7b3e81b0899e82f8ddd09"
+    },
+    {
+      "path": "src/economic_machine/position_reconciliation.py",
+      "sha256": "313e3352f44c3686fd07bd42c8df24f6fc928cc8361b0c5d09daa6ebe93ff24d"
+    },
+    {
+      "path": "src/economic_machine/preflight.py",
+      "sha256": "5cf93f7554ff11fc455363210e2756d8bcd6f15059552a3f4462a6b0102da0d2"
+    },
+    {
+      "path": "src/economic_machine/product_adapter.py",
+      "sha256": "6609966aaaf364600f5749f222a48ad8f6f300f3b28e48f36fa7813f50bf2bba"
+    },
+    {
+      "path": "src/economic_machine/resource_cost.py",
+      "sha256": "da6955c3bc47b9f61d2f7ea77bec7b9b8b4f77a0b26166c45379d7c79a91bcc0"
+    },
+    {
+      "path": "src/economic_machine/runtime.py",
+      "sha256": "f8ee8a331b54e7f1e6e30d135dc7a57a716a498d9068bc4a4fd5579927a384e8"
+    },
+    {
+      "path": "src/economic_machine/settlement.py",
+      "sha256": "43aec48624694da1ec201815b4d0edfb71e0f3cc78b89c7dccc8845b9c730875"
+    },
+    {
+      "path": "src/economic_machine/signed_evidence.py",
+      "sha256": "4a121fc10cceb7b3d7576894ebdbf4511514e4cf8754377b600495707dbcc425"
+    },
+    {
+      "path": "src/economic_machine/signed_tx_validation.py",
+      "sha256": "4f8424391b856311a260df0b91cbbd00b7ceea8c199803b2961dded7fc86e027"
+    },
+    {
+      "path": "src/economic_machine/snapshot_assembly.py",
+      "sha256": "6f9f719343b966d5fb621953b2d6fc19474abd762c3dd8e63269edbcbacc86de"
+    },
+    {
+      "path": "src/economic_machine/spec.py",
+      "sha256": "6cf5599d260bcae3cc4742c2b56ea421f25d64482212e5a9e5f93c2fd47927c1"
+    },
+    {
+      "path": "src/economic_machine/state.py",
+      "sha256": "35f8e05d90cad6307cf47d7fd9b8fd917b0f801e12f6eeb55bfed2a4afc423db"
+    },
+    {
+      "path": "src/economic_machine/transitions.py",
+      "sha256": "568995fb27a0f84742d4217b12a5261cad350c2c0fbe76b702b28ac65da0c086"
+    },
+    {
+      "path": "src/economic_machine/tron_actions.py",
+      "sha256": "1982974ed0faa19e87bd788454098016eb29920d545057f1b33dc592f9170ad8"
+    },
+    {
+      "path": "src/economic_machine/tron_cashflow.py",
+      "sha256": "7ceae64ff40a4f2495d2dd39cf83c4552b9eb7ce0d057978bf6a5a70926ad424"
+    },
+    {
+      "path": "src/economic_machine/tron_constant.py",
+      "sha256": "1cc5d47d75032579f97b31dc8bd5499063294dcbc9b93fe83c6da8e42c9fe51d"
+    },
+    {
+      "path": "src/economic_machine/tron_consumption_read.py",
+      "sha256": "9bf04514120484dacecaa2738209efc8dd0d2ca451fdb563b8c5195c38c77089"
+    },
+    {
+      "path": "src/economic_machine/tron_crypto.py",
+      "sha256": "34db7e53b2db75e68c466e26a29619dd6b92275c24526bfc181a46c5ec4ea1df"
+    },
+    {
+      "path": "src/economic_machine/tron_execution.py",
+      "sha256": "0d9e015531b4685f89150c870f83cbd6e96c6d3bb02ad094eba81334b649f77c"
+    },
+    {
+      "path": "src/economic_machine/tron_multicall.py",
+      "sha256": "3bb6bbd24379ac60c9ba633984759223d75e7bf41f9682b181dc81c0937ac5c0"
+    },
+    {
+      "path": "src/economic_machine/tron_products.py",
+      "sha256": "6aaaaeec3bd400cc1278554ebf2f7f323d7619f77963cb0381f3744232c93795"
+    },
+    {
+      "path": "src/economic_machine/tron_registry_read.py",
+      "sha256": "a28649284262eb3dcf2db3d68ec951c94762cdd52d6c7872b1502ad4b39b3f6c"
+    },
+    {
+      "path": "src/economic_machine/tron_rpc_snapshot.py",
+      "sha256": "533b6c0ec18bfcb3188319b53818d3f40f3f4c89af02fad9547ba57dedccf644"
+    },
+    {
+      "path": "src/economic_machine/tron_sources.py",
+      "sha256": "2ba037b5a7bb6b18ab8b17e6a8cce4cf6c34049dd3531e8d9d7eaf9be899985f"
+    },
+    {
+      "path": "src/economic_machine/tron_yield.py",
+      "sha256": "49fd776d5ffcce3bc976e2d0974d789b54d8a92bb3461811b7481522ff466fa2"
+    },
+    {
+      "path": "src/economic_machine/tx_graph.py",
+      "sha256": "4ccf9266f616658a52db7032a9e2e0238587b925dfcaca8f26702cbb80633b58"
+    },
+    {
+      "path": "src/economic_machine/usdd_workflow.py",
+      "sha256": "325716f67370d5b246dccb07975f0538301ee9ab0742fcc37f0645bef23fcda0"
+    },
+    {
+      "path": "src/economic_machine/values.py",
+      "sha256": "735b140de0fb014dcd8fdb4302d7461e364a145c46d4d7e6a94b2a38ad1d4688"
+    },
+    {
+      "path": "src/economic_machine/vault_accounting.py",
+      "sha256": "d5ad2e36615f5fa63ddf12f24d5f0105fd97fbeaf72014de0059c31f300c26a3"
+    },
+    {
+      "path": "src/economic_machine/vault_batch.py",
+      "sha256": "8a442e2f9be518b069d2f00fc4b5955c55c4856ff15c524203ffb2db905e817c"
+    },
+    {
+      "path": "src/economic_machine/vault_registration.py",
+      "sha256": "935e4dc14f168d29fe344e8f24c25047e398014cd08e0c6932d1532585427e14"
+    },
+    {
+      "path": "src/economic_machine/wallet_bridge.py",
+      "sha256": "ae419e418f3554cfca653fb248d8522ede54b1a18cac5626805437b122b4fbb1"
+    },
+    {
+      "path": "src/economic_machine/yield_math.py",
+      "sha256": "5945f366f82bb424dd2721a4e4dd91d66ca60b302e9637d0ffb8c6544ea0ec03"
+    },
+    {
+      "path": "src/finagent/__init__.py",
+      "sha256": "c8a3d04eef6bff4456862d6dd4fdb3d75cfff0423af893e3de3ffb415976f929"
+    },
+    {
+      "path": "src/finagent/cli.py",
+      "sha256": "0c519da060abd1294b016af5d99b5a9a2b30a79288b815b521c1eb857951a53f"
+    },
+    {
+      "path": "src/finagent/collect.py",
+      "sha256": "f731687ffc98e13144c164fad6bcabcfc5adadfa9dc870e5d8790c7243b18d97"
+    },
+    {
+      "path": "src/finagent/contracts.py",
+      "sha256": "7c4a34524335e4bd355794db0a40481c37a222f28556456d953eb6cc89d54e5a"
+    },
+    {
+      "path": "src/finagent/episode.py",
+      "sha256": "a45c297b21532841f0ef1c5e0a97e2746e33a82cde5829652c1f9c22b131ff10"
+    },
+    {
+      "path": "src/finagent/fs1_runner.py",
+      "sha256": "3ad06482d9ed532575540e958a2d9a8941f0c89920a3cde5ee649703d74e6e2e"
+    },
+    {
+      "path": "src/finagent/history.py",
+      "sha256": "36c90c64fdd77de11ebb1388eae771bfe01003a6b5c7f741827d74dea3141c16"
+    },
+    {
+      "path": "src/finagent/normalize.py",
+      "sha256": "d892e5684ebd8bdf0e36088957ee8c8d2abd15cb7e945091be5f4645c6fe69a8"
+    },
+    {
+      "path": "src/finagent/planner.py",
+      "sha256": "cab176786ec071665ea3a71825f789dd0dbb360900b1712c0740d03f03cece6e"
+    },
+    {
+      "path": "src/finagent/quality.py",
+      "sha256": "541b69d2107898af6b375fd55a8c100e2219001fb90bcf32640924755339f027"
+    },
+    {
+      "path": "src/finagent/qwen.py",
+      "sha256": "f408a283311113209a9f5b72d3dd33310089d39a80ec7c97d3d99b11f3ea7ad4"
+    },
+    {
+      "path": "src/finagent/release.py",
+      "sha256": "bb1f39ac50dfa3f0db1ed1c58947835fb6baf86b0016807cd5b69b8350967d88"
+    },
+    {
+      "path": "src/finagent/server.py",
+      "sha256": "634da11119a096e32d8740e2ab2d8c1c76f017052923a0f75146db9894dc17b4"
+    },
+    {
+      "path": "src/finagent/store.py",
+      "sha256": "bf37c4a0c5fc8df9ca02366362dd29384bb830d7d0cd73468446868284640612"
+    },
+    {
+      "path": "src/finance_service/__init__.py",
+      "sha256": "d2803e4208d63c80885946a8edbb0753890cd453bd9c6072b990d6af3a19fcfe"
+    },
+    {
+      "path": "src/finance_service/agent_intent.py",
+      "sha256": "108deb8d6d3e2be668f2da126f673fc0b5af70af35b35d595a58aa1ae95e694e"
+    },
+    {
+      "path": "src/finance_service/alerts.py",
+      "sha256": "bcf557ec5853cf2b060df725ab3cf402f62cf1c4dbadfdd03f87816401128763"
+    },
+    {
+      "path": "src/finance_service/api.py",
+      "sha256": "7ae22e515fe14d9044871be51b0f1d5edcbd0c332eb5b0faa37fc859f80d954d"
+    },
+    {
+      "path": "src/finance_service/auth.py",
+      "sha256": "8ab9b22e92d4f81b33bfad6d272a919d19c905c372235f77e7a79cee656c7d18"
+    },
+    {
+      "path": "src/finance_service/context.py",
+      "sha256": "b768148905852588c70b1af17379593612302498698a93537a025e0772554708"
+    },
+    {
+      "path": "src/finance_service/entrypoint.py",
+      "sha256": "40ef03aeabeec5eccfeda40f1250182d48076e834e5010cde9416559132e5490"
+    },
+    {
+      "path": "src/finance_service/execution_service.py",
+      "sha256": "728efa71b6ac18e4a9e8645f344887d4623329a112b042be7fa393afe491c6a0"
+    },
+    {
+      "path": "src/finance_service/intent_service.py",
+      "sha256": "b3ac638c5e5fda89e28c2c4b1dc8bf38c501c4bdd71d511a4ed519fe65f4ccc2"
+    },
+    {
+      "path": "src/finance_service/machine_bridge.py",
+      "sha256": "2619244c61bc3c354d93627150eaf99dbd4f0de7c2b4268678a25d2bd14ae004"
+    },
+    {
+      "path": "src/finance_service/machine_observations.py",
+      "sha256": "0923334cf2469aab9db61351fa7ea48587d9c6879e1e4f66a0850a4aa2618f42"
+    },
+    {
+      "path": "src/finance_service/machine_worker.py",
+      "sha256": "6d2a70bb1cfaaae0c38dbc406149b2992adbbd349f033aed032faaaf3dcb5a34"
+    },
+    {
+      "path": "src/finance_service/mandate_service.py",
+      "sha256": "135b23a2edbdc69b0c73bf69a774e4568adf9a47fba9937925aa89896c71fa54"
+    },
+    {
+      "path": "src/finance_service/model_provider.py",
+      "sha256": "b43be7c443f0f430c89b23879f99efe86bd949958814c77cc43892caf2a71094"
+    },
+    {
+      "path": "src/finance_service/model_usage.py",
+      "sha256": "c404754898f66590f6e529274e9f0e8a6e84adade1d26e0f7d7120098a18ba8e"
+    },
+    {
+      "path": "src/finance_service/native_adjustments.py",
+      "sha256": "31cacd6aa4ef3cad6582de9603752dd6961ce1176670fd74d8e726013d842f4c"
+    },
+    {
+      "path": "src/finance_service/native_execution.py",
+      "sha256": "2a271c6b030eae93040fc48b3bdb756a8d4f901d732494405dde258b973ee61e"
+    },
+    {
+      "path": "src/finance_service/native_performance.py",
+      "sha256": "7b9dd930e541af4a633f6a78d70479f2d290d56e1db81511e537a0dbc24ce0ff"
+    },
+    {
+      "path": "src/finance_service/native_recovery.py",
+      "sha256": "f0d11924bf86038fdff8f042c9f0056410d4386941fd127aafae672976d2f25d"
+    },
+    {
+      "path": "src/finance_service/nile_funding.py",
+      "sha256": "180e286f2eef1bdd72c3801d3b174b032dab1fc091fe09341d349d2a7ad2324f"
+    },
+    {
+      "path": "src/finance_service/nile_observations.py",
+      "sha256": "ebac4051d5d48dd9c13501041d99276dd85cfbe9f366361616b72b7faf05fa1a"
+    },
+    {
+      "path": "src/finance_service/operational_repository.py",
+      "sha256": "245a4fc527ab59cc4eac63d96a1ae0fa9b95559b826a2ae14a4a1f434dec8aac"
+    },
+    {
+      "path": "src/finance_service/plan_service.py",
+      "sha256": "d0181fa0b9f7cefa7921dae88c4128535522f00057cf9e0fcbf6eb259034f5b0"
+    },
+    {
+      "path": "src/finance_service/portfolio_review.py",
+      "sha256": "c8f77f8628ccd37916d2a95a7628c89b564366e05893647f58f3374a06bcd165"
+    },
+    {
+      "path": "src/finance_service/postgres_repository.py",
+      "sha256": "ec313b6848db474451dc0e65ecadcb1dbd940501cd5b06457eda1a24be602f5d"
+    },
+    {
+      "path": "src/finance_service/postgres_runtime.py",
+      "sha256": "b4a3647e74897a6ef18d18a6f6d71e9478f514c56b37f37afb14544c1e89e6d2"
+    },
+    {
+      "path": "src/finance_service/product_workspace.py",
+      "sha256": "ca5c881fb0145aa2a65414262f44171aa432dadacc5eb3f9894129ec63358607"
+    },
+    {
+      "path": "src/finance_service/rebalance_gate.py",
+      "sha256": "acbe970696362396b65bf847fa0bbdf8b669eca586971c2847c1a3ef4952e4cd"
+    },
+    {
+      "path": "src/finance_service/repository.py",
+      "sha256": "bf43665041726167d824684a09e54d718bdbc40455d82c8ba0aa615e2bd42e3e"
+    },
+    {
+      "path": "src/finance_service/resource_costs.py",
+      "sha256": "9be105352baaa3d9aa4ccd8ed976b04a14ae6644099a0ee9029fcf0bfbe9f924"
+    },
+    {
+      "path": "src/finance_service/scheduler.py",
+      "sha256": "6a941374726f3a599374ad4ba4b031746b856c42712d601bdb74ed208d95715f"
+    },
+    {
+      "path": "src/finance_service/snapshot_service.py",
+      "sha256": "0a38f897e412d9a29e1b287ff655f0f0eef8627d474be214e001f23109040a15"
+    },
+    {
+      "path": "src/finance_service/tron_proof.py",
+      "sha256": "0480cd074b69312129461d6d8c0571d33b09f926b50317f0c377e3e77b76e31b"
+    },
+    {
+      "path": "src/finance_service/usdd_chain.py",
+      "sha256": "6cec2185f91acd8012b6f3bb9296837f3968a5759984b84a3b8836d4dfde225a"
+    },
+    {
+      "path": "src/finance_service/usdd_comparison.py",
+      "sha256": "eacbdb1bdcad2ea4faaf5d2db67d14544a000aadc4ceb5b3a2484fb197af5f76"
+    },
+    {
+      "path": "src/finance_service/usdd_execution.py",
+      "sha256": "b53f1b19eb15870bd25744b276ebea778b8b63bf7c2feec5e3f532fcf16213c4"
+    },
+    {
+      "path": "src/finance_service/usdd_market.py",
+      "sha256": "31f1abe1648109414de8b3b1d9a03dee5d5ebf084a6c8befcd778b7776275aa8"
+    },
+    {
+      "path": "src/finance_service/usdd_portfolio.py",
+      "sha256": "840a69cac2bc8c7b1371490187e7f4850b8f05bbea644d7bd21a4dc5a01cb0e6"
+    },
+    {
+      "path": "src/finance_service/usdd_review.py",
+      "sha256": "69326ac61a1d90c6ef965bdc280657e1187c9155c015751a183a2d8bc6fec0a2"
+    },
+    {
+      "path": "src/finance_service/wallet_auth.py",
+      "sha256": "f31d433b1be37950aafaaa4624375fc660199e10e72d733ea0caf3494966c3a1"
+    },
+    {
+      "path": "src/finance_service/worker.py",
+      "sha256": "dcc70d934ffba619ff0950aa9d2373650325c958ded662ba8973030408048c1d"
+    },
+    {
+      "path": "frontend/src/App.tsx",
+      "sha256": "ac226634dd02c74b176762a70e1044108fe2f521546f84b71c99a7a638dffe64"
+    },
+    {
+      "path": "frontend/src/api/client.ts",
+      "sha256": "d30a3ad469db532bda846c81562caa37a13be3d8f70c9a81f8f710b5dbf90a3d"
+    },
+    {
+      "path": "frontend/src/api/contracts.ts",
+      "sha256": "622af2a35ce3d991326aea4348a4424161cd9bf9523afc561dec3024392de814"
+    },
+    {
+      "path": "frontend/src/api/useMachine.ts",
+      "sha256": "e93146e8a1f4f9e9ff19db0cb563e02725fb3c200e3a21638965ad9e0f6cd5c1"
+    },
+    {
+      "path": "frontend/src/components/BalancePerformance.tsx",
+      "sha256": "6ed0cfdedcd962bcafba43c7d253d7496b904aa2a381e3f1b60cdadab3df3f36"
+    },
+    {
+      "path": "frontend/src/components/ConversationCard.tsx",
+      "sha256": "bb381accb7442458def174f8b010c694df8729765489b72773ee9323240f2951"
+    },
+    {
+      "path": "frontend/src/components/ExecutionCard.tsx",
+      "sha256": "7d6b71e82236619f045e9b9b4eb1c38a529eccdd889dbed90cc1ef9134256688"
+    },
+    {
+      "path": "frontend/src/components/MandateEditor.tsx",
+      "sha256": "389dccf78ec2384db028887ece45495f2f2062f9501fafe7786c060475b3abf4"
+    },
+    {
+      "path": "frontend/src/components/NileFunding.tsx",
+      "sha256": "3796c077686eafac534e24898965235a212b542065d2359ca4c43b0515ea86f2"
+    },
+    {
+      "path": "frontend/src/components/PlanCards.tsx",
+      "sha256": "2a7a23bbe63c3dd2f68a994178e57ec0b1fe9f4f9b84d1907ac64cb8bf18f4b9"
+    },
+    {
+      "path": "frontend/src/components/PortfolioChart.tsx",
+      "sha256": "7464b0158f4e608d76b1d844a04e4e6591e63e21699dec5bf31959e6c6d08053"
+    },
+    {
+      "path": "frontend/src/components/PortfolioReview.tsx",
+      "sha256": "b4bc628a1ea7974a589889d5b92af53e948d540c4cd2f843252021ca84db6dd1"
+    },
+    {
+      "path": "frontend/src/components/SidePanel.tsx",
+      "sha256": "9b7db14d77ce33c41abf5963dd3d3933e6a06ce47bc2b6503327f3c8dab36a8d"
+    },
+    {
+      "path": "frontend/src/components/UsddWorkflow.tsx",
+      "sha256": "a8f20a7bce65b2bed871a9331f13679a49f6b82adc63d43b30f58b25593c6f23"
+    },
+    {
+      "path": "frontend/src/components/WithdrawalReview.tsx",
+      "sha256": "f68a45ac5ce5b37ea7a514c68c69ac9ef4b3348122486c000c081026a9f9b1c6"
+    },
+    {
+      "path": "frontend/src/components/ui.tsx",
+      "sha256": "33be2cb0ebb9491bc43f655c09753e3d6c16541fff67b115659b9533798ccee8"
+    },
+    {
+      "path": "frontend/src/lib/errors.ts",
+      "sha256": "15ba2941c5ec9bfc9d9ddcda14d05fad9959500285a92755cf92a06e401b3151"
+    },
+    {
+      "path": "frontend/src/lib/format.ts",
+      "sha256": "4383bdd74b80e3d35eca099205d15b997e762fd9c51fee9feb63a0fa8be87fa5"
+    },
+    {
+      "path": "frontend/src/lib/guards.ts",
+      "sha256": "46529681062359f206d6dfb8555a6a97a09ff1f7431db8d9059337f499d56b1c"
+    },
+    {
+      "path": "frontend/src/lib/portfolio.ts",
+      "sha256": "e370c4ec4536622d1ddb82c96420b5f15f3d1a3ca9239ee6e526c44b647142ed"
+    },
+    {
+      "path": "frontend/src/lib/submission.ts",
+      "sha256": "8a17b0778e8396a3df62c704a55b3fad124f73f097930a23ac548e1a3c1b2b80"
+    },
+    {
+      "path": "frontend/src/lib/wallet.ts",
+      "sha256": "265b1a60518497465495ef061fb05fba0ef37fb84b89662076fd2c09ab660824"
+    },
+    {
+      "path": "frontend/src/main.tsx",
+      "sha256": "ab9ccecb5e4b30e2a31391067ad77007f9773e5f9b127d9a1228f3bb15c683fc"
+    },
+    {
+      "path": "frontend/src/styles.css",
+      "sha256": "cae86eb4d39a224e3fcce5f0861879a768081a5e0c36fdb7ed057c553ab0bdaa"
+    },
+    {
+      "path": "frontend/server/conversation.ts",
+      "sha256": "1e46c002c45a65e49ca0a59186f7a3622cfcffdd485f38bedbd29801ee711995"
+    },
+    {
+      "path": "frontend/server/index.ts",
+      "sha256": "358d63a208d262ae85d2e0ef085abc4b3720e632a5aafa88c824a0bdedb45fa1"
+    },
+    {
+      "path": "frontend/server/kiln.ts",
+      "sha256": "1b29a07d35225af8a3670527291c997baef614a3d109e7681becb400a96ef6e1"
+    },
+    {
+      "path": "frontend/server/store.ts",
+      "sha256": "84068c0efee81f8ecc69f3c6642201100b54c135437c3dc0476e5f5911063496"
+    },
+    {
+      "path": "frontend/scripts/dev.mjs",
+      "sha256": "d354c1b4fe6df48e6b8380a2ba19967a1c28ec4d12c7f5b408f1007ae2cba547"
+    },
+    {
+      "path": "frontend/scripts/export-contract.ts",
+      "sha256": "596c25128e49936825a31a857cce01790e010c390aac8370051af92afd23021b"
+    },
+    {
+      "path": "contracts/EconomicCapitalVault.compile-manifest.json",
+      "sha256": "962c932ddb06a70b9d11f4047912b37182163aca2ad5451f3192018155382266"
+    },
+    {
+      "path": "contracts/EconomicCapitalVault.sol",
+      "sha256": "ba93e25423a949da339ec30b0948ed549e88c15e0c11f735c9a9ed09b241c513"
+    },
+    {
+      "path": "contracts/EconomicExecutionGuardV1.sol",
+      "sha256": "ab30c7738a561f72a55786720716d1769e0cb228fa302eaf764fcbd06e3de923"
+    },
+    {
+      "path": "contracts/EconomicPolicyRegistry.compile-manifest.json",
+      "sha256": "b68954e397f98f2d5133e312ab5e11f5706f4e1735672ddf572850383f9ed7eb"
+    },
+    {
+      "path": "contracts/EconomicPolicyRegistry.sol",
+      "sha256": "70a4f0beca1a14cdd8da8cdcfe3a7fe76cf3d7f1946be50a9dd70c1e6a8ab7fa"
+    },
+    {
+      "path": "contracts/JustLendV1Adapter.sol",
+      "sha256": "3e81bff148ec16de76b69b61b25da5eb7aa17f1a197804aa7dbe3b6452ee8488"
+    },
+    {
+      "path": "contracts/allocation_oracle_v1.schema.json",
+      "sha256": "676ef5cc05ed8a20bc4fff953c90248cc0870866a8f8d4afebbe44a4b1839e30"
+    },
+    {
+      "path": "contracts/allocation_pair_verdict_v1.schema.json",
+      "sha256": "cd3e3be9ade76ef0cc14b7c4981cc09593385db391b80c24327c169416d55c0d"
+    },
+    {
+      "path": "contracts/allocation_proposal_v1.schema.json",
+      "sha256": "f696abc7eb650d647df2712818ff813f25744eacc298fd32980dce98e000bc44"
+    },
+    {
+      "path": "contracts/contract-test-requirements.lock",
+      "sha256": "ec8cd13278d2120e2a8c5e863335b6138c32ca4f0edcc88b763a80fa5d8244d3"
+    },
+    {
+      "path": "contracts/decision_case.schema.json",
+      "sha256": "1a2ff6c8c98a14d402cb0594b22bb292fa6c8e1c48383db59425b76818f49b2a"
+    },
+    {
+      "path": "contracts/episode_v2.schema.json",
+      "sha256": "fb36c71767fb40361ee5b1e9b08308bbbd22411b68080db02daca697e914fc79"
+    },
+    {
+      "path": "contracts/episode_v3.schema.json",
+      "sha256": "4f6207cb27bf73069b63d3b11dc338266189dea0fd0e164828dc8ca7a3b619a8"
+    },
+    {
+      "path": "contracts/model_binding.template.json",
+      "sha256": "55c3d07da26e3bede3d503ab567cd87c2088ef75f0f6ffb6861868c207e260e2"
+    },
+    {
+      "path": "contracts/tron_observation_v1.schema.json",
+      "sha256": "b4266b3428e3a614e54bbd687dcea971ddfd911ec7d5292e5d35bf0160f67e16"
+    },
+    {
+      "path": "db/migrations/009_finance_service.sql",
+      "sha256": "3c8b317101eaab6d07195a9c327d2788779fbc127f1236eb97e90cf2868aa696"
+    },
+    {
+      "path": "db/migrations/011_finance_postgres_runtime.sql",
+      "sha256": "0006f1e91831285213558668935c7004317285dbacbba3b55485e3cd1c6258b1"
+    },
+    {
+      "path": "db/migrations/012_finance_resilience.sql",
+      "sha256": "595849f0fe64d9596fc7c5cb19a7f825368fb48e7d62a2e88a883902750d0753"
+    },
+    {
+      "path": "db/migrations/013_finance_journal_audit.sql",
+      "sha256": "e92c3bc871710db00d4a10f0dbd0e8ab0b6f3785bba5c45c4e64c5cfc8f23869"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "ab8ade97ba205d419bdf24d3c92feb2b604e091cf1da2fa14831804a707ea961"
+    },
+    {
+      "path": "frontend/package.json",
+      "sha256": "32423b4f199530b9239f4a668352c46090b338606a451c9df05d09204a707300"
+    },
+    {
+      "path": "frontend/pnpm-lock.yaml",
+      "sha256": "d3bfa11142a932f863ef957a4a7a4f354e3fa4bb26c8a9b75d2a31d2b40120ee"
+    }
+  ]
+}

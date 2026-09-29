@@ -1,7 +1,11 @@
 import unittest
+import tempfile
+from pathlib import Path
 
 from economic_machine.values import MachineError
-from finance_service.model_usage import InMemoryModelUsageStore, normalize_usage_event
+from finance_service.model_usage import (InMemoryModelUsageStore,
+    OperationalModelUsageStore, normalize_usage_event)
+from finance_service.operational_repository import OperationalRepository
 
 
 def event(**changes):
@@ -35,6 +39,18 @@ class ModelUsageTests(unittest.TestCase):
             normalize_usage_event({**cached, "input_tokens": 0})
         with self.assertRaises(MachineError):
             normalize_usage_event(event(outcome="FAILED", error_code=None))
+
+    def test_operational_store_commits_usage_inside_authenticated_scope(self):
+        scope = {"tenant_id": "tenant-one", "owner_id": "owner-one",
+            "wallet": "41" + "11" * 20, "network": "tron-nile"}
+        with tempfile.TemporaryDirectory() as temp:
+            repository = OperationalRepository(Path(temp) / "usage.sqlite3")
+            stored = OperationalModelUsageStore(repository).append(event(), scope=scope)
+            record = repository.get_record(scope, "MODEL_USAGE", "usage-" + stored["event_id"])
+            self.assertEqual(record["body"], stored)
+            self.assertTrue(repository.verify_journal())
+            with self.assertRaisesRegex(MachineError, "authenticated scope"):
+                OperationalModelUsageStore(repository).append(event())
 
 
 if __name__ == "__main__":

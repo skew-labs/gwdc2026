@@ -69,8 +69,10 @@ def address_base58(value: str) -> str:
     return result
 
 
-def parse_raw(raw: bytes) -> dict:
-    if not isinstance(raw, bytes) or not 1 <= len(raw) <= MAX_BYTES:
+def parse_raw(raw: bytes, *, max_bytes=MAX_BYTES) -> dict:
+    if max_bytes not in (MAX_BYTES, 8*MAX_BYTES):
+        raise MachineError("unsupported response size bound")
+    if not isinstance(raw, bytes) or not 1 <= len(raw) <= max_bytes:
         raise MachineError("source body exceeds bounded response size")
 
     def pairs(items):

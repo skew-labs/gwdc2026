@@ -8,8 +8,14 @@ from pathlib import Path
 
 from .api import create_app
 from .auth import HmacSessionVerifier
+from .agent_intent import AgentIntentService
+from .model_provider import (ModelProviderError, OpenAICompatibleQwenProvider,
+                             QwenProviderConfig, UnavailableQwenProvider)
+from .model_usage import OperationalModelUsageStore
 from .operational_repository import OperationalRepository
 from .product_workspace import ProductWorkspaceService
+from .tron_proof import TronProofService
+from .wallet_auth import WalletAuthService
 
 
 def _required(name):
@@ -21,11 +27,22 @@ def _required(name):
 
 def build_app():
     key_id = _required("FINANCE_SERVICE_SESSION_KEY_ID")
+    session_direct = os.environ.get("FINANCE_SERVICE_SESSION_HMAC_B64")
+    session_file = os.environ.get("FINANCE_SERVICE_SESSION_HMAC_FILE")
+    if bool(session_direct) == bool(session_file):
+        raise RuntimeError("exactly one session HMAC source is required")
+    if session_file:
+        from .postgres_runtime import read_owner_file
+
+        session_direct, _ = read_owner_file(
+            session_file, label="session HMAC", max_size=4096)
+        session_direct = session_direct.strip()
     try:
-        secret = base64.b64decode(_required("FINANCE_SERVICE_SESSION_HMAC_B64"),
-                                  validate=True)
+        secret = base64.b64decode(session_direct, validate=True)
     except ValueError as exc:
         raise RuntimeError("invalid session HMAC base64") from exc
+    if len(secret) < 32:
+        raise RuntimeError("session HMAC must decode to at least 32 bytes")
     postgres_api_dsn = os.environ.get("FINANCE_SERVICE_POSTGRES_API_DSN")
     postgres_api_dsn_file = os.environ.get("FINANCE_SERVICE_POSTGRES_API_DSN_FILE")
     postgres_worker_dsn = os.environ.get("FINANCE_SERVICE_POSTGRES_WORKER_DSN")
@@ -54,9 +71,29 @@ def build_app():
     demo_story = None if not story_path else json.loads(Path(story_path).read_text())
     product_service = ProductWorkspaceService(
         repository, lambda: datetime.now(UTC).isoformat())
-    return create_app(session_verifier=verifier, repository=repository,
-        clock=lambda: datetime.now(UTC).isoformat(), product_service=product_service,
-        web_root=web_root, demo_story=demo_story)
+    try:
+        provider = OpenAICompatibleQwenProvider(QwenProviderConfig.from_environment())
+    except ModelProviderError as exc:
+        provider = UnavailableQwenProvider(exc)
+    usage_store = OperationalModelUsageStore(repository)
+    clock = lambda: datetime.now(UTC).isoformat()
+    agent_intent_service = AgentIntentService(provider, usage_store, clock)
+    wallet_auth_service = WalletAuthService(repository, verifier, clock,
+        domain=os.environ.get("FINANCE_SERVICE_PUBLIC_DOMAIN", "whollet.gwdc"))
+    tron_proof_service = TronProofService(repository, clock)
+    app = create_app(session_verifier=verifier, repository=repository,
+        clock=clock, product_service=product_service, web_root=web_root,
+        demo_story=demo_story, agent_intent_service=agent_intent_service,
+        wallet_auth_service=wallet_auth_service, tron_proof_service=tron_proof_service)
+    gateway_file = os.environ.get("MACHINE_GATEWAY_SECRET_FILE")
+    if gateway_file:
+        from .postgres_runtime import read_owner_file
+        from .machine_bridge import MachineBridge, router_for
+        from .machine_observations import MachineObservations
+        gateway_secret, _ = read_owner_file(gateway_file, label="Machine gateway secret")
+        app.include_router(router_for(MachineBridge(repository, clock,
+            agent_intent_service, MachineObservations(clock)), gateway_secret.strip()))
+    return app
 
 
 app = build_app()

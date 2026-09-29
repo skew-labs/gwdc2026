@@ -14,6 +14,10 @@ EnvironmentFile=/etc/gwdc/economic-service.env
 # A worker process receives FINANCE_SERVICE_POSTGRES_WORKER_DSN_FILE separately.
 Environment=FINANCE_SERVICE_WEB_ROOT=/srv/gwdc2026/web
 Environment=FINANCE_SERVICE_DEMO_STORY_PATH=/srv/gwdc2026/cases/product_workspace_story.json
+Environment=FINANCE_SERVICE_PUBLIC_DOMAIN=whollet.gwdc
+Environment=GWDC_QWEN_BASE_URL=https://api.bricksum.com/v1
+Environment=GWDC_QWEN_MODEL_ID=qwen3-32b
+Environment=GWDC_QWEN_API_KEY_FILE=/etc/gwdc/qwen-api-key
 ExecStart=/srv/gwdc2026/.venv/bin/python -m uvicorn finance_service.entrypoint:app --host 127.0.0.1 --port 8080 --workers 1
 Restart=on-failure
 RestartSec=5

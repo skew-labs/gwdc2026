@@ -1,0 +1,30 @@
+{
+  "schema": "faat-publication-verification-v1",
+  "verified_at": "2026-09-30",
+  "backend": {
+    "tests": 63,
+    "status": "PASS",
+    "command": "PYTHONPATH=src:tests python -m unittest test_native_execution test_native_adjustments test_native_performance test_performance_periods test_wallet_encoding test_machine_worker test_usdd_workflow test_usdd_execution test_usdd_comparison"
+  },
+  "frontend": {
+    "tests": 49,
+    "files": 9,
+    "status": "PASS",
+    "command": "pnpm test"
+  },
+  "typescript": {
+    "status": "PASS",
+    "command": "tsc -b"
+  },
+  "build": {
+    "status": "PASS",
+    "command": "vite build",
+    "warning": "Bundle contains a chunk larger than 500 kB; build succeeds."
+  },
+  "nile": {
+    "status": "PASS",
+    "mode": "PUBLIC_RPC_REFRESH",
+    "manifest": "../nile/manifest.json"
+  },
+  "scope": "Product regression suite, frontend type/build checks and public Nile receipts. Not a full mainnet or production resilience certification."
+}

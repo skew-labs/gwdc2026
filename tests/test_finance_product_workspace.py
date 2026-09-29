@@ -218,10 +218,14 @@ class StaticWorkspaceTests(unittest.TestCase):
     def test_browser_code_uses_text_nodes_and_preserves_unknown_measurements(self):
         script = (ROOT / "web/app.js").read_text()
         self.assertNotIn("innerHTML", script)
-        self.assertNotIn("tronWeb", script)
-        self.assertNotIn("sign(", script)
+        self.assertIn("signMessageV2", script)
+        self.assertNotIn("privateKey", script)
+        self.assertIn("sendRawTransaction", script)
+        self.assertIn("sendTrx(address, 1, address)", script)
+        self.assertIn("tron-nile", script)
         self.assertIn("미측정", script)
         self.assertIn("/api/demo/story", script)
+        self.assertIn("/v1/agent/intent", script)
         self.assertIn("whollet:selected:", script)
         self.assertIn("NOT_SUBMITTED", (ROOT / "cases/product_workspace_story.json").read_text())
 

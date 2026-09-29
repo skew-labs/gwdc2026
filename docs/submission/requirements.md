@@ -1,3 +1,5 @@
+> Historical PR12 checklist. Current scope: [verification](../VERIFICATION.md).
+
 # GWDC 2026 dual-track evidence map
 
 2026-09-29. This document maps product claims to checked-in evidence. It does not declare either track accepted. The public workspace is a historical replay made from a saved public TRON snapshot and synthetic user constraints.

@@ -1,0 +1,24 @@
+{
+  "schema": "faat-nile-public-receipts-v1",
+  "status": "PASS",
+  "mode": "PUBLIC_RPC_REFRESH",
+  "checked_at": "2026-09-29T22:10:07.098707+00:00",
+  "transactions": [
+    {
+      "path": "evidence/nile/supply.json",
+      "txid": "877d3dcb132ff55b37f0cb24286c9ce3fce4e0966c21bdc4b0924f6d7652a7c2",
+      "sha256": "91cf700c4b2d2227fca7bcaafcf57c233b7c2341f25b5ebf8b1e46b4f5f1acdb",
+      "block": 71384943,
+      "fee_sun": "8089400",
+      "energy_used": 80894
+    },
+    {
+      "path": "evidence/nile/redeem.json",
+      "txid": "b83d55426b98f73ff458e61d003f062a58d2588bbcad21b3d02ebf72f1f0d628",
+      "sha256": "82d4323792604f9db580708f633ddb07b89a55f2bd7d633f01e97706e7df076d",
+      "block": 71395937,
+      "fee_sun": "7256900",
+      "energy_used": 72569
+    }
+  ]
+}
