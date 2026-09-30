@@ -4637,6 +4637,32 @@
                               ],
                               "additionalProperties": false
                             },
+                            "plan_hash": {
+                              "type": "string"
+                            },
+                            "mandate_hash": {
+                              "type": "string"
+                            },
+                            "account": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "network": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "nile",
+                                    "mainnet"
+                                  ]
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
                             "representative": {
                               "type": "string"
                             },
@@ -4650,6 +4676,30 @@
                                   },
                                   "status": {
                                     "type": "string"
+                                  },
+                                  "graph_id": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "graph_hash": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "step_id": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "expires_at": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
                                   }
                                 },
                                 "required": [
@@ -16637,6 +16687,32 @@
                     ],
                     "additionalProperties": false
                   },
+                  "plan_hash": {
+                    "type": "string"
+                  },
+                  "mandate_hash": {
+                    "type": "string"
+                  },
+                  "account": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "network": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "nile",
+                          "mainnet"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
                   "representative": {
                     "type": "string"
                   },
@@ -16650,6 +16726,30 @@
                         },
                         "status": {
                           "type": "string"
+                        },
+                        "graph_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "graph_hash": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "step_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "expires_at": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       },
                       "required": [

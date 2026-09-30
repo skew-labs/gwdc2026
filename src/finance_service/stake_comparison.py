@@ -8,6 +8,30 @@ from .stake_market import PRODUCT, read, enrich, StakeAssembler, forecast_rate
 from .native_execution import money
 
 
+def project_evidence(state):
+    """Expose the compiler's combined root, keeping its original validity window."""
+    w = state["workspace"]
+    core, comparison = state.get("comparison_core") or {}, w.get("comparison") or {}
+    if (
+        core.get("kind") != "NATIVE_STAKE"
+        or core.get("snapshot", {}).get("snapshot_hash") != comparison.get("snapshot_root")
+        or core.get("comparison", {}).get("comparison_hash") != comparison.get("id")
+    ):
+        return
+    market = core["market"]
+    w["snapshots"] = [s for s in w["snapshots"] if s["id"] != "native-allocation"] + [{
+        "id": "native-allocation",
+        "network": comparison["network"],
+        "observed_at": market["observed_at"],
+        "expires_at": comparison["expires_at"],
+        "source": "Combined allocation snapshot with native voting evidence",
+        "source_url": "https://nile.trongrid.io",
+        "block": market["block"],
+        "root": comparison["snapshot_root"],
+        "status": "VALID",
+    }]
+
+
 def compare(bridge, context, state, record):
     t = record["mandate"]["terms"]
     at = bridge.clock()
