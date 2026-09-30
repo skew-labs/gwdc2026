@@ -1,80 +1,110 @@
 # faat
 
-**Finance AI Agent Tron**
+**Finance AI Agent Tron · GWDC 2026 · TRON B**
 
-Describe an allocation. Compare feasible plans. Sign the exact transaction. Account for what actually happened.
+faat turns personal investment conditions into calculated TRON allocation plans, user-signed transactions and ongoing portfolio reviews. Tell your agent the budget, horizon and cash you need. Confirm the conditions once; the engine compares eligible allocations and returns the result in the conversation. Your wallet signs each reviewed transaction.
 
-faat is a conversational TRON allocation workspace built for **GWDC 2026 · TRON B**. Alpha helps express an investment objective, Vault turns confirmed conditions into transaction reviews, and Watch checks whether an existing position still fits those conditions. Users create their agents and keep control of their wallet.
-
-[Open faat on Nile](https://machine.148-113-153-116.nip.io/?network=nile) · [Run locally](docs/SETUP.md) · [Architecture](docs/ARCHITECTURE.md) · [Failure cases](docs/FAILURE_MODEL.md) · [Verification](docs/VERIFICATION.md)
+[Open the Nile app](https://machine.148-113-153-116.nip.io/?network=nile) · [Start here](docs/README.md) · [Architecture](docs/ARCHITECTURE.md) · [Evidence and limits](docs/VERIFICATION.md) · [Run locally](docs/SETUP.md)
 
 [![Verify faat](https://github.com/skew-labs/gwdc2026/actions/workflows/verify.yml/badge.svg)](https://github.com/skew-labs/gwdc2026/actions/workflows/verify.yml)
 
-## Start with a receipt
+![Two computed allocation options in the faat conversation](docs/assets/automatic-plan-comparison.png)
 
-The integrated application completed a real Nile JustLend supply and full redemption, signed by the user through TronLink and reconciled against chain receipts and positions.
+*Actual interface using the calculation engine and live Nile observations in an isolated verification workspace, September 30. Forecasts shown are variable testnet estimates; no transaction was signed in this check. [Inputs and provenance](docs/AUTOMATIC_PLANNING.md#verification-on-2026-09-30).*
 
-| Operation | Principal / output | Actual fee | Chain evidence |
-| --- | --- | --- | --- |
-| Supply TRX | 1 TRX supplied | 8.0894 TRX | [Supply transaction](https://nile.tronscan.org/#/transaction/877d3dcb132ff55b37f0cb24286c9ce3fce4e0966c21bdc4b0924f6d7652a7c2) |
-| Redeem jTRX | 89.46435527 jTRX → 1 TRX | 7.2569 TRX | [Redemption transaction](https://nile.tronscan.org/#/transaction/b83d55426b98f73ff458e61d003f062a58d2588bbcad21b3d02ebf72f1f0d628) |
+## From a goal to an accountable position
 
-That tiny integration test produced **0 TRX income before fees and −15.3463 TRX net P&L**. We display that loss. An RPC success, a minted share token, and a profitable investment are three different claims. The current investment-entry gate rejects candidates whose projected income does not cover modeled costs; a remedial exit has separate rules.
+1. **Describe the goal.** Create an Alpha, Vault or Watch agent. Chat captures capital, horizon, immediate cash, withdrawals and risk terms in an editable draft. The roles share a wallet-scoped workspace.
+2. **Confirm and compare.** Review the conditions and click **Confirm & compare**. A durable job confirms that exact version, loads current observations and posts two eligible plans automatically. If the conditions cannot produce two valid options, the result explains what failed.
+3. **Choose and sign.** Compare allocations, net income, full costs, liquidity and risks. Select a plan, review its exact actions and approve. TronLink requests the user's signature for each transaction.
+4. **Verify the outcome.** The service reconciles receipts and positions. Portfolio separates forecasts, accrued income, realized income, actual fees and cumulative net P&L.
+5. **Set a routine.** Watch fetches fresh state and compares keeping the position with adjusting it, including unwind and reinvestment costs. An actionable result creates an account notification and a new review.
 
-Nile is a test network. These transactions establish an integration path, not future yield or mainnet economics. [Exact scope and remaining gaps](docs/VERIFICATION.md).
+Condition confirmation authorizes calculation. A selected plan still needs transaction approval and a wallet signature. General willingness to take risk does not authorize borrowing or widen a spending limit.
 
-## Conditions → automatic comparison
+## What exists today
 
-**Confirm & compare** persists a server-side planning task. It confirms only the exact reviewed draft, reads current network inputs, calculates two eligible allocations and publishes Plan A / Plan B in the originating conversation. No additional chat prompt is required. Closing the page or restarting the gateway does not lose a running calculation.
+| Capability | Implementation and evidence | Boundary |
+| --- | --- | --- |
+| Conversational conditions and automatic comparison | Qwen3-32B through Kiln; editable conditions; persistent Plan A / Plan B cards; live Nile calculation verified | Two recommendations require two eligible candidates. Stale or infeasible work returns typed blockers. |
+| JustLend TRX supply and redemption | **User-signed Nile round trip**, receipts and closed position reconciled | Small integration test; recorded net loss after fees. |
+| Native Stake 2.0 and voting | Live reward/resource reads, allocation engine, five-action execution/recovery path, unsigned node bytes and TronWeb verification | **First user-signed native lifecycle pending.** |
+| USDD issue / supply / bounded loops / unwind | Constraint, compilation, execution and recovery code; regression coverage | **Funded mainnet lifecycle pending.** Incompatible Nile Vault/JustLend token route is blocked. |
+| Performance and Watch | Actual JustLend fee accounting; fresh production Watch `HOLD`; synthetic `ADJUST` notification path | Notifications require separate review and signing. Annual realized yield is unproven. |
+| Multiple product families | Native Stake + cash and JustLend + cash, selected by permitted route | Joint Native Stake + JustLend portfolio optimization is future work. |
 
-A recommendation is not transaction approval. If fewer than two allocations satisfy the policy, cash requirements and full costs, the agent returns the exclusion reasons. It never fills the second slot with an invalid plan. Old spending limits remain visible when the investment budget changes. [Automatic planning invariants and verification](docs/AUTOMATIC_PLANNING.md).
+This table describes the current submission. Earlier PR records remain available as dated history.
 
-## Native staking extension
-
-Nile now has a second executable product family: **Stake 2.0 → representative voting → rewards → unstake → withdraw**. It reuses the constraint engine and durable financial ledger, with exact native protobuf validation and a separate wallet signature for each step. Existing conditions require explicit Native Stake and voting permission before this route is considered.
-
-A live 300 TRX / 365 day / 20% cash calculation found 25 eligible allocations after reserving the complete native lifecycle cost. The interface presents two computed plans and tracks forecast versus accrued/claimed rewards and actual fees. These are variable testnet projections. The new route has live read/unsigned-transaction validation and synthetic lifecycle tests; its first real user-signed native cycle remains outstanding. It does not imply completed mainnet USDD looping or a joint optimizer across every product. [Calculation, costs, evidence and limitations](docs/NATIVE_STAKING.md).
-
-## The product loop
-
-1. **Explain the objective.** Chat captures capital, base asset, horizon, immediate cash, withdrawals and risk constraints. Missing terms remain missing. General risk appetite does not authorize debt.
-2. **Confirm conditions.** A versioned mandate records the terms the user reviewed. Editing conditions invalidates dependent unsigned work; it cannot erase an unresolved signed transaction.
-3. **Compare eligible plans.** Alternatives share capital, horizon and the relevant snapshot. The breakdown separates base income, incentives, borrowing interest, entry/exit costs, liquidity and risk. Infeasible conditions produce reasons rather than fabricated alternatives.
-4. **Review and sign.** The selected plan becomes a transaction graph. Approval binds the account, network, conditions, graph, amounts, fee bounds and expiry. TronLink signs each reviewed step.
-5. **Reconcile.** The service records submission intent before broadcasting, checks receipts and post-state, and accounts for actual costs. A timeout stays unresolved until evidence resolves it.
-6. **Watch.** A scheduled or requested review fetches fresh state and compares maintaining the position with adjusting it, including recovery and reinvestment costs. Actionable changes create account notifications. A notification does not authorize execution.
-
-## Architecture: every boundary has a different job
+## How the system is connected
 
 ```text
-USER
-  │ conversation / condition confirmation / plan choice
-  ▼
-React workspace ──────────────── TronLink
-  │                              │ user signature only
-  ▼                              │
-Node gateway ◀───────────────────┘
-  ├─ sessions, wallet proof, CSRF, persistent chat, agent workspace
-  ├─ Kiln / Qwen3-32B: language and structured intent
-  └─ authenticated finance requests
-       ▼
-Python finance service
-  ├─ conditions → snapshot → eligible comparison → transaction graph
-  ├─ approval → fresh preflight → exact signed-payload validation
-  ├─ durable submission → solid receipt → position reconciliation
-  └─ performance ledger / Watch reviews / account notifications
-       │                  │                         │
-       ▼                  ▼                         ▼
-Economic Machine     PostgreSQL               TRON / protocols
-integer amounts      scoped records           network-bound reads
-constraints          version checks           JustLend / USDD
-execution guards     leases + journal         receipts + post-state
+React workspace ─── user confirmation / plan choice ─── TronLink
+       │                                                  │
+       ▼                                                  │ signature
+Node gateway ◀────────────────────────────────────────────┘
+       ├── wallet proof, sessions, CSRF, scoped conversations
+       ├── SQLite: agents, messages, durable planning jobs
+       ├── Kiln / Qwen3-32B: editable intent + explanations
+       └── authenticated finance requests
+                    │
+                    ▼
+Python finance service + Economic Machine
+       ├── fresh observations → constraints → eligible allocations
+       ├── transaction graph → exact approval → signed-byte checks
+       ├── durable submission → receipt → independent post-state
+       └── performance ledger → Watch review → account notification
+                    │                         │
+                    ▼                         ▼
+              PostgreSQL                 TRON / protocols
+              financial records          Native Stake + voting
+              reservations + journal     JustLend / USDD adapters
+              Watch queue + leases       network-bound evidence
 
-Research/data lane: source capture → normalization → quality checks
-                    → explicit replay/research release → oracle checks
+Data / research: source capture → normalization → provenance checks
+                 → explicit synthetic/replay cases → oracle evaluation
 ```
 
-The gateway's chat store and the finance ledger are separate. The financial service authenticates the gateway before trusting workspace or verified-wallet headers. The model cannot manufacture signing authority. [Detailed module and state map](docs/ARCHITECTURE.md).
+**The model interprets; the engine calculates; the wallet signs.** SQLite planning jobs and PostgreSQL financial/Watch jobs have distinct responsibilities. Research outputs pass through the same financial gates before they can influence executable work. [Module boundaries and state transitions](docs/ARCHITECTURE.md).
+
+## A calculated result with inspectable inputs
+
+At **2026-09-30 01:17 UTC**, a live Nile check evaluated **101 allocations; 25 passed**. One confirmation produced the following comparison in about 10 seconds, with no additional chat prompt, signature or broadcast.
+
+| Native Stake + cash option | Stake | Available cash | Lifecycle cost reserve | Projected net income over 365 days |
+| --- | ---: | ---: | ---: | ---: |
+| More cash available | 165 TRX | 133 TRX | 2 TRX | 0.010920 TRX |
+| Higher voting income | 237 TRX | 61 TRX | 2 TRX | 0.888413 TRX |
+
+Each row totals **300 TRX**. Conditions included a 20% cash floor, no borrowing and explicit staking/voting permission. The isolated test explicitly allowed full-capital loss: spending and loss caps were 300 TRX with 100% loss scenarios. Those permissive test settings are not a risk recommendation. These are dated, variable forecasts for two allocations within the same product family. [Full conditions, timing and machine-readable result](docs/AUTOMATIC_PLANNING.md).
+
+If costs, liquidity or retained risk limits invalidate a plan, faat reports the constraint. Increasing the budget alone does not silently increase authority. [Native reward calculation and cost model](docs/NATIVE_STAKING.md).
+
+## A transaction result with public receipts
+
+The user signed a complete Nile JustLend supply and full redemption through TronLink.
+
+| Operation | Principal / output | Actual fee | Evidence |
+| --- | --- | ---: | --- |
+| Supply | 1 TRX | 8.0894 TRX | [Supply receipt](https://nile.tronscan.org/#/transaction/877d3dcb132ff55b37f0cb24286c9ce3fce4e0966c21bdc4b0924f6d7652a7c2) |
+| Redeem | 89.46435527 jTRX → 1 TRX | 7.2569 TRX | [Redemption receipt](https://nile.tronscan.org/#/transaction/b83d55426b98f73ff458e61d003f062a58d2588bbcad21b3d02ebf72f1f0d628) |
+
+**Income before fees: 0 TRX. Actual net P&L: −15.3463 TRX.** The position reconciled as closed. This was a small integration test. Current investment entry requires positive projected net benefit; a protective exit has separate eligibility rules.
+
+Expected net **to the same observation time** was −16.3703 TRX. The +1.024 TRX variance came from lower fees, not earned yield. A new performance period preserves the old receipts and loss. [Accounting definitions and proof scope](docs/VERIFICATION.md).
+
+## Failure cases that shaped the implementation
+
+| Failure observed or tested | Enforced behavior | Code / tests |
+| --- | --- | --- |
+| Model extraction returns `intent: null` | Preserve healthy workspace state; show an editable draft error | [Automatic planning](docs/AUTOMATIC_PLANNING.md) |
+| Page closes or gateway restarts during comparison | Resume the durable job with stable confirmation/comparison keys | [Gateway and worker](frontend/server/index.ts) |
+| An old 2 TRX limit survives a larger budget request | Expose the conflict; require an explicit draft change and confirmation | [Condition editor](frontend/src/App.tsx) |
+| A zero-value protobuf field breaks wallet encoding | Check canonical bytes against official TronWeb serialization before signing | [Wallet encoding regression](tests/test_wallet_encoding.py) |
+| Broadcast times out | Retain the reservation and reconcile the same transaction identity | [Recovery](src/finance_service/native_recovery.py) |
+| Receipt and account changes disagree | Keep the transaction disputed; avoid attributing a false position | [Reconciliation](src/economic_machine/position_reconciliation.py) |
+| Chart reset follows a losing trade | Preserve the financial ledger; open a separate measurement period | [Period tests](tests/test_performance_periods.py) |
+
+[Failure model](docs/FAILURE_MODEL.md) · [Decision record](docs/DECISIONS.md)
 
 ## Where to read the code
 
@@ -93,20 +123,6 @@ The gateway's chat store and the finance ledger are separate. The financial serv
 | Persistence, concurrency and integrity | [`postgres_repository.py`](src/finance_service/postgres_repository.py), [`postgres_runtime.py`](src/finance_service/postgres_runtime.py), [`db/migrations/`](db/migrations) |
 | On-chain guards and adapters | [`contracts/`](contracts), [`scripts/verify_execution_guard.py`](scripts/verify_execution_guard.py), [`scripts/verify_economic_vault.py`](scripts/verify_economic_vault.py) |
 | Source capture and dataset provenance | [`src/finagent/`](src/finagent), [`config/sources.json`](config/sources.json), [`cases/`](cases), [`research/fdc/`](research/fdc) |
-
-## Engineering decisions that came from failures
-
-**One omitted zero broke wallet signing.** A zero-value redemption encoded `call_value = 0` explicitly, while the canonical protobuf serializer omits that default. We now compare server bytes against official TronWeb fixtures and check the transaction before opening the signing prompt. See [`test_wallet_encoding.py`](tests/test_wallet_encoding.py) and [`wallet.test.ts`](frontend/tests/wallet.test.ts).
-
-**A timeout is not proof of failure.** The service saves transaction identity and reserves capital before broadcast. Browser reloads recover an unresolved transaction; a retry follows the same ID. Expired prepared transactions require chain absence evidence before the reservation can be released. See [`native_recovery.py`](src/finance_service/native_recovery.py) and the restart/timeout cases in [`test_usdd_execution.py`](tests/test_usdd_execution.py).
-
-**A successful transaction is not yet a reconciled position.** Execution checks receipts and independent position/cash changes. Contradictory evidence remains disputed. Fee accounting must not run twice when the same receipt is observed twice. See [`position_reconciliation.py`](src/economic_machine/position_reconciliation.py) and [`test_native_execution.py`](tests/test_native_execution.py).
-
-**Resetting a chart must not delete a loss.** A new measurement period preserves old accounting and receipts. Open positions, debt and unresolved transactions block a reset; late old receipts do not become income in the new period. See [`test_performance_periods.py`](tests/test_performance_periods.py).
-
-**Leverage amplifies a negative spread too.** Borrow/resupply cycles require explicit debt terms, bounded exposure, current collateral checks and viable net economics. The source includes the USDD execution/recovery path; mainnet end-to-end live verification remains outstanding. See [`test_usdd_workflow.py`](tests/test_usdd_workflow.py) and [`test_usdd_execution.py`](tests/test_usdd_execution.py).
-
-The [failure model](docs/FAILURE_MODEL.md) maps each claim to its code and test. The [decision record](docs/DECISIONS.md) explains the tradeoffs and the evidence that led to them.
 
 ## Run and verify
 
@@ -138,16 +154,12 @@ pnpm build
 
 Tests with synthetic receipts demonstrate rejection/recovery logic; they do not constitute a live mainnet transaction. PostgreSQL resilience drills and research training have additional environment requirements. [Verification guide](docs/VERIFICATION.md).
 
-GitHub Actions runs these offline product checks and the frontend build. The current extended check passed **576 backend tests and 57 frontend tests**, with **48 backend tests skipped** because their dedicated PostgreSQL environment or pinned compiler was unavailable; exact commands and results are in [`evidence/verification/native-summary.json`](evidence/verification/native-summary.json), alongside the earlier publication evidence. Re-read the two demonstrated Nile receipts with `python scripts/verify_nile_receipts.py --refresh`, or omit `--refresh` to validate the checked-in captures without a network request. This script never signs or broadcasts.
+GitHub Actions runs these offline product checks and the frontend build. The current extended check passed **576 backend tests and 61 frontend tests**, with **48 backend tests skipped** because their dedicated PostgreSQL environment or pinned compiler was unavailable; backend commands and results are in [`evidence/verification/native-summary.json`](evidence/verification/native-summary.json), alongside the earlier publication evidence. The later 61-test frontend run and automatic-planning checks are recorded in [AUTOMATIC_PLANNING.md](docs/AUTOMATIC_PLANNING.md). These are separate recorded runs, not a new aggregate run made for this documentation update. Re-read the two demonstrated Nile receipts with `python scripts/verify_nile_receipts.py --refresh`, or omit `--refresh` to validate the checked-in captures without a network request. This script never signs or broadcasts.
 
-## Data and research
+## Data, provenance and history
 
-The repository includes collection, normalization, source hashing, quality gates, explicit synthetic cases, schemas and research code. Public observations, synthetic labels and live customer positions have different provenance. Research model outputs do not gain execution authority. Source-license uncertainty is retained in the data pipeline rather than silently promoting data into training. [Data map](docs/DATA.md).
+[`src/finagent/`](src/finagent), [`config/sources.json`](config/sources.json), [`cases/`](cases) and [`research/fdc/`](research/fdc) contain source capture, normalization, source hashing, quality gates, explicit synthetic cases and research evaluation. Source observations, synthetic labels and live positions retain distinct provenance. [Data map](docs/DATA.md).
 
-## Scope and history
+`frontend/` is the current application. `web/` is an older reference client. Internal `machine` routes and storage identifiers remain for compatibility with the public **faat** brand. [`docs/history/`](docs/history) preserves prior design and implementation records; [the documentation index](docs/README.md) identifies the current entry points.
 
-The public product is **faat**. Internal `machine` route, cookie and storage identifiers remain for compatibility. `frontend/` is the current interface; `web/` is the older reference client. Earlier implementation and design documents are preserved under [`docs/history/`](docs/history) and [`research/`](research); their dated statements are historical, not current completion claims.
-
-Nile native supply and redemption are live-verified. Mainnet USDD full lifecycle is not. Nile's Vault and JustLend USDD incompatibility blocks that route. No maximum-APY, zero-bug or autonomous-profit claim is made.
-
-This publication includes the project source and reviewed evidence. Pitch decks, private customer databases, credentials, signing material and dependency caches are maintained outside the repository.
+This repository publishes project source and reviewed evidence. Credentials, private customer databases, signing material, dependency caches and pitch-deck binaries are excluded. Verification scope is documented; a passing test suite is not a claim of zero bugs, guaranteed yield or completed mainnet deployment.
