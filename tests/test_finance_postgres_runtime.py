@@ -127,6 +127,17 @@ class PostgresRuntimeTests(unittest.TestCase):
                                 "scope": OTHER_SCOPE}),))
             self.assertEqual(db.execute("SELECT count(*) FROM finance_service_records").fetchone()[0], 0)
 
+    def test_native_metadata_survives_jsonb_without_losing_raw_url(self):
+        from finance_service.stake_market import storage_evidence
+        raw_url = "\x00\x00witness-\ud800"
+        body = storage_evidence({"witnesses": {"witnesses": [{"url": raw_url}]}})
+        self.repo.put_record(SCOPE, "OBSERVATION", "native-metadata", body,
+                             expected_version=0, at=AT)
+        persisted = self.repo.get_record(SCOPE, "OBSERVATION", "native-metadata")
+        self.assertEqual(persisted["body"], body)
+        self.assertEqual(persisted["body_hash"], digest(body))
+        self.assertEqual(json.loads(body["witnesses"]["witnesses"][0]["url"]["value"]), raw_url)
+
     def test_account_serialization_completion_and_expired_lease_recovery(self):
         first = self.enqueue(SCOPE, "first", {"n": 1}, priority=100, max_attempts=2)
         second = self.enqueue(SCOPE, "second", {"n": 2}, priority=90)

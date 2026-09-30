@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from decimal import Decimal, localcontext
 from copy import deepcopy
+import json
 from economic_machine.values import MachineError, digest, decstr
 from economic_machine.tron_sources import parse_raw, address_hex, address_base58
 from economic_machine.capabilities import (
@@ -89,7 +90,29 @@ def read(request, clock, context):
     return normalize(captured, clock())
 
 
+def storage_evidence(evidence):
+    """Losslessly encode witness URL metadata that PostgreSQL JSONB cannot store.
+
+    Witness URLs are arbitrary on-chain strings, not yield/identity inputs.
+    Keep ordinary URLs unchanged and retain unsafe strings as an explicit JSON
+    string encoding. Do this before hashing, never by stripping record contents
+    inside the repository: stored evidence must still replay to the same hash.
+    """
+    result = deepcopy(evidence)
+    for witness in result.get("witnesses", {}).get("witnesses", []):
+        value = witness.get("url")
+        if isinstance(value, str) and any(
+            c == "\x00" or 0xD800 <= ord(c) <= 0xDFFF for c in value
+        ):
+            witness["url"] = {
+                "encoding": "json-string-v1",
+                "value": json.dumps(value, ensure_ascii=True),
+            }
+    return result
+
+
 def normalize(evidence, at):
+    evidence = storage_evidence(evidence)
     age = (
         datetime.fromisoformat(at) - datetime.fromisoformat(evidence["observed_at"])
     ).total_seconds()

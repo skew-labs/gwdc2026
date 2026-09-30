@@ -74,3 +74,13 @@ The positive variance is a fee saving relative to the estimate. It is not positi
 ## Publication provenance
 
 This is a publication of the team's project source and accumulated implementation, including the integrated faat frontend. Commit and document dates are preserved as history where available; file modification times are not used as proof of original authorship. Publication does not rewrite earlier work as a new build or claim competition eligibility beyond the organizer's rules.
+
+## PostgreSQL witness metadata recovery — September 30, 02:17 UTC
+
+The earlier live comparison used an isolated SQLite repository. It missed a production JSONB incompatibility: one of the 845 live Nile witness entries contained a NUL in its arbitrary URL metadata, including an entry outside the top-127 forecast set. Calculations completed, but PostgreSQL rejected the retained raw metadata when committing the result.
+
+Unsafe witness URL strings now use a tagged, reversible JSON-string encoding before evidence hashing. Valid URL strings and all voting, account, fee and identity inputs remain unchanged. The captured evidence still replays to exactly the same stored hash. Nothing is stripped at the database layer. Non-JSON upstream failures now produce a scoped, actionable error rather than a gateway JSON parser error.
+
+Verification reproduced the original error against PostgreSQL 16 with the current live response, then persisted and reread the encoded original metadata. A separate authenticated test scope completed draft → confirmation → comparison → native execution review → repository reconnect: restrictive 2 TRX limits returned INFEASIBLE; an explicit test policy with 300 TRX spending/loss limits returned two plans from 25 eligible allocations. No customer conditions, transaction approvals or broadcasts were changed by this test. Native regression tests: 28 passed. Gateway regression tests: 7 passed; TypeScript passed.
+
+CI now starts PostgreSQL 16 and exercises the actual JSONB boundary in `test_stake_postgres`, so this regression is no longer covered only by SQLite fixtures. [Live persistence evidence](../evidence/verification/native-postgres-metadata.json).

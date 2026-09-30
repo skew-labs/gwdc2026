@@ -32,6 +32,7 @@ const empty = () =>
   });
 const states = new Map<string, Workspace>();
 let intentMode = "normal";
+let plainTextFailure = false;
 let intentReads = 0;
 let comparisonMode = "ready";
 let releaseComparison: (() => void) | null = null;
@@ -111,6 +112,15 @@ beforeAll(async () => {
     let body = "";
     for await (const chunk of req) body += chunk;
     const payload = body ? JSON.parse(body) : {};
+    if (plainTextFailure && req.url === "/v1/machine/mandates") {
+      plainTextFailure = false;
+      res.statusCode = 500;
+      res.setHeader("Content-Type", "text/plain");
+      res.end(
+        "Internal Server Error: private database trace must not reach the browser",
+      );
+      return;
+    }
     if (req.url === "/v1/machine/agent-intent") intentReads++;
     if (req.url === "/v1/machine/agent-intent" && intentMode !== "normal") {
       const mode = intentMode;
@@ -497,6 +507,26 @@ async function waitJob(c: Client, agent: string, status = "SUCCEEDED") {
     "Job did not reach " + status + ": " + JSON.stringify(w?.jobs),
   );
 }
+it("upstream plain-text errors stay actionable and the same request can recover", async () => {
+  const { c, a } = await authenticatedAgent();
+  const payload = { network: "nile", agent_id: a.id };
+  plainTextFailure = true;
+  const failed = await call(
+    c,
+    "/v1/mandates",
+    "POST",
+    payload,
+    "retry-plain-text",
+  );
+  expect(failed.status).toBe(502);
+  expect(failed.body.error.code).toBe("FINANCE_RESPONSE_INVALID");
+  expect(failed.body.error.message).toContain("Refresh the current status");
+  expect(JSON.stringify(failed.body)).not.toContain("private database trace");
+  expect(
+    (await call(c, "/v1/mandates", "POST", payload, "retry-plain-text")).status,
+  ).toBe(200);
+});
+
 it("nullable or failed condition extraction keeps the financial workspace and returns an editable card without USDD diversion", async () => {
   const { c, a } = await authenticatedAgent();
   for (const mode of ["rejected", "transport"]) {
@@ -693,11 +723,23 @@ it("legacy confirmation stays with the reviewed draft conversation instead of th
   expect(w.execution).toBeNull();
   // Reproduce already misrouted historical records in this isolated fixture.
   await stop();
-  const fixtureDb = new DatabaseSync(join(dir,"test.sqlite"));
-  fixtureDb.prepare("UPDATE jobs SET agent=? WHERE id=?").run(first.id,result.body.job_id);
-  fixtureDb.prepare("UPDATE messages SET agent=? WHERE id=?").run(first.id,"planning-result-"+result.body.job_id);
-  fixtureDb.prepare("DELETE FROM message_cards WHERE message_id IN (SELECT id FROM messages WHERE agent=? AND text LIKE 'Here are the two calculated plans.%')").run(second.id);
-  fixtureDb.prepare("DELETE FROM messages WHERE agent=? AND text LIKE 'Here are the two calculated plans.%'").run(second.id);
+  const fixtureDb = new DatabaseSync(join(dir, "test.sqlite"));
+  fixtureDb
+    .prepare("UPDATE jobs SET agent=? WHERE id=?")
+    .run(first.id, result.body.job_id);
+  fixtureDb
+    .prepare("UPDATE messages SET agent=? WHERE id=?")
+    .run(first.id, "planning-result-" + result.body.job_id);
+  fixtureDb
+    .prepare(
+      "DELETE FROM message_cards WHERE message_id IN (SELECT id FROM messages WHERE agent=? AND text LIKE 'Here are the two calculated plans.%')",
+    )
+    .run(second.id);
+  fixtureDb
+    .prepare(
+      "DELETE FROM messages WHERE agent=? AND text LIKE 'Here are the two calculated plans.%'",
+    )
+    .run(second.id);
   fixtureDb.close();
   await start();
   const reloaded = (

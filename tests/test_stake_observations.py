@@ -61,6 +61,27 @@ def evidence():
 
 
 class NativeMarketTests(unittest.TestCase):
+    def test_binary_witness_urls_are_lossless_replayable_metadata(self):
+        original = evidence()
+        urls = ["\x00\x00validator", "https://example.test/\ud800", "literal \\u0000", "https://example.test/한글"]
+        for row, value in zip(original["witnesses"]["witnesses"], urls):
+            row["url"] = value
+        baseline = normalize(evidence(), AT)
+        normalized = normalize(original, AT)
+        rows = normalized["evidence"]["witnesses"]["witnesses"]
+        for i in range(2):
+            self.assertEqual(rows[i]["url"]["encoding"], "json-string-v1")
+            self.assertEqual(json.loads(rows[i]["url"]["value"]), urls[i])
+            self.assertEqual(original["witnesses"]["witnesses"][i]["url"], urls[i])
+        self.assertEqual([r["url"] for r in rows[2:4]], urls[2:])
+        self.assertNotIn("\x00", json.dumps(normalized, ensure_ascii=False))
+        self.assertEqual(normalized["representative"], baseline["representative"])
+        self.assertEqual(normalized["parameters"], baseline["parameters"])
+        self.assertEqual(normalize(normalized["evidence"], AT), normalized)
+        tampered = copy.deepcopy(normalized["evidence"])
+        tampered["witnesses"]["witnesses"][0]["url"]["value"] = json.dumps("changed")
+        self.assertNotEqual(normalize(tampered, AT)["hash"], normalized["hash"])
+
     def test_network_specific_maintenance_and_commission_not_mainnet_constant(self):
         m = normalize(evidence(), AT)
         r = m["representative"]
