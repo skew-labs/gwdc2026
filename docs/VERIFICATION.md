@@ -30,6 +30,10 @@ Real Qwen3-32B requests through Kiln, persistent conversations, condition editin
 
 These checks do not establish a continuous live two-plan → new transaction → performance → adjustment recording. A viable funded scenario and user wallet signature are still needed for that demonstration.
 
+## Native staking extension — September 30
+
+The new native route was checked with live market reads and an unsigned node-built transaction, official TronWeb serialization and synthetic five-action lifecycle/recovery tests. See [Native staking scope](NATIVE_STAKING.md). No new native user signature or on-chain native lifecycle receipt is claimed.
+
 ## Remaining limits
 
 - Mainnet USDD full live lifecycle has not been verified end to end. Guarded execution and regression coverage are not a substitute for that evidence.

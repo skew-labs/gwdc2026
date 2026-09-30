@@ -4573,6 +4573,399 @@
                   "$schema": "https://json-schema.org/draft/2020-12/schema",
                   "type": "object",
                   "properties": {
+                    "stake_transaction_receipts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "txid": {
+                            "type": "string"
+                          },
+                          "graph_id": {
+                            "type": "string"
+                          },
+                          "step_id": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "txid",
+                          "graph_id",
+                          "step_id",
+                          "status"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "stake_workflow": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "cursor": {
+                              "type": "number"
+                            },
+                            "amount": {
+                              "type": "object",
+                              "properties": {
+                                "value": {
+                                  "type": "string",
+                                  "pattern": "^-?\\d+(\\.\\d+)?$"
+                                },
+                                "symbol": {
+                                  "type": "string"
+                                },
+                                "decimals": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 30
+                                }
+                              },
+                              "required": [
+                                "value",
+                                "symbol",
+                                "decimals"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "representative": {
+                              "type": "string"
+                            },
+                            "steps": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "action": {
+                                    "type": "string"
+                                  },
+                                  "status": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "action",
+                                  "status"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "forecast": {
+                              "type": "object",
+                              "properties": {
+                                "gross": {
+                                  "type": "string",
+                                  "pattern": "^-?\\d+(\\.\\d+)?$"
+                                },
+                                "net": {
+                                  "type": "string",
+                                  "pattern": "^-?\\d+(\\.\\d+)?$"
+                                },
+                                "fees": {
+                                  "type": "string",
+                                  "pattern": "^-?\\d+(\\.\\d+)?$"
+                                },
+                                "horizon_seconds": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "gross",
+                                "net",
+                                "fees",
+                                "horizon_seconds"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "status",
+                            "cursor",
+                            "amount",
+                            "representative",
+                            "steps",
+                            "forecast"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "stake_position": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "status": {
+                              "type": "string"
+                            },
+                            "amount": {
+                              "type": "object",
+                              "properties": {
+                                "value": {
+                                  "type": "string",
+                                  "pattern": "^-?\\d+(\\.\\d+)?$"
+                                },
+                                "symbol": {
+                                  "type": "string"
+                                },
+                                "decimals": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 30
+                                }
+                              },
+                              "required": [
+                                "value",
+                                "symbol",
+                                "decimals"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "representative": {
+                              "type": "string"
+                            },
+                            "as_of": {
+                              "type": "string"
+                            },
+                            "forecast_net": {
+                              "type": "object",
+                              "properties": {
+                                "value": {
+                                  "type": "string",
+                                  "pattern": "^-?\\d+(\\.\\d+)?$"
+                                },
+                                "symbol": {
+                                  "type": "string"
+                                },
+                                "decimals": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 30
+                                }
+                              },
+                              "required": [
+                                "value",
+                                "symbol",
+                                "decimals"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "forecast_to_date": {
+                              "type": "object",
+                              "properties": {
+                                "value": {
+                                  "type": "string",
+                                  "pattern": "^-?\\d+(\\.\\d+)?$"
+                                },
+                                "symbol": {
+                                  "type": "string"
+                                },
+                                "decimals": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 30
+                                }
+                              },
+                              "required": [
+                                "value",
+                                "symbol",
+                                "decimals"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "net_return_pct": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^-?\\d+(\\.\\d+)?$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "fees": {
+                              "type": "object",
+                              "properties": {
+                                "value": {
+                                  "type": "string",
+                                  "pattern": "^-?\\d+(\\.\\d+)?$"
+                                },
+                                "symbol": {
+                                  "type": "string"
+                                },
+                                "decimals": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 30
+                                }
+                              },
+                              "required": [
+                                "value",
+                                "symbol",
+                                "decimals"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "realized": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "value": {
+                                      "type": "string",
+                                      "pattern": "^-?\\d+(\\.\\d+)?$"
+                                    },
+                                    "symbol": {
+                                      "type": "string"
+                                    },
+                                    "decimals": {
+                                      "type": "integer",
+                                      "minimum": 0,
+                                      "maximum": 30
+                                    }
+                                  },
+                                  "required": [
+                                    "value",
+                                    "symbol",
+                                    "decimals"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "accrued": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "value": {
+                                      "type": "string",
+                                      "pattern": "^-?\\d+(\\.\\d+)?$"
+                                    },
+                                    "symbol": {
+                                      "type": "string"
+                                    },
+                                    "decimals": {
+                                      "type": "integer",
+                                      "minimum": 0,
+                                      "maximum": 30
+                                    }
+                                  },
+                                  "required": [
+                                    "value",
+                                    "symbol",
+                                    "decimals"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "net_income": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "value": {
+                                      "type": "string",
+                                      "pattern": "^-?\\d+(\\.\\d+)?$"
+                                    },
+                                    "symbol": {
+                                      "type": "string"
+                                    },
+                                    "decimals": {
+                                      "type": "integer",
+                                      "minimum": 0,
+                                      "maximum": 30
+                                    }
+                                  },
+                                  "required": [
+                                    "value",
+                                    "symbol",
+                                    "decimals"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "basis": {
+                              "type": "string"
+                            },
+                            "unfreeze_at": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "status",
+                            "amount",
+                            "representative",
+                            "as_of",
+                            "forecast_net",
+                            "fees",
+                            "realized",
+                            "accrued",
+                            "net_income",
+                            "basis"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "product_catalog": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "status",
+                          "reason"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
                     "prepared_transactions": {
                       "type": "array",
                       "items": {
@@ -5446,6 +5839,9 @@
                         {
                           "type": "object",
                           "properties": {
+                            "product_label": {
+                              "type": "string"
+                            },
                             "denomination": {
                               "type": "string",
                               "enum": [
@@ -6293,6 +6689,21 @@
                         {
                           "type": "object",
                           "properties": {
+                            "candidate_count": {
+                              "type": "number"
+                            },
+                            "eligible_candidates": {
+                              "type": "number"
+                            },
+                            "exclusion_histogram": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {
+                                "type": "number"
+                              }
+                            },
                             "id": {
                               "type": "string"
                             },
@@ -6741,7 +7152,8 @@
                               "enum": [
                                 "ALLOCATION",
                                 "ADJUSTMENT",
-                                "USDD_WORKFLOW"
+                                "USDD_WORKFLOW",
+                                "NATIVE_STAKE"
                               ]
                             },
                             "review_id": {
@@ -6893,6 +7305,34 @@
                               "items": {
                                 "type": "object",
                                 "properties": {
+                                  "native_votes": {
+                                    "anyOf": [
+                                      {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "vote_address": {
+                                              "type": "string"
+                                            },
+                                            "vote_count": {
+                                              "type": "integer",
+                                              "exclusiveMinimum": 0,
+                                              "maximum": 9007199254740991
+                                            }
+                                          },
+                                          "required": [
+                                            "vote_address",
+                                            "vote_count"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
                                   "call_data": {
                                     "type": "string",
                                     "pattern": "^[a-f0-9]+$"
@@ -8180,6 +8620,21 @@
                                   {
                                     "type": "object",
                                     "properties": {
+                                      "candidate_count": {
+                                        "type": "number"
+                                      },
+                                      "eligible_candidates": {
+                                        "type": "number"
+                                      },
+                                      "exclusion_histogram": {
+                                        "type": "object",
+                                        "propertyNames": {
+                                          "type": "string"
+                                        },
+                                        "additionalProperties": {
+                                          "type": "number"
+                                        }
+                                      },
                                       "id": {
                                         "type": "string"
                                       },
@@ -8628,7 +9083,8 @@
                                         "enum": [
                                           "ALLOCATION",
                                           "ADJUSTMENT",
-                                          "USDD_WORKFLOW"
+                                          "USDD_WORKFLOW",
+                                          "NATIVE_STAKE"
                                         ]
                                       },
                                       "review_id": {
@@ -8780,6 +9236,34 @@
                                         "items": {
                                           "type": "object",
                                           "properties": {
+                                            "native_votes": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "array",
+                                                  "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "vote_address": {
+                                                        "type": "string"
+                                                      },
+                                                      "vote_count": {
+                                                        "type": "integer",
+                                                        "exclusiveMinimum": 0,
+                                                        "maximum": 9007199254740991
+                                                      }
+                                                    },
+                                                    "required": [
+                                                      "vote_address",
+                                                      "vote_count"
+                                                    ],
+                                                    "additionalProperties": false
+                                                  }
+                                                },
+                                                {
+                                                  "type": "null"
+                                                }
+                                              ]
+                                            },
                                             "call_data": {
                                               "type": "string",
                                               "pattern": "^[a-f0-9]+$"
@@ -12448,6 +12932,21 @@
                               {
                                 "type": "object",
                                 "properties": {
+                                  "candidate_count": {
+                                    "type": "number"
+                                  },
+                                  "eligible_candidates": {
+                                    "type": "number"
+                                  },
+                                  "exclusion_histogram": {
+                                    "type": "object",
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "additionalProperties": {
+                                      "type": "number"
+                                    }
+                                  },
                                   "id": {
                                     "type": "string"
                                   },
@@ -12896,7 +13395,8 @@
                                     "enum": [
                                       "ALLOCATION",
                                       "ADJUSTMENT",
-                                      "USDD_WORKFLOW"
+                                      "USDD_WORKFLOW",
+                                      "NATIVE_STAKE"
                                     ]
                                   },
                                   "review_id": {
@@ -13048,6 +13548,34 @@
                                     "items": {
                                       "type": "object",
                                       "properties": {
+                                        "native_votes": {
+                                          "anyOf": [
+                                            {
+                                              "type": "array",
+                                              "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "vote_address": {
+                                                    "type": "string"
+                                                  },
+                                                  "vote_count": {
+                                                    "type": "integer",
+                                                    "exclusiveMinimum": 0,
+                                                    "maximum": 9007199254740991
+                                                  }
+                                                },
+                                                "required": [
+                                                  "vote_address",
+                                                  "vote_count"
+                                                ],
+                                                "additionalProperties": false
+                                              }
+                                            },
+                                            {
+                                              "type": "null"
+                                            }
+                                          ]
+                                        },
                                         "call_data": {
                                           "type": "string",
                                           "pattern": "^[a-f0-9]+$"
@@ -13967,6 +14495,775 @@
                     ],
                     "additionalProperties": false
                   }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session absent or expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale, expired, changed policy, conflict, or unresolved execution",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Constraint violation or invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stake-workflows/next": {
+      "post": {
+        "operationId": "post__v1_stake_workflows_next",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "network": {
+                    "type": "string",
+                    "const": "nile"
+                  },
+                  "agent_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "network"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "accepted": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "job_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "accepted",
+                    "job_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session absent or expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale, expired, changed policy, conflict, or unresolved execution",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Constraint violation or invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stake-workflows/cancel": {
+      "post": {
+        "operationId": "post__v1_stake_workflows_cancel",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "network": {
+                    "type": "string",
+                    "const": "nile"
+                  },
+                  "agent_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "network"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "accepted": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "job_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "accepted",
+                    "job_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session absent or expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale, expired, changed policy, conflict, or unresolved execution",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Constraint violation or invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stake-workflows/refresh": {
+      "post": {
+        "operationId": "post__v1_stake_workflows_refresh",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "network": {
+                    "type": "string",
+                    "const": "nile"
+                  },
+                  "agent_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "network"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "accepted": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "job_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "accepted",
+                    "job_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session absent or expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale, expired, changed policy, conflict, or unresolved execution",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Constraint violation or invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stake-workflows/lifecycle": {
+      "post": {
+        "operationId": "post__v1_stake_workflows_lifecycle",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "network": {
+                    "type": "string",
+                    "const": "nile"
+                  },
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "UNSTAKE",
+                      "WITHDRAW",
+                      "CLAIM"
+                    ]
+                  },
+                  "agent_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "network",
+                  "action"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Validated response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "accepted": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "job_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "accepted",
+                    "job_id"
+                  ],
+                  "additionalProperties": false
                 }
               }
             }
@@ -15273,6 +16570,399 @@
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
+          "stake_transaction_receipts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "txid": {
+                  "type": "string"
+                },
+                "graph_id": {
+                  "type": "string"
+                },
+                "step_id": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "txid",
+                "graph_id",
+                "step_id",
+                "status"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "stake_workflow": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "cursor": {
+                    "type": "number"
+                  },
+                  "amount": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "pattern": "^-?\\d+(\\.\\d+)?$"
+                      },
+                      "symbol": {
+                        "type": "string"
+                      },
+                      "decimals": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 30
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "symbol",
+                      "decimals"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "representative": {
+                    "type": "string"
+                  },
+                  "steps": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "status"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "forecast": {
+                    "type": "object",
+                    "properties": {
+                      "gross": {
+                        "type": "string",
+                        "pattern": "^-?\\d+(\\.\\d+)?$"
+                      },
+                      "net": {
+                        "type": "string",
+                        "pattern": "^-?\\d+(\\.\\d+)?$"
+                      },
+                      "fees": {
+                        "type": "string",
+                        "pattern": "^-?\\d+(\\.\\d+)?$"
+                      },
+                      "horizon_seconds": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "gross",
+                      "net",
+                      "fees",
+                      "horizon_seconds"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id",
+                  "status",
+                  "cursor",
+                  "amount",
+                  "representative",
+                  "steps",
+                  "forecast"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stake_position": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string"
+                  },
+                  "amount": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "pattern": "^-?\\d+(\\.\\d+)?$"
+                      },
+                      "symbol": {
+                        "type": "string"
+                      },
+                      "decimals": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 30
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "symbol",
+                      "decimals"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "representative": {
+                    "type": "string"
+                  },
+                  "as_of": {
+                    "type": "string"
+                  },
+                  "forecast_net": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "pattern": "^-?\\d+(\\.\\d+)?$"
+                      },
+                      "symbol": {
+                        "type": "string"
+                      },
+                      "decimals": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 30
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "symbol",
+                      "decimals"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "forecast_to_date": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "pattern": "^-?\\d+(\\.\\d+)?$"
+                      },
+                      "symbol": {
+                        "type": "string"
+                      },
+                      "decimals": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 30
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "symbol",
+                      "decimals"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "net_return_pct": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^-?\\d+(\\.\\d+)?$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "fees": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "pattern": "^-?\\d+(\\.\\d+)?$"
+                      },
+                      "symbol": {
+                        "type": "string"
+                      },
+                      "decimals": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 30
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "symbol",
+                      "decimals"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "realized": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "string",
+                            "pattern": "^-?\\d+(\\.\\d+)?$"
+                          },
+                          "symbol": {
+                            "type": "string"
+                          },
+                          "decimals": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 30
+                          }
+                        },
+                        "required": [
+                          "value",
+                          "symbol",
+                          "decimals"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "accrued": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "string",
+                            "pattern": "^-?\\d+(\\.\\d+)?$"
+                          },
+                          "symbol": {
+                            "type": "string"
+                          },
+                          "decimals": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 30
+                          }
+                        },
+                        "required": [
+                          "value",
+                          "symbol",
+                          "decimals"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "net_income": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "string",
+                            "pattern": "^-?\\d+(\\.\\d+)?$"
+                          },
+                          "symbol": {
+                            "type": "string"
+                          },
+                          "decimals": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 30
+                          }
+                        },
+                        "required": [
+                          "value",
+                          "symbol",
+                          "decimals"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "basis": {
+                    "type": "string"
+                  },
+                  "unfreeze_at": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "status",
+                  "amount",
+                  "representative",
+                  "as_of",
+                  "forecast_net",
+                  "fees",
+                  "realized",
+                  "accrued",
+                  "net_income",
+                  "basis"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "product_catalog": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "status",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          },
           "prepared_transactions": {
             "type": "array",
             "items": {
@@ -16146,6 +17836,9 @@
               {
                 "type": "object",
                 "properties": {
+                  "product_label": {
+                    "type": "string"
+                  },
                   "denomination": {
                     "type": "string",
                     "enum": [
@@ -16993,6 +18686,21 @@
               {
                 "type": "object",
                 "properties": {
+                  "candidate_count": {
+                    "type": "number"
+                  },
+                  "eligible_candidates": {
+                    "type": "number"
+                  },
+                  "exclusion_histogram": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {
+                      "type": "number"
+                    }
+                  },
                   "id": {
                     "type": "string"
                   },
@@ -17441,7 +19149,8 @@
                     "enum": [
                       "ALLOCATION",
                       "ADJUSTMENT",
-                      "USDD_WORKFLOW"
+                      "USDD_WORKFLOW",
+                      "NATIVE_STAKE"
                     ]
                   },
                   "review_id": {
@@ -17593,6 +19302,34 @@
                     "items": {
                       "type": "object",
                       "properties": {
+                        "native_votes": {
+                          "anyOf": [
+                            {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "vote_address": {
+                                    "type": "string"
+                                  },
+                                  "vote_count": {
+                                    "type": "integer",
+                                    "exclusiveMinimum": 0,
+                                    "maximum": 9007199254740991
+                                  }
+                                },
+                                "required": [
+                                  "vote_address",
+                                  "vote_count"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
                         "call_data": {
                           "type": "string",
                           "pattern": "^[a-f0-9]+$"
@@ -18880,6 +20617,21 @@
                         {
                           "type": "object",
                           "properties": {
+                            "candidate_count": {
+                              "type": "number"
+                            },
+                            "eligible_candidates": {
+                              "type": "number"
+                            },
+                            "exclusion_histogram": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {
+                                "type": "number"
+                              }
+                            },
                             "id": {
                               "type": "string"
                             },
@@ -19328,7 +21080,8 @@
                               "enum": [
                                 "ALLOCATION",
                                 "ADJUSTMENT",
-                                "USDD_WORKFLOW"
+                                "USDD_WORKFLOW",
+                                "NATIVE_STAKE"
                               ]
                             },
                             "review_id": {
@@ -19480,6 +21233,34 @@
                               "items": {
                                 "type": "object",
                                 "properties": {
+                                  "native_votes": {
+                                    "anyOf": [
+                                      {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "vote_address": {
+                                              "type": "string"
+                                            },
+                                            "vote_count": {
+                                              "type": "integer",
+                                              "exclusiveMinimum": 0,
+                                              "maximum": 9007199254740991
+                                            }
+                                          },
+                                          "required": [
+                                            "vote_address",
+                                            "vote_count"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
                                   "call_data": {
                                     "type": "string",
                                     "pattern": "^[a-f0-9]+$"
@@ -20659,6 +22440,21 @@
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
+          "candidate_count": {
+            "type": "number"
+          },
+          "eligible_candidates": {
+            "type": "number"
+          },
+          "exclusion_histogram": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
           "id": {
             "type": "string"
           },
@@ -21101,7 +22897,8 @@
             "enum": [
               "ALLOCATION",
               "ADJUSTMENT",
-              "USDD_WORKFLOW"
+              "USDD_WORKFLOW",
+              "NATIVE_STAKE"
             ]
           },
           "review_id": {
@@ -21253,6 +23050,34 @@
             "items": {
               "type": "object",
               "properties": {
+                "native_votes": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "vote_address": {
+                            "type": "string"
+                          },
+                          "vote_count": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "vote_address",
+                          "vote_count"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
                 "call_data": {
                   "type": "string",
                   "pattern": "^[a-f0-9]+$"
@@ -22409,6 +24234,21 @@
                   {
                     "type": "object",
                     "properties": {
+                      "candidate_count": {
+                        "type": "number"
+                      },
+                      "eligible_candidates": {
+                        "type": "number"
+                      },
+                      "exclusion_histogram": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {
+                          "type": "number"
+                        }
+                      },
                       "id": {
                         "type": "string"
                       },
@@ -22857,7 +24697,8 @@
                         "enum": [
                           "ALLOCATION",
                           "ADJUSTMENT",
-                          "USDD_WORKFLOW"
+                          "USDD_WORKFLOW",
+                          "NATIVE_STAKE"
                         ]
                       },
                       "review_id": {
@@ -23009,6 +24850,34 @@
                         "items": {
                           "type": "object",
                           "properties": {
+                            "native_votes": {
+                              "anyOf": [
+                                {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "vote_address": {
+                                        "type": "string"
+                                      },
+                                      "vote_count": {
+                                        "type": "integer",
+                                        "exclusiveMinimum": 0,
+                                        "maximum": 9007199254740991
+                                      }
+                                    },
+                                    "required": [
+                                      "vote_address",
+                                      "vote_count"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
                             "call_data": {
                               "type": "string",
                               "pattern": "^[a-f0-9]+$"

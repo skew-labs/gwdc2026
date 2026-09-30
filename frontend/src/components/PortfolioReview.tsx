@@ -147,7 +147,7 @@ export function PortfolioReviewCard({
                 <strong>Keep current holdings</strong>
                 <Badge>No trade</Badge>
               </div>
-              <p>{trx(r.hold.position)} in JustLend</p>
+              <p>{trx(r.hold.position)} in {r.product_label || "JustLend"}</p>
               <Row label="Cost to change">{trx("0")}</Row>
               <details>
                 <summary>Income & exit costs</summary>
@@ -166,16 +166,24 @@ export function PortfolioReviewCard({
               <article key={i} className={!a.eligible ? "review-blocked" : ""}>
                 <div className="option-heading">
                   <strong>
-                    {a.action === "SUPPLY" ? "Supply more" : "Withdraw to cash"}
+                    {r.product_label === "Native Stake" ? "Unstake, then withdraw after the waiting period" : a.action === "SUPPLY" ? "Supply more" : "Withdraw to cash"}
                   </strong>
                   <Badge>{a.eligible ? "Within limits" : "Blocked"}</Badge>
                 </div>
-                <p>{trx(a.position)} remaining in JustLend</p>
+                <p>{trx(a.position)} remaining in {r.product_label || "JustLend"}</p>
                 <Row label="Cost to change">{trx(a.change_cost)}</Row>
                 <Row label="Improvement after costs">
                   {trx(a.net_improvement)}
                 </Row>
-                {a.hash && r.network === "nile" && (
+                {r.product_label === "Native Stake" && r.network === "nile" && a.action === "REDEEM" && (
+                  <Button secondary
+                    disabled={!!m.busy || draft || stale || !a.eligible || !m.session.data?.authenticated ||
+                      ["DATA_UNAVAILABLE", "POLICY_INACTIVE", "PENDING_EXECUTION"].includes(r.status)}
+                    onClick={() => m.stakeAction("UNSTAKE")}>
+                    Review unstaking
+                  </Button>
+                )}
+                {a.hash && r.network === "nile" && r.product_label !== "Native Stake" && (
                   <Button secondary
                     disabled={!!m.busy || (draft && a.action !== "REDEEM") || stale || !a.eligible || !m.session.data?.authenticated ||
                       ["DATA_UNAVAILABLE", "POLICY_INACTIVE", "PENDING_EXECUTION"].includes(r.status)}
@@ -239,7 +247,7 @@ export function PortfolioReviewCard({
         </p>
         {r.rate && (
           <p className="caption">
-            Observed APY: {(Number(r.rate.annual_fraction) * 100).toFixed(4)}% ·
+            {r.rate.convention === "SIMPLE_APR" ? "Projected APR:" : "Observed APY:"} {(Number(r.rate.annual_fraction) * 100).toFixed(4)}% ·
             ACT/365F
           </p>
         )}

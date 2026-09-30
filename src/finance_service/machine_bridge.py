@@ -27,7 +27,7 @@ def empty_workspace(network):
     return dict(revision=0, network=network, mode="LIVE", messages=[], mandate=None,
         comparison=None, graph=None, approval=None, execution=None, positions=[],
         performance=None, balances=[], snapshots=[], routines=[], evidence=[],
-        activity=[], jobs=[], intent=None, notifications=[], portfolio_review=None, usdd_review=None, usdd_workflow=None)
+        activity=[], jobs=[], intent=None, notifications=[], portfolio_review=None, usdd_review=None, usdd_workflow=None, stake_workflow=None, stake_position=None)
 
 
 class StateMandates:
@@ -69,6 +69,8 @@ class MachineBridge:
         self.usdd = UsddReviews(self)
         from .usdd_execution import UsddExecution
         self.usdd_execution = UsddExecution(self)
+        from .stake_execution import StakeExecution
+        self.stake = StakeExecution(self)
 
     def load(self, context):
         scope = context.authorize(self.clock())
@@ -89,11 +91,14 @@ class MachineBridge:
     def workspace(self, context):
         _, state = self.load(context)
         w = state["workspace"]
+        from .product_catalog import catalog
+        w['product_catalog']=catalog(context.network)
         from .portfolio_review import active_mandate, withdrawal_policy
         w['active_mandate']=active_mandate(state)
         w['withdrawal_policy']=withdrawal_policy(state)
         from .native_recovery import recovery_projection
         w['prepared_transactions'] = recovery_projection(state, context)
+        w['stake_transaction_receipts'] = [{'txid':txid,'graph_id':row['graph_id'],'step_id':row['step_id'],'status':state['stake_receipts'][txid]['status']} for txid,row in state.get('native_requests',{}).items() if row.get('adapter')=='STAKE' and txid in state.get('stake_receipts',{})]
         w['transaction_resolutions'] = [r['resolution'] for r in state.get('native_requests', {}).values() if r.get('resolution')]
         heartbeat = Path("/var/lib/machine-finance/worker-heartbeat")
         connected = False
@@ -141,6 +146,10 @@ class MachineBridge:
             can_revise=active_usdd['status'] in ('AWAITING_SIGNATURE','AWAITING_NEXT_REVIEW') and not current.get('transaction') and not current.get('submission')
             if (path.startswith('/v1/mandates') and not can_revise) or path in ('/v1/plan-comparisons','/v1/execution-graphs','/v1/portfolio-adjustments'):
                 raise MachineError('Reconcile the prepared USDD transaction before changing its conditions. Completed steps require a recovery review under any new conditions.')
+        active_stake=state.get('stake_workflow')
+        can_revise_stake=active_stake and not active_stake['steps'][active_stake['cursor']].get('transaction') and not active_stake['steps'][active_stake['cursor']].get('submission')
+        if active_stake and active_stake['status'] not in ('COMPLETE','CANCELLED','FAILED') and ((path.startswith('/v1/mandates') and not can_revise_stake) or path in ('/v1/plan-comparisons','/v1/execution-graphs','/v1/portfolio-adjustments','/v1/usdd-workflows')):
+            raise MachineError('Finish the native stake review, cancel its unprepared draft, or reconcile its transaction before changing conditions.')
         mandates = MandateService(StateMandates(state), self.clock)
         result = {"accepted": True, "job_id": None}
         if method == "POST" and path == "/v1/agent-intent":
@@ -171,6 +180,14 @@ class MachineBridge:
             else:
                 # A portfolio/read-only message must not re-open stale conditions.
                 result = {**result, "known": current, "questions": questions, "pending_proposal": bool(prior.get("patch"))}
+        elif method == 'POST' and path == '/v1/stake-workflows/next':
+            self.stake.next(context,state)
+        elif method == 'POST' and path == '/v1/stake-workflows/cancel':
+            self.stake.cancel(context,state)
+        elif method == 'POST' and path == '/v1/stake-workflows/lifecycle':
+            self.stake.lifecycle(context,state,payload)
+        elif method == 'POST' and path == '/v1/stake-workflows/refresh':
+            self.stake.refresh_position(context,state)
         elif method == "POST" and path == "/v1/usdd-workflows":
             self.usdd_execution.create(context,state,payload)
         elif method == "POST" and path == "/v1/usdd-workflows/next":
@@ -250,7 +267,13 @@ class MachineBridge:
             if self.observations is None:
                 raise MachineError("live observations are unavailable")
             workflow_comparison = w["mandate"]["terms"]["base_asset"] == "USDD" or (context.network == "tron-mainnet" and w["mandate"]["terms"]["base_asset"] == "TRX")
-            if workflow_comparison:
+            native_staking = context.network=='tron-nile' and w['mandate']['terms']['base_asset']=='TRX' and w['mandate']['terms']['protocol_caps_bps'].get('tron-native',0)>0
+            if native_staking:
+                from .stake_comparison import compare as compare_stake
+                record=mandates.get(context,payload['mandate_id'])['revisions'][-1]
+                comparison,core=compare_stake(self,context,state,record)
+                observation=state['observation']
+            elif workflow_comparison:
                 from .usdd_comparison import compare as compare_usdd
                 comparison, core = compare_usdd(self, context, state)
                 observation = {"snapshot": core.get("inputs"), "observed_at": self.clock()}
@@ -309,11 +332,16 @@ class MachineBridge:
                 return result
             snapshot = state["observation"]["snapshot"]
             record = mandates.get(context, w["mandate"]["id"])["revisions"][-1]
+            assembler=self.observations.assembler_for(context.network, record['mandate']['terms']['base_asset'])
+            if data.get('kind')=='NATIVE_STAKE':
+                from .stake_market import StakeAssembler
+                assembler=StakeAssembler(assembler)
             intent = compile_plan_intent(data["comparison"], record, snapshot, data["request"],
-                selected_plan=plan["id"], assembler=self.observations.assembler_for(context.network, record["mandate"]["terms"]["base_asset"]),
+                selected_plan=plan["id"], assembler=assembler,
                 at=self.clock(), valid_until=comparison["expires_at"])
             if record["mandate"]["terms"]["base_asset"] == "TRX" and context.network == "tron-nile":
-                self.native.review(context, state, intent, plan, snapshot)
+                if data.get('kind')=='NATIVE_STAKE':self.stake.create(context,state,plan,data)
+                else:self.native.review(context, state, intent, plan, snapshot)
                 state["plan_intent"] = intent
                 state["requests"][key] = {"hash": request_hash, "response": result}
                 if len(state["requests"]) > 256: state["requests"].pop(next(iter(state["requests"])))
@@ -332,7 +360,9 @@ class MachineBridge:
             w["graph"], w["approval"] = graph, None
             state["plan_intent"] = intent
         elif method == "POST" and path == "/v1/approvals":
-            if state.get('usdd_execution') and (w.get('graph') or {}).get('id','').startswith('usdd-'):
+            if state.get('stake_workflow') and (w.get('graph') or {}).get('id','').startswith('stake-'):
+                self.stake.approve(context,state,payload)
+            elif state.get('usdd_execution') and (w.get('graph') or {}).get('id','').startswith('usdd-'):
                 self.usdd_execution.approve(context,state,payload)
             elif state.get("native_execution") and w.get("graph", {}).get("id", "").startswith("native-"):
                 self.native.approve(context, state, payload)
@@ -420,6 +450,11 @@ def router_for(bridge, gateway_secret):
             if not 1 <= len(key) <= 200:
                 raise MachineError("bounded idempotency key required")
             usdd_pointer=route.split('/')[1] if route.startswith('execution-graphs/') else payload.get('graph_id','')
+            if request.method == 'POST' and isinstance(usdd_pointer,str) and usdd_pointer.startswith('stake-'):
+                if route.startswith('execution-graphs/') and route.endswith('/preflight'):
+                    return await run_in_threadpool(bridge.stake.prepare,context,usdd_pointer,payload)
+                if route=='executions':return await run_in_threadpool(bridge.stake.submit,context,payload)
+                if route=='executions/reconcile':return await run_in_threadpool(bridge.stake.reconcile,context,payload)
             if request.method == 'POST' and isinstance(usdd_pointer,str) and usdd_pointer.startswith('usdd-'):
                 if route.startswith('execution-graphs/') and route.endswith('/preflight'):
                     return await run_in_threadpool(bridge.usdd_execution.prepare,context,usdd_pointer,payload)

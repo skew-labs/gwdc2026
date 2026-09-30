@@ -22,6 +22,7 @@ import { NileFunding } from "./NileFunding";
 import { MandateEditor } from "./MandateEditor";
 import { MandateCard, PlanCards } from "./PlanCards";
 import { UsddWorkflow } from "./UsddWorkflow";
+import { StakePositionCard, ProductCatalogCard } from "./StakePositionCard";
 import { ExecutionCard } from "./ExecutionCard";
 import { PortfolioChart } from "./PortfolioChart";
 import { PortfolioReviewCard, Notifications } from "./PortfolioReview";
@@ -287,7 +288,9 @@ export function Portfolio({ m }: { m: Machine }) {
           </Button>
         </section>
       )}
+      <StakePositionCard m={m} />
       <PortfolioReviewCard m={m} />
+      <ProductCatalogCard m={m} />
       <UsddWorkflow m={m} />
       <details className="companion-card companion-disclosure">
         <summary>

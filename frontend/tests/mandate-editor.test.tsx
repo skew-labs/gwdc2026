@@ -34,3 +34,9 @@ it("keeps new unreviewed policy limits empty rather than silently choosing them"
   for(const label of ["Maximum USDD price exposure","Maximum JustLend allocation","Maximum USDD protocol allocation"])
     expect(input(html,label)).toContain('value=""');
 });
+it("does not silently add native staking or voting to a pre-existing policy",()=>{
+ const html=render({prices:{TRX:10000},protocols:{justlend:8000}});
+ expect(html).toContain("Allow Stake 2.0 and representative voting");
+ expect(html.match(/<input[^>]*type="checkbox"[^>]*>/)?.[0]).not.toContain("checked");
+ expect(html).not.toContain('aria-label="Maximum Native Stake allocation"');
+});

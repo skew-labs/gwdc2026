@@ -65,3 +65,10 @@ it("releases a browser recovery pointer when the server proves it expired, even 
   w.transaction_resolutions[0].txid = "b".repeat(64);
   expect(status(w)).toBe("UNKNOWN");
 });
+it("uses a native receipt after voting replaces the staking review",()=>{
+ const w=workspace();w.graph!.id="next-native-step";
+ w.stake_transaction_receipts=[{txid:pointer.txid,graph_id:pointer.graph_id,step_id:pointer.step_id,status:"POSITION_RECONCILED"}];
+ expect(status(w)).toBe("RECONCILED");
+ w.stake_transaction_receipts[0].step_id="another-step";
+ expect(status(w)).toBe("UNKNOWN");
+});

@@ -9,6 +9,7 @@ import {
 import type { Machine } from "../api/useMachine";
 import { Badge, Button, Row } from "./ui";
 import { expired, money } from "../lib/format";
+const productName = (id: string) => ({ "tron.native.stake": "Native Stake & voting", "justlend.v1.jTRX": "JustLend TRX" }[id] || id);
 export function MandateCard({
   m,
   edit,
@@ -179,6 +180,7 @@ export function PlanCards({
             {comparison.reason ||
               "Two distinct plans could not be found within your conditions."}
           </p>
+          {comparison.candidate_count !== undefined && <p className="caption">{comparison.candidate_count} allocations checked · {comparison.eligible_candidates ?? 0} eligible after costs and limits.</p>}
           <p className="muted">
             Your limits have been preserved. Review your conditions to request
             another comparison.
@@ -228,7 +230,7 @@ export function PlanCards({
                 className="allocation-bar"
                 role="img"
                 aria-label={p.allocations
-                  .map((x) => `${x.product}: ${x.share_bps / 100}%`)
+                  .map((x) => `${productName(x.product)}: ${x.share_bps / 100}%`)
                   .join(", ")}
               >
                 {p.allocations.map((x) => (
@@ -242,7 +244,7 @@ export function PlanCards({
               {p.allocations.map((x) => (
                 <Row
                   key={x.product}
-                  label={x.kind === "CASH" ? "Wallet cash" : x.product}
+                  label={x.kind === "CASH" ? "Wallet cash" : productName(x.product)}
                 >
                   {money(x.amount)}
                 </Row>
@@ -256,7 +258,7 @@ export function PlanCards({
                 <p>{p.summary}</p>
                 {p.allocations.map((x) => (
                   <div className="plan-detail" key={x.product}>
-                    <strong>{x.product}</strong>
+                    <strong>{productName(x.product)}</strong>
                     <Row label="Base yield">{money(x.base_yield)}</Row>
                     <Row label="Incentives">{money(x.incentive_rewards)}</Row>
                     {x.costs.map((c) => (
@@ -323,6 +325,7 @@ export function PlanCards({
       <details className="calculation-note">
         <summary>Calculation & sources</summary>
         <p>{comparison.search_scope}</p>
+        {comparison.candidate_count !== undefined && <p>{comparison.candidate_count} allocations checked; {comparison.eligible_candidates ?? 0} eligible. Costs, cash, protocol exposure and loss limits are tested before selecting two alternatives.</p>}
         <p>
           Math: {comparison.math_version} · Adapter:{" "}
           {comparison.adapter_version}

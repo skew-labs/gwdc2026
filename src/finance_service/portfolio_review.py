@@ -250,6 +250,9 @@ class PortfolioReviews:
     def refresh(self, context, state, *, source='ON_DEMAND', notify=True):
         b = self.bridge; w = state['workspace']; at = b.clock()
         p = confirmed_policy(state)
+        if context.network=='tron-nile' and state.get('stake_position',{}).get('status') not in (None,'CLOSED'):
+            from .stake_watch import refresh as refresh_stake
+            return refresh_stake(self,context,state,p,source,notify)
         if context.network=='tron-mainnet' and state.get('usdd_execution',{}).get('status') not in (None,'CLOSED','CANCELLED'):
             from .usdd_portfolio import refresh_usdd
             return refresh_usdd(self,context,state,p,source,notify)

@@ -22,6 +22,12 @@ export function submissionStatus(
   if (workspace?.network === network && workspace.transaction_resolutions?.some(r =>
     r.txid === pending.txid && r.graph_id === pending.graph_id && r.step_id === pending.step_id && r.status === "EXPIRED_NOT_OBSERVED"))
     return "EXPIRED";
+  if (workspace?.network === network) {
+    const receipt=workspace.stake_transaction_receipts?.find(r=>r.txid===pending.txid && r.graph_id===pending.graph_id && r.step_id===pending.step_id);
+    if (receipt?.status === "POSITION_RECONCILED") return "RECONCILED";
+    if (receipt?.status === "FAILED") return "FAILED";
+    if (receipt?.status === "DISPUTED") return "DISPUTED";
+  }
   const workflow = workspace?.usdd_workflow;
   if (workspace?.network === pending.network && workflow?.network === pending.network && workflow.account === pending.account) {
     const recorded = workflow.steps.find(s => s.id === pending.step_id && s.graph_id === pending.graph_id && s.txid === pending.txid);

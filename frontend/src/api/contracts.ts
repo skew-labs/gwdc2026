@@ -117,6 +117,7 @@ export const Plan = z.object({
 });
 export type Plan = z.infer<typeof Plan>;
 export const Comparison = z.object({
+  candidate_count:z.number().optional(), eligible_candidates:z.number().optional(), exclusion_histogram:z.record(z.string(),z.number()).optional(),
   id: z.string(),
   network: Network,
   mandate_hash: z.string(),
@@ -146,6 +147,7 @@ export const StepStatus = z.enum([
   "WAITING_EXIT",
 ]);
 export const Step = z.object({
+  native_votes:z.array(z.object({vote_address:z.string(),vote_count:z.number().int().positive()})).nullable().optional(),
   call_data: z.string().regex(/^[a-f0-9]+$/).optional(),
   call_value_sun: z.string().regex(/^\d+$/).optional(),
   input_amount: Amount.optional(),
@@ -162,7 +164,7 @@ export const Step = z.object({
   error: z.string().nullable(),
 });
 export const Graph = z.object({
-  review_kind: z.enum(["ALLOCATION", "ADJUSTMENT", "USDD_WORKFLOW"]).optional(),
+  review_kind: z.enum(["ALLOCATION", "ADJUSTMENT", "USDD_WORKFLOW", "NATIVE_STAKE"]).optional(),
   review_id: z.string().optional(),
   snapshot_root: z.string().optional(),
   minimum_received: Amount.nullable().optional(),
@@ -398,6 +400,7 @@ export const ReviewOption = z.object({
   additional_cost: Decimal.nullable().optional(),
 });
 export const PortfolioReview = z.object({
+  product_label:z.string().optional(),
   denomination: z.enum(["TRX", "USDD"]).optional(),
   id: z.string(),
   network: Network,
@@ -474,7 +477,21 @@ export const UsddWorkflow = z.object({
   outcome: z.record(z.string(), z.string()), spent_fees: z.string(), total_fee_cap: z.string(),
   steps: z.array(z.object({ id: z.string(), operation: z.string(), amount: z.string(), status: z.string(), txid: z.string().nullable(), graph_id: z.string().nullable().optional() })),
 });
+export const StakeWorkflow = z.object({
+  id: z.string(), status: z.string(), cursor: z.number(), amount: Amount,
+  representative: z.string(), steps: z.array(z.object({action:z.string(),status:z.string()})),
+  forecast: z.object({gross:Decimal, net:Decimal, fees:Decimal, horizon_seconds:z.number()}),
+});
+export const StakePosition = z.object({
+  status:z.string(), amount:Amount, representative:z.string(), as_of:z.string(), forecast_net:Amount, forecast_to_date:Amount.optional(), net_return_pct:Decimal.nullable().optional(),
+  fees:Amount, realized:Amount.nullable(), accrued:Amount.nullable(), net_income:Amount.nullable(), basis:z.string(), unfreeze_at:z.number().nullable().optional(),
+});
+export const ProductCatalog = z.array(z.object({id:z.string(),name:z.string(),status:z.string(),reason:z.string()}));
 export const Workspace = z.object({
+  stake_transaction_receipts: z.array(z.object({txid:z.string(),graph_id:z.string(),step_id:z.string(),status:z.string()})).optional(),
+  stake_workflow: StakeWorkflow.nullable().optional(),
+  stake_position: StakePosition.nullable().optional(),
+  product_catalog: ProductCatalog.optional(),
   prepared_transactions: z.array(z.object({
     txid: z.string(), graph_id: z.string(), step_id: z.string(), approval_id: z.string(),
     account: z.string(), network: Network, phase: z.literal("PREPARED"),
@@ -800,6 +817,18 @@ export const endpoints = [
     response: Ack,
   },
   { method: "get", path: "/v1/evidence", response: z.array(EvidenceRun) },
+  ...(["next", "cancel", "refresh"] as const).map((action) => ({
+    method: "post" as const,
+    path: `/v1/stake-workflows/${action}`,
+    request: z.object({ network: z.literal("nile"), agent_id: z.string().optional() }),
+    response: Ack,
+  })),
+  {
+    method: "post",
+    path: "/v1/stake-workflows/lifecycle",
+    request: z.object({ network: z.literal("nile"), action: z.enum(["UNSTAKE", "WITHDRAW", "CLAIM"]), agent_id: z.string().optional() }),
+    response: Ack,
+  },
   { method: "get", path: "/v1/funding/state", response: FundingState },
   {
     method: "post",

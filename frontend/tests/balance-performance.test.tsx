@@ -24,3 +24,10 @@ it("shows an explicit zero starting baseline for a new period without inventing 
  expect(html).toContain("No investments yet");expect(html).toContain("Not measured");
  expect(html).toContain("Earlier transactions remain in your receipts");expect(html).not.toContain("-808.94%");
 });
+it("never shows the old empty lending period as zero-return native staking",()=>{
+ const native=structuredClone(w);
+ native.stake_position={status:"EARNING",amount:amount("600"),representative:"TExample",as_of:"2026-09-30T00:00:00Z",forecast_net:amount("5"),forecast_to_date:amount("-0.8"),net_return_pct:"-0.083333",net_income:amount("-0.5"),fees:amount("0.5"),accrued:amount("0"),realized:amount("0"),basis:"Synthetic native fixture."};
+ const html=renderToStaticMarkup(<BalancePerformance workspace={native} symbol="TRX" />);
+ expect(html).toContain("Native Stake");expect(html).toContain("-0.5 TRX");expect(html).toContain("-0.8 TRX");
+ expect(html).not.toContain("No investments yet");expect(html).not.toContain("-808.94%");
+});

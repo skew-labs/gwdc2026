@@ -1,0 +1,477 @@
+{
+  "notice": "Public node observations and isolated computed scenarios. No wallet signature, private workspace or realized profit is represented. Quotes expire and must be refreshed.",
+  "captures": [
+    {
+      "network": "tron-nile",
+      "observed_at": "2026-09-30T00:32:57.007374+00:00",
+      "source_url": "https://developers.tron.network/docs/reward-calculation",
+      "block": "71400376",
+      "block_id": "0000000004417bb877df537f5c0ce9948a3012cfdbc2f39209b1fc67f0d20d17",
+      "parameters": {
+        "getAccountUpgradeCost": 9999000000,
+        "getAdaptiveResourceLimitMultiplier": 1000,
+        "getAdaptiveResourceLimitTargetRatio": 10,
+        "getAllowAccountAssetOptimization": 0,
+        "getAllowAccountStateRoot": 0,
+        "getAllowAdaptiveEnergy": 0,
+        "getAllowAssetOptimization": 1,
+        "getAllowCancelAllUnfreezeV2": 1,
+        "getAllowCreationOfContracts": 1,
+        "getAllowDelegateOptimization": 1,
+        "getAllowDelegateResource": 1,
+        "getAllowDynamicEnergy": 1,
+        "getAllowEnergyAdjustment": 1,
+        "getAllowFnDsa512": 1,
+        "getAllowHardenExchangeCalculation": 0,
+        "getAllowHardenResourceCalculation": 0,
+        "getAllowHigherLimitForMaxCpuTimeOfOneTx": 1,
+        "getAllowMarketTransaction": 0,
+        "getAllowMlDsa44": 0,
+        "getAllowMultiSign": 1,
+        "getAllowNewResourceModel": 0,
+        "getAllowNewReward": 1,
+        "getAllowOldRewardOpt": 1,
+        "getAllowOptimizeBlackHole": 1,
+        "getAllowOptimizedReturnValueOfChainId": 1,
+        "getAllowPBFT": 1,
+        "getAllowProtoFilterNum": 0,
+        "getAllowSameTokenName": 1,
+        "getAllowShieldedTRC20Transaction": 1,
+        "getAllowStrictMath": 1,
+        "getAllowTransactionFeePool": 0,
+        "getAllowTvmBlob": 1,
+        "getAllowTvmCancun": 1,
+        "getAllowTvmCompatibleEvm": 0,
+        "getAllowTvmConstantinople": 1,
+        "getAllowTvmFreeze": 1,
+        "getAllowTvmIstanbul": 1,
+        "getAllowTvmLondon": 1,
+        "getAllowTvmOsaka": 1,
+        "getAllowTvmPrague": 1,
+        "getAllowTvmSelfdestructRestriction": 1,
+        "getAllowTvmShangHai": 1,
+        "getAllowTvmSolidity059": 1,
+        "getAllowTvmTransferTrc10": 1,
+        "getAllowTvmVote": 1,
+        "getAllowUpdateAccountName": 0,
+        "getAssetIssueFee": 1024000000,
+        "getChangeDelegation": 1,
+        "getConsensusLogicOptimization": 1,
+        "getCreateAccountFee": 100000,
+        "getCreateNewAccountBandwidthRate": 1,
+        "getCreateNewAccountFeeInSystemContract": 1000000,
+        "getDynamicEnergyIncreaseFactor": 2000,
+        "getDynamicEnergyMaxFactor": 34000,
+        "getDynamicEnergyThreshold": 5000000000,
+        "getEnergyFee": 100,
+        "getExchangeCreateFee": 1024000000,
+        "getForbidTransferToContract": 0,
+        "getFreeNetLimit": 600,
+        "getMaintenanceTimeInterval": 1800000,
+        "getMarketCancelFee": 0,
+        "getMarketSellFee": 0,
+        "getMaxCpuTimeOfOneTx": 80,
+        "getMaxCreateAccountTxSize": 1000,
+        "getMaxDelegateLockPeriod": 144000,
+        "getMaxFeeLimit": 15000000000,
+        "getMemoFee": 1000000,
+        "getMultiSignFee": 1000000,
+        "getProposalExpireTime": 600000,
+        "getRemoveThePowerOfTheGr": -1,
+        "getTotalEnergyAverageUsage": 0,
+        "getTotalEnergyCurrentLimit": 180000000000,
+        "getTotalEnergyLimit": 180000000000,
+        "getTotalEnergyTargetLimit": 12500000,
+        "getTotalNetLimit": 43200000000,
+        "getTransactionFee": 1000,
+        "getUnfreezeDelayDays": 1,
+        "getUpdateAccountPermissionFee": 100000000,
+        "getWitness127PayPerBlock": 128000000,
+        "getWitnessPayPerBlock": 8000000,
+        "getWitnessStandbyAllowance": 100000000
+      },
+      "representative": {
+        "address": "41608e7e1c6f6dcc1679ea512503e41ca0254e0948",
+        "address_base58": "TJmka325yjJKeFpQDwKSQAoNwEyNGhsaEV",
+        "annual_fraction": "0.012188093052277809",
+        "brokerage_percent": 40,
+        "total_top127_votes": "67932674841",
+        "votes": "5421317859"
+      },
+      "unfreeze_days": 1,
+      "comparison": {
+        "status": "READY",
+        "candidate_count": 101,
+        "eligible_candidates": 25,
+        "exclusion_histogram": {
+          "CASH_OR_TOTAL_BUDGET": 21,
+          "LIQUIDITY_REQUIREMENT": 21,
+          "NET_BENEFIT_NOT_POSITIVE": 54,
+          "NO_INVESTED_CAPITAL": 1,
+          "PRODUCT": 42
+        },
+        "search_scope": "Native Stake + voting and wallet cash; complete 1% allocation grid, rounded down to whole TRX votes. Distinct plans differ by at least 10%. Current native jTRX remains available through JustLend-only conditions. sTRX is excluded until its Nile yield and complete exit cost can be verified.",
+        "math_version": "economic-plan-comparison-2 / native-voting-1",
+        "adapter_version": "native-stake-v2-1"
+      },
+      "plans": [
+        {
+          "title": "More cash available",
+          "allocations": [
+            {
+              "amount": {
+                "decimals": 6,
+                "symbol": "TRX",
+                "value": "165"
+              },
+              "base_yield": {
+                "decimals": 6,
+                "symbol": "TRX",
+                "value": "2.01092"
+              },
+              "costs": [
+                {
+                  "amount": {
+                    "decimals": 6,
+                    "symbol": "TRX",
+                    "value": "2"
+                  },
+                  "label": "Full bandwidth reserve: stake + vote + reward claim + unstake + withdrawal"
+                }
+              ],
+              "exit_description": "Unstake, then wait the current 1-day chain delay and claim. Future delay changes may apply.",
+              "incentive_rewards": null,
+              "kind": "STAKE",
+              "participation_terms": "Vote for TJmka325yjJKeFpQDwKSQAoNwEyNGhsaEV; current representative commission 40%. Both stake and vote require separate wallet signatures.",
+              "product": "tron.native.stake",
+              "protocol": "TRON Native",
+              "share_bps": 5500
+            },
+            {
+              "amount": {
+                "decimals": 6,
+                "symbol": "TRX",
+                "value": "133"
+              },
+              "base_yield": null,
+              "costs": [],
+              "exit_description": "Immediately available wallet cash.",
+              "incentive_rewards": null,
+              "kind": "CASH",
+              "participation_terms": "Entry and exit reserves excluded.",
+              "product": "Wallet cash",
+              "protocol": "Wallet",
+              "share_bps": 4433
+            }
+          ],
+          "expected_net_return": {
+            "decimals": 6,
+            "symbol": "TRX",
+            "value": "0.01092"
+          },
+          "estimated_fees": {
+            "decimals": 6,
+            "symbol": "TRX",
+            "value": "2"
+          }
+        },
+        {
+          "title": "Higher projected voting income",
+          "allocations": [
+            {
+              "amount": {
+                "decimals": 6,
+                "symbol": "TRX",
+                "value": "237"
+              },
+              "base_yield": {
+                "decimals": 6,
+                "symbol": "TRX",
+                "value": "2.888413"
+              },
+              "costs": [
+                {
+                  "amount": {
+                    "decimals": 6,
+                    "symbol": "TRX",
+                    "value": "2"
+                  },
+                  "label": "Full bandwidth reserve: stake + vote + reward claim + unstake + withdrawal"
+                }
+              ],
+              "exit_description": "Unstake, then wait the current 1-day chain delay and claim. Future delay changes may apply.",
+              "incentive_rewards": null,
+              "kind": "STAKE",
+              "participation_terms": "Vote for TJmka325yjJKeFpQDwKSQAoNwEyNGhsaEV; current representative commission 40%. Both stake and vote require separate wallet signatures.",
+              "product": "tron.native.stake",
+              "protocol": "TRON Native",
+              "share_bps": 7900
+            },
+            {
+              "amount": {
+                "decimals": 6,
+                "symbol": "TRX",
+                "value": "61"
+              },
+              "base_yield": null,
+              "costs": [],
+              "exit_description": "Immediately available wallet cash.",
+              "incentive_rewards": null,
+              "kind": "CASH",
+              "participation_terms": "Entry and exit reserves excluded.",
+              "product": "Wallet cash",
+              "protocol": "Wallet",
+              "share_bps": 2033
+            }
+          ],
+          "expected_net_return": {
+            "decimals": 6,
+            "symbol": "TRX",
+            "value": "0.888413"
+          },
+          "estimated_fees": {
+            "decimals": 6,
+            "symbol": "TRX",
+            "value": "2"
+          }
+        }
+      ]
+    },
+    {
+      "network": "tron-nile",
+      "observed_at": "2026-09-30T00:27:11.002572+00:00",
+      "source_url": "https://developers.tron.network/docs/reward-calculation",
+      "block": "71400261",
+      "block_id": "0000000004417b45caeeb28e8c0eea64dedeac17fd329d7555221919d1346604",
+      "parameters": {
+        "getAccountUpgradeCost": 9999000000,
+        "getAdaptiveResourceLimitMultiplier": 1000,
+        "getAdaptiveResourceLimitTargetRatio": 10,
+        "getAllowAccountAssetOptimization": 0,
+        "getAllowAccountStateRoot": 0,
+        "getAllowAdaptiveEnergy": 0,
+        "getAllowAssetOptimization": 1,
+        "getAllowCancelAllUnfreezeV2": 1,
+        "getAllowCreationOfContracts": 1,
+        "getAllowDelegateOptimization": 1,
+        "getAllowDelegateResource": 1,
+        "getAllowDynamicEnergy": 1,
+        "getAllowEnergyAdjustment": 1,
+        "getAllowFnDsa512": 1,
+        "getAllowHardenExchangeCalculation": 0,
+        "getAllowHardenResourceCalculation": 0,
+        "getAllowHigherLimitForMaxCpuTimeOfOneTx": 1,
+        "getAllowMarketTransaction": 0,
+        "getAllowMlDsa44": 0,
+        "getAllowMultiSign": 1,
+        "getAllowNewResourceModel": 0,
+        "getAllowNewReward": 1,
+        "getAllowOldRewardOpt": 1,
+        "getAllowOptimizeBlackHole": 1,
+        "getAllowOptimizedReturnValueOfChainId": 1,
+        "getAllowPBFT": 1,
+        "getAllowProtoFilterNum": 0,
+        "getAllowSameTokenName": 1,
+        "getAllowShieldedTRC20Transaction": 1,
+        "getAllowStrictMath": 1,
+        "getAllowTransactionFeePool": 0,
+        "getAllowTvmBlob": 1,
+        "getAllowTvmCancun": 1,
+        "getAllowTvmCompatibleEvm": 0,
+        "getAllowTvmConstantinople": 1,
+        "getAllowTvmFreeze": 1,
+        "getAllowTvmIstanbul": 1,
+        "getAllowTvmLondon": 1,
+        "getAllowTvmOsaka": 1,
+        "getAllowTvmPrague": 1,
+        "getAllowTvmSelfdestructRestriction": 1,
+        "getAllowTvmShangHai": 1,
+        "getAllowTvmSolidity059": 1,
+        "getAllowTvmTransferTrc10": 1,
+        "getAllowTvmVote": 1,
+        "getAllowUpdateAccountName": 0,
+        "getAssetIssueFee": 1024000000,
+        "getChangeDelegation": 1,
+        "getConsensusLogicOptimization": 1,
+        "getCreateAccountFee": 100000,
+        "getCreateNewAccountBandwidthRate": 1,
+        "getCreateNewAccountFeeInSystemContract": 1000000,
+        "getDynamicEnergyIncreaseFactor": 2000,
+        "getDynamicEnergyMaxFactor": 34000,
+        "getDynamicEnergyThreshold": 5000000000,
+        "getEnergyFee": 100,
+        "getExchangeCreateFee": 1024000000,
+        "getForbidTransferToContract": 0,
+        "getFreeNetLimit": 600,
+        "getMaintenanceTimeInterval": 1800000,
+        "getMarketCancelFee": 0,
+        "getMarketSellFee": 0,
+        "getMaxCpuTimeOfOneTx": 80,
+        "getMaxCreateAccountTxSize": 1000,
+        "getMaxDelegateLockPeriod": 144000,
+        "getMaxFeeLimit": 15000000000,
+        "getMemoFee": 1000000,
+        "getMultiSignFee": 1000000,
+        "getProposalExpireTime": 600000,
+        "getRemoveThePowerOfTheGr": -1,
+        "getTotalEnergyAverageUsage": 0,
+        "getTotalEnergyCurrentLimit": 180000000000,
+        "getTotalEnergyLimit": 180000000000,
+        "getTotalEnergyTargetLimit": 12500000,
+        "getTotalNetLimit": 43200000000,
+        "getTransactionFee": 1000,
+        "getUnfreezeDelayDays": 1,
+        "getUpdateAccountPermissionFee": 100000000,
+        "getWitness127PayPerBlock": 128000000,
+        "getWitnessPayPerBlock": 8000000,
+        "getWitnessStandbyAllowance": 100000000
+      },
+      "representative": {
+        "address": "41608e7e1c6f6dcc1679ea512503e41ca0254e0948",
+        "address_base58": "TJmka325yjJKeFpQDwKSQAoNwEyNGhsaEV",
+        "annual_fraction": "0.012188093052277809",
+        "brokerage_percent": 40,
+        "total_top127_votes": "67932674841",
+        "votes": "5421317859"
+      },
+      "unfreeze_days": 1,
+      "comparison": {
+        "status": "READY",
+        "candidate_count": 101,
+        "eligible_candidates": 61,
+        "exclusion_histogram": {
+          "CASH_OR_TOTAL_BUDGET": 21,
+          "LIQUIDITY_REQUIREMENT": 21,
+          "NET_BENEFIT_NOT_POSITIVE": 18,
+          "NO_INVESTED_CAPITAL": 1,
+          "PRODUCT": 42
+        },
+        "search_scope": "Native Stake + voting and wallet cash; complete 1% allocation grid, rounded down to whole TRX votes. Distinct plans differ by at least 10%. Current native jTRX remains available through JustLend-only conditions. sTRX is excluded until its Nile yield and complete exit cost can be verified.",
+        "math_version": "economic-plan-comparison-2 / native-voting-1",
+        "adapter_version": "native-stake-v2-1"
+      },
+      "plans": [
+        {
+          "title": "More cash available",
+          "allocations": [
+            {
+              "amount": {
+                "decimals": 6,
+                "symbol": "TRX",
+                "value": "171"
+              },
+              "base_yield": {
+                "decimals": 6,
+                "symbol": "TRX",
+                "value": "2.084044"
+              },
+              "costs": [
+                {
+                  "amount": {
+                    "decimals": 6,
+                    "symbol": "TRX",
+                    "value": "2"
+                  },
+                  "label": "Full bandwidth reserve: stake + vote + reward claim + unstake + withdrawal"
+                }
+              ],
+              "exit_description": "Unstake, then wait the current 1-day chain delay and claim. Future delay changes may apply.",
+              "incentive_rewards": null,
+              "kind": "STAKE",
+              "participation_terms": "Vote for TJmka325yjJKeFpQDwKSQAoNwEyNGhsaEV; current representative commission 40%. Both stake and vote require separate wallet signatures.",
+              "product": "tron.native.stake",
+              "protocol": "TRON Native",
+              "share_bps": 1900
+            },
+            {
+              "amount": {
+                "decimals": 6,
+                "symbol": "TRX",
+                "value": "727"
+              },
+              "base_yield": null,
+              "costs": [],
+              "exit_description": "Immediately available wallet cash.",
+              "incentive_rewards": null,
+              "kind": "CASH",
+              "participation_terms": "Entry and exit reserves excluded.",
+              "product": "Wallet cash",
+              "protocol": "Wallet",
+              "share_bps": 8077
+            }
+          ],
+          "expected_net_return": {
+            "decimals": 6,
+            "symbol": "TRX",
+            "value": "0.084044"
+          },
+          "estimated_fees": {
+            "decimals": 6,
+            "symbol": "TRX",
+            "value": "2"
+          }
+        },
+        {
+          "title": "Higher projected voting income",
+          "allocations": [
+            {
+              "amount": {
+                "decimals": 6,
+                "symbol": "TRX",
+                "value": "711"
+              },
+              "base_yield": {
+                "decimals": 6,
+                "symbol": "TRX",
+                "value": "8.665239"
+              },
+              "costs": [
+                {
+                  "amount": {
+                    "decimals": 6,
+                    "symbol": "TRX",
+                    "value": "2"
+                  },
+                  "label": "Full bandwidth reserve: stake + vote + reward claim + unstake + withdrawal"
+                }
+              ],
+              "exit_description": "Unstake, then wait the current 1-day chain delay and claim. Future delay changes may apply.",
+              "incentive_rewards": null,
+              "kind": "STAKE",
+              "participation_terms": "Vote for TJmka325yjJKeFpQDwKSQAoNwEyNGhsaEV; current representative commission 40%. Both stake and vote require separate wallet signatures.",
+              "product": "tron.native.stake",
+              "protocol": "TRON Native",
+              "share_bps": 7900
+            },
+            {
+              "amount": {
+                "decimals": 6,
+                "symbol": "TRX",
+                "value": "187"
+              },
+              "base_yield": null,
+              "costs": [],
+              "exit_description": "Immediately available wallet cash.",
+              "incentive_rewards": null,
+              "kind": "CASH",
+              "participation_terms": "Entry and exit reserves excluded.",
+              "product": "Wallet cash",
+              "protocol": "Wallet",
+              "share_bps": 2077
+            }
+          ],
+          "expected_net_return": {
+            "decimals": 6,
+            "symbol": "TRX",
+            "value": "6.665239"
+          },
+          "estimated_fees": {
+            "decimals": 6,
+            "symbol": "TRX",
+            "value": "2"
+          }
+        }
+      ]
+    }
+  ]
+}

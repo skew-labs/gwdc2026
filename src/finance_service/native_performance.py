@@ -218,6 +218,9 @@ def start_period(bridge, context, state, payload):
               'account_evidence_hash': digest(raw), 'previous_performance_hash': digest(previous)}
     period['id'] = 'period-' + digest(period)[:24]
     accounting['active_period'] = period
+    if state.get('stake_position',{}).get('status')=='CLOSED':
+        state.setdefault('stake_period_history',[]).append({'position':deepcopy(state.pop('stake_position')),'performance':deepcopy(w.get('stake_position')),'ended_at':at})
+        w['stake_position']=None
     w['balances'] = [period['starting_wallet_balance'], *[a for a in w['balances'] if a['symbol'] != 'TRX']]
     state.setdefault('performance_period_evidence', {})[period['id']] = raw
     refresh(state, account, raw, at)

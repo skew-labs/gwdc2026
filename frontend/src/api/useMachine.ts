@@ -443,7 +443,7 @@ export function useMachine(agentId?: string) {
         phase: "PREPARED",
       };
       // Retain a recovery pointer even if the wallet closes or rejects signing.
-      if (g.id.startsWith("native-")) {
+      if ((g.id.startsWith("native-") || g.id.startsWith("stake-"))) {
         sessionStorage.setItem(pendingKey, JSON.stringify(record));
         setPending(record);
       }
@@ -617,6 +617,10 @@ export function useMachine(agentId?: string) {
     pendingMessage,
     reconcile,
     refresh,
+    stakeAction: (action: "next" | "cancel" | "refresh" | "UNSTAKE" | "WITHDRAW" | "CLAIM") => run("Updating native stake", async () => {
+      await mutate(`/v1/stake-workflows/${["next","cancel","refresh"].includes(action) ? action : "lifecycle"}`, {network,action,agent_id:agentId});
+      if (action !== "refresh" && action !== "cancel") { const next=new URLSearchParams(params);next.set("panel","execution");setParams(next); }
+    }),
     reviewPortfolio: () =>
       run("Reviewing current holdings and costs", () =>
         mutate("/v1/portfolio-reviews", { network, agent_id: agentId }),

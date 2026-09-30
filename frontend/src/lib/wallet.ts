@@ -249,6 +249,22 @@ export function assertNativeScope(
       "Native transaction differs from the reviewed amount, recipient, call or fee cap.",
     );
 }
+export function assertStakeScope(tx:Transaction,step:Graph["steps"][number],toHex:(address:string)=>string) {
+  const kinds=["FreezeBalanceV2Contract","VoteWitnessContract","UnfreezeBalanceV2Contract","WithdrawExpireUnfreezeContract","WithdrawBalanceContract"];
+  if (!kinds.includes(step.action)) return;
+  const contracts=tx.raw_data.contract as {type:string;Permission_id?:number;parameter:{type_url:string;value:Record<string,unknown>}}[];
+  const c=contracts?.[0],v=c?.parameter?.value;
+  if (contracts?.length!==1 || c.type!==step.action || (c.Permission_id || 0)!==0 || c.parameter.type_url!==`type.googleapis.com/protocol.${step.action}` || !v || Number(tx.raw_data.fee_limit || 0)!==0) throw new Error("Native transaction type or permission differs from this review.");
+  const allowed=step.action==="VoteWitnessContract" ? ["owner_address","votes"] : step.action==="FreezeBalanceV2Contract" ? ["owner_address","frozen_balance","resource"] : step.action==="UnfreezeBalanceV2Contract" ? ["owner_address","unfreeze_balance","resource"] : ["owner_address"];
+  if (Object.keys(v).some(key=>!allowed.includes(key))) throw new Error("Unexpected native transaction field.");
+  if (step.action==="FreezeBalanceV2Contract" || step.action==="UnfreezeBalanceV2Contract") {
+    if (v.resource!=="ENERGY" || step.amount.symbol!=="TRX" || BigInt(String(v[step.action==="FreezeBalanceV2Contract" ? "frozen_balance" : "unfreeze_balance"]))!==toUnits(step.amount.value,6)) throw new Error("Staking amount or resource changed.");
+  }
+  if (step.action==="VoteWitnessContract") {
+    const normalize=(votes:{vote_address:string;vote_count:number}[])=>votes.map(v=>({vote_address:toHex(v.vote_address).toLowerCase(),vote_count:v.vote_count})).sort((a,b)=>a.vote_address.localeCompare(b.vote_address));
+    if (!Array.isArray(v.votes) || !step.native_votes?.length || canonical(normalize(v.votes as {vote_address:string;vote_count:number}[]))!==canonical(normalize(step.native_votes))) throw new Error("Representative or vote count differs from this review.");
+  }
+}
 export async function signPrepared(p: Prepared, step: Graph["steps"][number]) {
   if (p.simulation || !p.transaction)
     throw new Error("A live, prepared transaction is required.");
@@ -263,6 +279,7 @@ export async function signPrepared(p: Prepared, step: Graph["steps"][number]) {
     throw new Error("The wallet account or network changed. Verify it again.");
   await assertTransaction(p.transaction, p.account, web().address.toHex);
   assertNativeScope(p.transaction, step, web().address.toHex);
+  assertStakeScope(p.transaction, step, web().address.toHex);
   const original = structuredClone(p.transaction);
   let walletResult: unknown;
   try { walletResult = await web().trx.sign(structuredClone(original)); }
