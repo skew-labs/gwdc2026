@@ -10971,6 +10971,9 @@
                       "nile",
                       "mainnet"
                     ]
+                  },
+                  "agent_id": {
+                    "type": "string"
                   }
                 },
                 "required": [

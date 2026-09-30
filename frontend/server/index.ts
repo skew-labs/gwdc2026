@@ -26,6 +26,7 @@ import {
   financialReply,
   leverageRequest,
   comparisonRequest,
+  comparisonOnlyRequest,
   portfolioOnlyRequest,
   portfolioRequest,
 } from "./conversation";
@@ -799,6 +800,45 @@ const server = createServer(async (req, res) => {
           })),
         );
       }
+      if (
+        agent &&
+        base.comparison &&
+        base.mandate?.status === "CONFIRMED" &&
+        base.comparison.mandate_hash === base.mandate.hash &&
+        !base.messages.some((m) =>
+          m.cards?.some(
+            (c) => c.kind === "plans" && c.target_id === base.comparison!.id,
+          ),
+        )
+      ) {
+        const tasks = db
+          .prepare(
+            "SELECT p.payload,p.confirmed_hash FROM plan_jobs p JOIN jobs j ON j.id=p.job_id WHERE j.workspace=? AND j.network=? AND p.wallet=? AND p.confirmed_hash=?",
+          )
+          .all(s.workspace, network, s.wallet || "", base.mandate.hash) as {
+          payload: string;
+          confirmed_hash: string;
+        }[];
+        const draftHashes = tasks.map((t) => JSON.parse(t.payload).hash);
+        const origin = base.messages.find((m) =>
+          m.cards?.some(
+            (c) => c.kind === "mandate" && draftHashes.includes(c.target_id),
+          ),
+        );
+        if (origin)
+          base.messages.push({
+            id: "current-comparison-" + base.comparison.id,
+            role: agent.role,
+            author: "agent",
+            text:
+              base.comparison.status === "READY"
+                ? "Your confirmed conditions have two calculated options. Choose one below."
+                : base.comparison.reason ||
+                  "No two eligible plans meet your confirmed conditions. Review the blockers below.",
+            created_at: base.mandate.confirmed_at || origin.created_at,
+            cards: [{ kind: "plans", target_id: base.comparison.id }],
+          });
+      }
       base.revision = Date.now();
       result = Workspace.parse(base);
     } else if (path === "/v1/usage" && method === "GET") {
@@ -929,13 +969,36 @@ const server = createServer(async (req, res) => {
           agent_id: z.string().optional(),
         })
         .parse(payload);
-      const agent = input.agent_id
-        ? ownedAgent(input.agent_id, s)
-        : (db
-            .prepare(
-              "SELECT * FROM agents WHERE workspace=? AND archived=0 ORDER BY created LIMIT 1",
+      // Older open tabs omit agent_id on confirmation. Bind to the exact draft
+      // card's conversation; never silently send results to the first agent.
+      const draftSources = db
+        .prepare(
+          "SELECT m.agent,c.body FROM messages m JOIN message_cards c ON c.message_id=m.id JOIN agents a ON a.id=m.agent WHERE m.workspace=? AND m.network=? AND a.archived=0 ORDER BY m.rowid DESC",
+        )
+        .all(s.workspace, input.network) as { agent: string; body: string }[];
+      const sourceAgents = [
+        ...new Set(
+          draftSources
+            .filter((row) =>
+              (
+                JSON.parse(row.body) as { kind: string; target_id: string }[]
+              ).some(
+                (card) =>
+                  card.kind === "mandate" && card.target_id === input.hash,
+              ),
             )
-            .get(s.workspace) as AgentRow | undefined);
+            .map((row) => row.agent),
+        ),
+      ];
+      const destination =
+        input.agent_id || (sourceAgents.length === 1 ? sourceAgents[0] : null);
+      if (!destination)
+        throw new HttpError(
+          409,
+          "CONVERSATION_REQUIRED",
+          "Open the conversation where you reviewed these conditions and confirm there.",
+        );
+      const agent = ownedAgent(destination, s);
       const jobId =
         "plan-" +
         hash(
@@ -1048,7 +1111,10 @@ const server = createServer(async (req, res) => {
             kind === "mandate"
               ? "Your updated conditions are ready to review. Confirm & compare to see the two calculated options here."
               : kind === "plans"
-                ? "Compare the calculated options below and choose the plan you want to review."
+                ? current.comparison?.status === "READY"
+                  ? "Compare the calculated options below and choose the plan you want to review."
+                  : current.comparison?.reason ||
+                    "No two eligible plans meet these conditions. Review the blockers below."
                 : kind === "review"
                   ? "Your holdings and market inputs have been refreshed. Here is the current hold-versus-adjust review."
                   : "Review the exact transaction below. Approval and your wallet signature are separate steps.";
@@ -1204,7 +1270,12 @@ const timer = setInterval(async () => {
           }),
         );
       };
-      if (workerSession.wallet && latest && !portfolioOnlyRequest(latest)) {
+      if (
+        workerSession.wallet &&
+        latest &&
+        !portfolioOnlyRequest(latest) &&
+        !comparisonOnlyRequest(latest)
+      ) {
         try {
           const intent = await finance(
             "/v1/agent-intent",

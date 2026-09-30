@@ -208,6 +208,12 @@ export function PlanCards({
     expired(comparison.expires_at) ||
     comparison.status === "STALE" ||
     comparison.mandate_hash !== m.workspace.data?.mandate?.hash;
+  const terms = m.workspace.data?.mandate?.terms;
+  const limits = terms?.limits as
+    Record<string, { amount: string; asset: string }> | undefined;
+  const nativeAllowed = (
+    terms?.protocol_caps_bps as Record<string, number> | undefined
+  )?.["tron-native"];
   if (comparison.status === "INFEASIBLE" || comparison.plans.length < 2)
     return (
       <section className="artifact">
@@ -220,6 +226,34 @@ export function PlanCards({
             {comparison.reason ||
               "Two distinct plans could not be found within your conditions."}
           </p>
+          <div className="summary-grid">
+            <Row label="Investment budget">
+              {money(m.workspace.data?.mandate?.constraints.capital)}
+            </Row>
+            {limits?.single_amount && (
+              <Row label="Maximum single allocation">
+                {limits.single_amount.amount} {limits.single_amount.asset}
+              </Row>
+            )}
+            {limits?.cumulative_amount && (
+              <Row label="Maximum total invested">
+                {limits.cumulative_amount.amount}{" "}
+                {limits.cumulative_amount.asset}
+              </Row>
+            )}
+            {limits?.stress_loss && (
+              <Row label="Stress loss limit">
+                {limits.stress_loss.amount} {limits.stress_loss.asset}
+              </Row>
+            )}
+            {m.network === "nile" && (
+              <Row label="Native Stake & voting">
+                {nativeAllowed
+                  ? "Permitted within reviewed limits"
+                  : "Not permitted by these conditions"}
+              </Row>
+            )}
+          </div>
           {comparison.candidate_count !== undefined && (
             <p className="caption">
               {comparison.candidate_count} allocations checked ·{" "}
@@ -266,6 +300,29 @@ export function PlanCards({
               Edit conditions
             </Button>
           )}
+          {m.network === "nile" &&
+            m.workspace.data?.mandate?.constraints.capital.symbol === "TRX" && (
+              <div className="condition-actions">
+                <Button
+                  secondary
+                  onClick={() =>
+                    setParams({
+                      ...Object.fromEntries(params),
+                      panel: "mandate",
+                      edit: "conditions",
+                      strategy: "native-review",
+                    })
+                  }
+                >
+                  Review a Native Stake alternative
+                </Button>
+                <p className="caption">
+                  Opens an editable proposal with higher spending and loss
+                  limits. Review every change before confirming. A new
+                  calculation may still be infeasible.
+                </p>
+              </div>
+            )}
         </div>
       </section>
     );
