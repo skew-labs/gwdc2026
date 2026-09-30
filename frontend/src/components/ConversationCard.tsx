@@ -21,13 +21,18 @@ export function ConversationCard({
   openPortfolio: () => void;
 }) {
   const [editing, setEditing] = useState(false);
+  const [showLatest, setShowLatest] = useState(false);
   const w = m.workspace.data;
   if (!w) return null;
-  const archived = (label: string) => (
+  const archived = (
+    label: string,
+    action = openConditions,
+    button = "View current conditions",
+  ) => (
     <div className="conversation-reference">
       <span>{label}</span>
-      <Button secondary onClick={openConditions}>
-        View current conditions
+      <Button secondary onClick={action}>
+        {button}
       </Button>
     </div>
   );
@@ -43,10 +48,19 @@ export function ConversationCard({
       </div>
     );
   if (card.kind === "plans")
-    return w.comparison?.id === card.target_id ? (
+    return w.comparison &&
+      (w.comparison.id === card.target_id || showLatest) ? (
       <PlanCards m={m} onReview={() => {}} onEdit={openConditions} />
+    ) : w.comparison ? (
+      archived(
+        "A newer comparison is available.",
+        () => setShowLatest(true),
+        "View latest comparison",
+      )
     ) : (
-      archived("This comparison has been replaced by a newer review.")
+      archived(
+        "These conditions changed. Review the new conditions before calculating again.",
+      )
     );
   if (card.kind === "execution")
     return w.graph?.id === card.target_id ? (

@@ -211,9 +211,11 @@
     "adapter_version": "native-stake-v2-1",
     "search_scope": "Native Stake + voting and wallet cash; complete 1% allocation grid, rounded down to whole TRX votes. Distinct plans differ by at least 10%. Current native jTRX remains available through JustLend-only conditions. sTRX is excluded until its Nile yield and complete exit cost can be verified."
   },
-  "frontend_tests_passed": 64,
+  "frontend_tests_passed": 65,
   "typecheck": "PASS",
   "build": "PASS",
   "browser_plan_b_selected_after_reload": true,
-  "historical_misroute_regression": true
+  "historical_misroute_regression": true,
+  "frontend_test_files_passed": 12,
+  "latest_comparison_navigation": "Older comparison cards can reveal the current result without editing conditions."
 }
