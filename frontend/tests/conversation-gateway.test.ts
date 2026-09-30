@@ -4,6 +4,7 @@ import { spawn, type ChildProcess } from "node:child_process";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { DatabaseSync } from "node:sqlite";
 import { TronWeb } from "tronweb";
 import { Workspace } from "../src/api/contracts";
 let finance: Server, child: ChildProcess, dir: string, base: string;
@@ -31,6 +32,7 @@ const empty = () =>
   });
 const states = new Map<string, Workspace>();
 let intentMode = "normal";
+let intentReads = 0;
 let comparisonMode = "ready";
 let releaseComparison: (() => void) | null = null;
 const completedRequests = new Set<string>();
@@ -109,6 +111,7 @@ beforeAll(async () => {
     let body = "";
     for await (const chunk of req) body += chunk;
     const payload = body ? JSON.parse(body) : {};
+    if (req.url === "/v1/machine/agent-intent") intentReads++;
     if (req.url === "/v1/machine/agent-intent" && intentMode !== "normal") {
       const mode = intentMode;
       intentMode = "normal";
@@ -139,7 +142,7 @@ beforeAll(async () => {
       w.mandate = {
         id: "test-draft",
         version: 1,
-        hash: "draft-hash",
+        hash: payload.test_hash || "draft-hash",
         network: "nile",
         status: "DRAFT",
         source_text: "Synthetic API test form",
@@ -640,4 +643,67 @@ it("infeasible conditions explain blockers, calculation errors stay retryable an
     expect(w.execution).toBeNull();
   }
   comparisonMode = "ready";
+}, 15000);
+
+it("legacy confirmation stays with the reviewed draft conversation instead of the first agent", async () => {
+  const { c, a: first } = await authenticatedAgent();
+  const second = (
+    await call(c, "/v1/agents", "POST", {
+      name: "Actual conversation",
+      role: "alpha",
+      instructions: "",
+    })
+  ).body;
+  await call(c, "/v1/mandates", "POST", {
+    agent_id: second.id,
+    network: "nile",
+    test_hash: "second-draft",
+  });
+  const result = await call(c, "/v1/mandates/test-draft/confirm", "POST", {
+    hash: "second-draft",
+    version: 1,
+    network: "nile",
+  });
+  expect(result.status).toBe(200);
+  let w = await waitJob(c, second.id);
+  expect(w.messages.at(-1).cards).toEqual([
+    { kind: "plans", target_id: w.comparison.id },
+  ]);
+  expect(
+    (
+      await call(c, `/v1/workspace?network=nile&agent_id=${first.id}`)
+    ).body.messages.some((m: any) => m.id.startsWith("planning-result")),
+  ).toBe(false);
+  const before = intentReads;
+  await call(c, "/v1/messages", "POST", {
+    agent_id: second.id,
+    role: "alpha",
+    network: "nile",
+    text: "confirm 했는데 지금 왜 옵션 두개 안 뜨냐?",
+  });
+  w = await waitJob(c, second.id);
+  expect(intentReads).toBe(before);
+  expect(w.mandate.status).toBe("CONFIRMED");
+  expect(w.messages.at(-1).cards[0]).toEqual({
+    kind: "plans",
+    target_id: w.comparison.id,
+  });
+  expect(w.messages.at(-1).text).not.toContain("extract");
+  expect(w.approval).toBeNull();
+  expect(w.execution).toBeNull();
+  // Reproduce already misrouted historical records in this isolated fixture.
+  await stop();
+  const fixtureDb = new DatabaseSync(join(dir,"test.sqlite"));
+  fixtureDb.prepare("UPDATE jobs SET agent=? WHERE id=?").run(first.id,result.body.job_id);
+  fixtureDb.prepare("UPDATE messages SET agent=? WHERE id=?").run(first.id,"planning-result-"+result.body.job_id);
+  fixtureDb.prepare("DELETE FROM message_cards WHERE message_id IN (SELECT id FROM messages WHERE agent=? AND text LIKE 'Here are the two calculated plans.%')").run(second.id);
+  fixtureDb.prepare("DELETE FROM messages WHERE agent=? AND text LIKE 'Here are the two calculated plans.%'").run(second.id);
+  fixtureDb.close();
+  await start();
+  const reloaded = (
+    await call(c, `/v1/workspace?network=nile&agent_id=${second.id}`)
+  ).body;
+  expect(reloaded.messages.at(-1).cards[0].target_id).toBe(
+    reloaded.comparison.id,
+  );
 }, 15000);

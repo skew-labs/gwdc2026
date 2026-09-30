@@ -17,9 +17,21 @@ export const portfolioOnlyRequest = (text: string) =>
     text,
   );
 export const leverageRequest = (text: string) =>
-  /usdd|leverage|borrow.*(resupply|reinvest)|loop.*(yield|apy)|담보.*(대출|차입|발행)|반복.*(차입|예치)|재예치|레버리지/i.test(text);
+  /usdd|leverage|borrow.*(resupply|reinvest)|loop.*(yield|apy)|담보.*(대출|차입|발행)|반복.*(차입|예치)|재예치|레버리지/i.test(
+    text,
+  );
 export const comparisonRequest = (text: string) =>
-  /compare|two plans|options|비교|선택지|두\s*(개|가지).*플랜/i.test(text);
+  /compare|two plans|options|비교|선택지|옵션|투자안|두\s*(개|가지).*플랜/i.test(
+    text,
+  );
+
+// Requests about missing/current options must not reopen an investment draft.
+// Amount-bearing requests still pass through condition extraction.
+export const comparisonOnlyRequest = (text: string) =>
+  comparisonRequest(text) &&
+  !/\d+\s*(trx|usdd|usdt|days?|years?|달러|일|년|%)|(?:change|revise|set|keep|retain)\b|바꿔|변경|수정|차입.*(?:허용|금지)/i.test(
+    text,
+  );
 
 /** Financial statements come from typed service data; the model extracts intent. */
 export function financialReply(
@@ -30,8 +42,11 @@ export function financialReply(
   if (portfolioRequest(text) && !Object.keys(intent?.patch || {}).length) {
     const review = w.portfolio_review;
     const performance = w.performance;
-    const fmt = (v: { value: string; symbol: string } | null | undefined) => v ? `${v.value} ${v.symbol}` : "unavailable";
-    const actual = performance ? `\n\n**Performance as of ${performance.as_of}**\n- Original net forecast, full horizon: ${fmt(performance.expected_return)}\n- Expected net to date: ${fmt(performance.expected_to_date)}\n- Actual net to date: ${fmt(performance.net_income)}\n- Accrued / realized position income before fees: ${fmt(performance.accrued)} / ${fmt(performance.realized)}\n- Fees paid: ${fmt(performance.fees)}\n- Actual minus expected to date: ${fmt(performance.variance)}\n\nDeposits and wallet cash are not income. Unmeasured income remains unavailable.` : "";
+    const fmt = (v: { value: string; symbol: string } | null | undefined) =>
+      v ? `${v.value} ${v.symbol}` : "unavailable";
+    const actual = performance
+      ? `\n\n**Performance as of ${performance.as_of}**\n- Original net forecast, full horizon: ${fmt(performance.expected_return)}\n- Expected net to date: ${fmt(performance.expected_to_date)}\n- Actual net to date: ${fmt(performance.net_income)}\n- Accrued / realized position income before fees: ${fmt(performance.accrued)} / ${fmt(performance.realized)}\n- Fees paid: ${fmt(performance.fees)}\n- Actual minus expected to date: ${fmt(performance.variance)}\n\nDeposits and wallet cash are not income. Unmeasured income remains unavailable.`
+      : "";
     if (review)
       return {
         text: `**${review.status.replaceAll("_", " ")}** · ${review.reason}\n\nChecked ${review.observed_at}. ${review.policy_hash ? "This review uses your confirmed conditions; pending chat edits are excluded." : "Confirm your conditions to enable compliance checks."}${actual}\n\nNo transaction has been authorized.`,
@@ -97,19 +112,44 @@ export function financialReply(
       ],
     };
   }
-  if (leverageRequest(text) && /apy|rate|yield|compare|available|cost|fee|check|loop|leverage|금리|수익|수수료|반복|레버리지|가능|확인|비교/i.test(text)) {
+  if (
+    leverageRequest(text) &&
+    /apy|rate|yield|compare|available|cost|fee|check|loop|leverage|금리|수익|수수료|반복|레버리지|가능|확인|비교/i.test(
+      text,
+    )
+  ) {
     const review = w.usdd_review;
-    if (!review || review.network !== w.network || !Number.isFinite(Date.parse(review.expires_at)) || Date.parse(review.expires_at) <= Date.now())
-      return { text: "I could not obtain a current USDD route assessment. No loan, reinvestment or transaction has been approved.", cards: [] };
+    if (
+      !review ||
+      review.network !== w.network ||
+      !Number.isFinite(Date.parse(review.expires_at)) ||
+      Date.parse(review.expires_at) <= Date.now()
+    )
+      return {
+        text: "I could not obtain a current USDD route assessment. No loan, reinvestment or transaction has been approved.",
+        cards: [],
+      };
     const f = review.facts;
-    const percent = (v: string) => `${(Number(v) * 100).toLocaleString("en-US", { maximumFractionDigits: 3 })}%`;
+    const percent = (v: string) =>
+      `${(Number(v) * 100).toLocaleString("en-US", { maximumFractionDigits: 3 })}%`;
     const rows = [
-      f.energy_sun !== null ? `Energy price: **${f.energy_sun} sun per unit**. Energy costs also exist on mainnet; available resources can reduce TRX burn.` : null,
-      f.supply_apy !== null && f.borrow_apy !== null ? `JustLend USDD base rates: **${percent(f.supply_apy)} supply / ${percent(f.borrow_apy)} borrow**, annualized from current per-block rates. These variable forecasts exclude incentives.` : null,
-      f.collaterals.length ? `Vault minimum debt: ${f.collaterals.map(c => `**${c.minimum_debt_usdd} USDD** (${c.ilk})`).join(", ")}.` : null,
-      f.token_match === false ? `Vault USDD: \`${f.vault_token}\`. Destination token: \`${f.destination_token}\`. These are different contracts.` : null,
+      f.energy_sun !== null
+        ? `Energy price: **${f.energy_sun} sun per unit**. Energy costs also exist on mainnet; available resources can reduce TRX burn.`
+        : null,
+      f.supply_apy !== null && f.borrow_apy !== null
+        ? `JustLend USDD base rates: **${percent(f.supply_apy)} supply / ${percent(f.borrow_apy)} borrow**, annualized from current per-block rates. These variable forecasts exclude incentives.`
+        : null,
+      f.collaterals.length
+        ? `Vault minimum debt: ${f.collaterals.map((c) => `**${c.minimum_debt_usdd} USDD** (${c.ilk})`).join(", ")}.`
+        : null,
+      f.token_match === false
+        ? `Vault USDD: \`${f.vault_token}\`. Destination token: \`${f.destination_token}\`. These are different contracts.`
+        : null,
     ].filter(Boolean);
-    return { text: `**USDD route assessment · ${w.network === "nile" ? "Nile testnet" : "TRON mainnet"}**\n\n${rows.map(r => `- ${r}`).join("\n")}\n\n${review.reason}\n\nChecked ${review.observed_at}. No transaction was sent.`, cards: [] };
+    return {
+      text: `**USDD route assessment · ${w.network === "nile" ? "Nile testnet" : "TRON mainnet"}**\n\n${rows.map((r) => `- ${r}`).join("\n")}\n\n${review.reason}\n\nChecked ${review.observed_at}. No transaction was sent.`,
+      cards: [],
+    };
   }
   if (comparisonRequest(text)) {
     if (w.mandate?.status === "DRAFT")

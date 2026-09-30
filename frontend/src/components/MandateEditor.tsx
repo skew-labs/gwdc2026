@@ -28,9 +28,11 @@ type Terms = {
 export function MandateEditor({
   m,
   onSaved,
+  nativeAlternative = false,
 }: {
   m: Machine;
   onSaved: () => void;
+  nativeAlternative?: boolean;
 }) {
   const existing = m.workspace.data?.mandate;
   const t = existing?.terms as Terms | undefined;
@@ -76,10 +78,11 @@ export function MandateEditor({
     initial(t ? (t.protocol_caps_bps.justlend ?? 0) / 100 : undefined),
   );
   const [nativeStake, setNativeStake] = useState(
-    Boolean(
-      t?.allowed_actions?.includes("STAKE") &&
-      t?.allowed_actions?.includes("VOTE"),
-    ),
+    nativeAlternative ||
+      Boolean(
+        t?.allowed_actions?.includes("STAKE") &&
+        t?.allowed_actions?.includes("VOTE"),
+      ),
   );
   const [nativeCap, setNativeCap] = useState(
     String((t?.protocol_caps_bps["tron-native"] || 10000) / 100),
@@ -115,7 +118,12 @@ export function MandateEditor({
         "fee_amount",
         "daily_loss",
         "stress_loss",
-      ].map((k) => [k, t?.limits[k]?.amount || ""]),
+      ].map((k) => [
+        k,
+        nativeAlternative && k !== "fee_amount"
+          ? proposedCapital?.amount || c?.capital.value || ""
+          : t?.limits[k]?.amount || "",
+      ]),
     ),
   );
   const [hours, setHours] = useState("24");
@@ -327,6 +335,16 @@ export function MandateEditor({
         Save your conditions for review. Confirm once to automatically calculate
         and receive two eligible options in this conversation.
       </p>
+      {nativeAlternative && (
+        <Alert>
+          Proposed Native Stake alternative: allow staking and representative
+          voting, with single investment, cumulative investment, daily loss and
+          stress loss limits of {capital} {asset}. This permits loss up to your
+          full budget. The cash floor, borrowing permission and fee budget stay
+          as displayed. Edit any limit before saving. Saving creates a draft;
+          confirmation and wallet signing are separate.
+        </Alert>
+      )}
       {intent && (
         <Alert>
           Chat edits are prefilled. Existing allocation limits and cost

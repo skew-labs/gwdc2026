@@ -240,6 +240,7 @@ export default function App() {
     setMenu(false);
     const next = new URLSearchParams(params);
     next.set("panel", p);
+    next.delete("strategy");
     if (editing) next.set("edit", "conditions");
     else next.delete("edit");
     setParams(next);
@@ -248,6 +249,7 @@ export default function App() {
     const next = new URLSearchParams(params);
     next.delete("panel");
     next.delete("edit");
+    next.delete("strategy");
     setParams(next);
   };
   const setDraft = (value: string) => {

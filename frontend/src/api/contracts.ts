@@ -749,6 +749,7 @@ export const endpoints = [
       hash: z.string(),
       version: z.number(),
       network: Network,
+      agent_id: z.string().optional(),
     }),
     response: Ack,
   },

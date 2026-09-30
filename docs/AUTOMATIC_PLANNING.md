@@ -41,3 +41,19 @@ These are timestamped variable Nile forecasts, not realized income, guaranteed r
 The production workspace had retained 2 TRX single/cumulative limits and a 32 TRX loss cap with a 100% daily-loss assumption. Entering a larger capital amount alone cannot override those conditions. The editor now exposes this conflict and offers an explicit draft-only spending-limit update. The user must review and confirm any change.
 
 Machine-readable evidence: [artifacts/automatic_planning/verification.json](../artifacts/automatic_planning/verification.json). Live deployment on OVH verified 13 file hashes and service health at 01:21 UTC.
+
+## Conversation routing recovery — September 30, 01:45 UTC
+
+An already-open client could omit `agent_id` on confirmation. The gateway then sent the result to the workspace's first agent, while the user stayed in the conversation that contained the reviewed draft. Each new edit changed the shared policy hash, leaving only obsolete references visible in that conversation.
+
+- Missing conversation context now resolves from the exact draft card and authenticated workspace/network. An ambiguous destination is rejected rather than guessed.
+- The current policy-bound comparison is exposed in its originating conversation even for previously misrouted jobs. Historical records and conditions remain intact.
+- Korean option/investment-plan status questions use calculated results without condition extraction. Amount-bearing change requests still go through extraction and review.
+- Infeasible comparison cards show retained investment/loss limits and Native Stake permission. A Native Stake alternative opens an editable draft, explicitly discloses proposed full-budget loss limits and still requires Save plus Confirm. It does not grant transaction authority.
+- Confirmation's generated API contract includes optional `agent_id`.
+
+Verification: **65 frontend tests passed**, including an old-client confirmation with multiple agents, a simulated historically misrouted job, reload recovery and the exact Korean missing-options question. TypeScript and production build passed. The real engine and live Nile inputs again produced 25 eligible allocations from 101; the second agent received both options after one confirmation in 9.46 seconds. The first agent received no message. Browser selection of Plan B survived reload. This was an isolated authentication fixture, with no signatures, broadcasts or changes to production conditions.
+
+Existing restrictive policies remain restrictive: a 300 TRX budget does not override a 2 TRX investment cap or enable Native Stake. An unavailable second option is not fabricated.
+
+Old comparison cards now open the latest calculated comparison inline, instead of sending the user through condition editing again. The final frontend run passed 65 tests across 12 files.

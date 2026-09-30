@@ -1,6 +1,10 @@
 import { expect, it } from "vitest";
 import type { Workspace } from "../src/api/contracts";
-import { financialReply, portfolioOnlyRequest } from "../server/conversation";
+import {
+  financialReply,
+  portfolioOnlyRequest,
+  comparisonOnlyRequest,
+} from "../server/conversation";
 import { portfolioAllocation } from "../src/lib/portfolio";
 function workspace(): Workspace {
   return {
@@ -166,11 +170,20 @@ it("failed review cannot become a reassuring hold recommendation", () => {
 it("USDD replies use fresh network-bound service rates and preserve absence of trade authority", () => {
   const w = workspace();
   w.usdd_review = {
-    network: "nile", observed_at: new Date().toISOString(),
+    network: "nile",
+    observed_at: new Date().toISOString(),
     expires_at: new Date(Date.now() + 60000).toISOString(),
-    reason: "Different token contracts. Borrowing has not been permitted. No signed execution adapter is connected.",
-    facts: { energy_sun: "100", supply_apy: "0.529264", borrow_apy: "0.541723", token_match: false,
-      vault_token: "vault-token", destination_token: "destination-token", collaterals: [{ ilk: "TRX-C", minimum_debt_usdd: "600" }] },
+    reason:
+      "Different token contracts. Borrowing has not been permitted. No signed execution adapter is connected.",
+    facts: {
+      energy_sun: "100",
+      supply_apy: "0.529264",
+      borrow_apy: "0.541723",
+      token_match: false,
+      vault_token: "vault-token",
+      destination_token: "destination-token",
+      collaterals: [{ ilk: "TRX-C", minimum_debt_usdd: "600" }],
+    },
   } as Workspace["usdd_review"];
   const r = financialReply(w, undefined, "USDD 반복 차입하면 APY 높아?")!;
   expect(r.text).toContain("52.926% supply / 54.172% borrow");
@@ -180,10 +193,25 @@ it("USDD replies use fresh network-bound service rates and preserve absence of t
   expect(r.cards).toEqual([]);
   expect(financialReply(w, undefined, "What is USDD?")).toBeNull();
   w.usdd_review!.network = "mainnet";
-  expect(financialReply(w, undefined, "USDD APY")!.text).toContain("could not obtain");
+  expect(financialReply(w, undefined, "USDD APY")!.text).toContain(
+    "could not obtain",
+  );
   w.usdd_review!.network = "nile";
   w.usdd_review!.expires_at = "invalid";
-  expect(financialReply(w, undefined, "USDD APY")!.text).toContain("could not obtain");
+  expect(financialReply(w, undefined, "USDD APY")!.text).toContain(
+    "could not obtain",
+  );
   w.usdd_review!.expires_at = new Date(Date.now() - 1).toISOString();
-  expect(financialReply(w, undefined, "USDD APY")!.text).not.toContain("52.926%");
+  expect(financialReply(w, undefined, "USDD APY")!.text).not.toContain(
+    "52.926%",
+  );
+});
+
+it("recognizes missing option questions without treating new amount instructions as read-only", () => {
+  expect(
+    comparisonOnlyRequest("confirm 했는데 지금 왜 옵션 두개 안 뜨냐?"),
+  ).toBe(true);
+  expect(comparisonOnlyRequest("투자안 두개 보여줘")).toBe(true);
+  expect(comparisonOnlyRequest("Compare 300 TRX for 365 days")).toBe(false);
+  expect(comparisonOnlyRequest("투자안을 500 TRX로 변경해")).toBe(false);
 });

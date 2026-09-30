@@ -1,0 +1,221 @@
+{
+  "legacy_confirmation_without_agent_id": true,
+  "second_agent_received_result": true,
+  "first_agent_untouched": true,
+  "provenance": "ISOLATED_GATEWAY_AUTH_FIXTURE_AND_REVIEWED_TEST_CONDITIONS_WITH_LIVE_NILE_RPC",
+  "checked_at": "2026-09-30T01:45:15.182787+00:00",
+  "automatic_after_one_confirmation": true,
+  "extra_chat_messages": 0,
+  "two_positive_net_plans": true,
+  "elapsed_seconds": 9.46,
+  "wallet_signatures": 0,
+  "broadcasts": 0,
+  "production_conditions_modified": false,
+  "test_risk_limits": "Single allocation, cumulative, daily loss and stress loss all 300 TRX; 100% loss scenarios; full capital at risk is explicitly permitted only in this isolated test.",
+  "comparison": {
+    "candidate_count": 101,
+    "eligible_candidates": 25,
+    "exclusion_histogram": {
+      "CASH_OR_TOTAL_BUDGET": 21,
+      "LIQUIDITY_REQUIREMENT": 21,
+      "NET_BENEFIT_NOT_POSITIVE": 54,
+      "NO_INVESTED_CAPITAL": 1,
+      "PRODUCT": 42
+    },
+    "id": "3d9e0f3606d646792d32e08fc0dbb097c1bc36c0a7c1fb0a931c1401451d124e",
+    "network": "nile",
+    "mandate_hash": "f60c3cd511115ea102e062f6364e1b29f96710ec9b1b3ab4cdc8aa34ff63192d",
+    "snapshot_root": "fd816ede803d9e758c25222b15a4eda14ccc21acd34c805b760b70310f33e872",
+    "expires_at": "2026-09-30T01:49:06+00:00",
+    "status": "READY",
+    "plans": [
+      {
+        "id": "CONSERVATIVE",
+        "hash": "5901828d4e52bc866e99548a31854ed7c5c660fdbfcee782bc513b2388881d9a",
+        "title": "More cash available",
+        "summary": "Stake TRX and vote for the named representative. Voting income is variable; Energy rental income is excluded.",
+        "allocations": [
+          {
+            "product": "tron.native.stake",
+            "protocol": "TRON Native",
+            "amount": {
+              "value": "165",
+              "symbol": "TRX",
+              "decimals": 6
+            },
+            "share_bps": 5500,
+            "kind": "STAKE",
+            "exit_description": "Unstake, then wait the current 1-day chain delay and claim. Future delay changes may apply.",
+            "participation_terms": "Vote for TJmka325yjJKeFpQDwKSQAoNwEyNGhsaEV; current representative commission 40%. Both stake and vote require separate wallet signatures.",
+            "base_yield": {
+              "value": "2.01092",
+              "symbol": "TRX",
+              "decimals": 6
+            },
+            "incentive_rewards": null,
+            "costs": [
+              {
+                "label": "Full bandwidth reserve: stake + vote + reward claim + unstake + withdrawal",
+                "amount": {
+                  "value": "2",
+                  "symbol": "TRX",
+                  "decimals": 6
+                }
+              }
+            ]
+          },
+          {
+            "product": "Wallet cash",
+            "protocol": "Wallet",
+            "amount": {
+              "value": "133",
+              "symbol": "TRX",
+              "decimals": 6
+            },
+            "share_bps": 4433,
+            "kind": "CASH",
+            "exit_description": "Immediately available wallet cash.",
+            "participation_terms": "Entry and exit reserves excluded.",
+            "base_yield": null,
+            "incentive_rewards": null,
+            "costs": []
+          }
+        ],
+        "expected_net_return": {
+          "value": "0.01092",
+          "symbol": "TRX",
+          "decimals": 6
+        },
+        "estimated_fees": {
+          "value": "2",
+          "symbol": "TRX",
+          "decimals": 6
+        },
+        "immediate_cash": {
+          "value": "133",
+          "symbol": "TRX",
+          "decimals": 6
+        },
+        "recoverable_cash": [
+          {
+            "days": 0,
+            "amount": {
+              "value": "133",
+              "symbol": "TRX",
+              "decimals": 6
+            },
+            "evidence": "Current chain unfreeze delay and confirmed cash requirements."
+          }
+        ],
+        "risks": [
+          "Constant current voting rewards, representative brokerage and vote weights; simple APR, no compounding. Current network maintenance pauses included; missed blocks may reduce income. Energy rental income excluded. Future votes, commission and rewards may change.",
+          "TRX price exposure remains. Unstaking has a waiting period. Voting takes effect at a maintenance boundary.",
+          "Forecast excludes Energy sale income; resource credits are not counted as cash."
+        ],
+        "eligible": true,
+        "violations": []
+      },
+      {
+        "id": "GROWTH",
+        "hash": "196804caf6afd9c5c3b3f7bf780b73000e6c63b8eb60564373166593272314d6",
+        "title": "Higher projected voting income",
+        "summary": "Stake TRX and vote for the named representative. Voting income is variable; Energy rental income is excluded.",
+        "allocations": [
+          {
+            "product": "tron.native.stake",
+            "protocol": "TRON Native",
+            "amount": {
+              "value": "237",
+              "symbol": "TRX",
+              "decimals": 6
+            },
+            "share_bps": 7900,
+            "kind": "STAKE",
+            "exit_description": "Unstake, then wait the current 1-day chain delay and claim. Future delay changes may apply.",
+            "participation_terms": "Vote for TJmka325yjJKeFpQDwKSQAoNwEyNGhsaEV; current representative commission 40%. Both stake and vote require separate wallet signatures.",
+            "base_yield": {
+              "value": "2.888413",
+              "symbol": "TRX",
+              "decimals": 6
+            },
+            "incentive_rewards": null,
+            "costs": [
+              {
+                "label": "Full bandwidth reserve: stake + vote + reward claim + unstake + withdrawal",
+                "amount": {
+                  "value": "2",
+                  "symbol": "TRX",
+                  "decimals": 6
+                }
+              }
+            ]
+          },
+          {
+            "product": "Wallet cash",
+            "protocol": "Wallet",
+            "amount": {
+              "value": "61",
+              "symbol": "TRX",
+              "decimals": 6
+            },
+            "share_bps": 2033,
+            "kind": "CASH",
+            "exit_description": "Immediately available wallet cash.",
+            "participation_terms": "Entry and exit reserves excluded.",
+            "base_yield": null,
+            "incentive_rewards": null,
+            "costs": []
+          }
+        ],
+        "expected_net_return": {
+          "value": "0.888413",
+          "symbol": "TRX",
+          "decimals": 6
+        },
+        "estimated_fees": {
+          "value": "2",
+          "symbol": "TRX",
+          "decimals": 6
+        },
+        "immediate_cash": {
+          "value": "61",
+          "symbol": "TRX",
+          "decimals": 6
+        },
+        "recoverable_cash": [
+          {
+            "days": 0,
+            "amount": {
+              "value": "61",
+              "symbol": "TRX",
+              "decimals": 6
+            },
+            "evidence": "Current chain unfreeze delay and confirmed cash requirements."
+          }
+        ],
+        "risks": [
+          "Constant current voting rewards, representative brokerage and vote weights; simple APR, no compounding. Current network maintenance pauses included; missed blocks may reduce income. Energy rental income excluded. Future votes, commission and rewards may change.",
+          "TRX price exposure remains. Unstaking has a waiting period. Voting takes effect at a maintenance boundary.",
+          "Forecast excludes Energy sale income; resource credits are not counted as cash."
+        ],
+        "eligible": true,
+        "violations": []
+      }
+    ],
+    "reason": null,
+    "usdd_vault": {
+      "status": "UNAVAILABLE",
+      "reason": "Nile Vault USDD and the JustLend destination token are incompatible; no cross-network substitution."
+    },
+    "math_version": "economic-plan-comparison-2 / native-voting-1",
+    "adapter_version": "native-stake-v2-1",
+    "search_scope": "Native Stake + voting and wallet cash; complete 1% allocation grid, rounded down to whole TRX votes. Distinct plans differ by at least 10%. Current native jTRX remains available through JustLend-only conditions. sTRX is excluded until its Nile yield and complete exit cost can be verified."
+  },
+  "frontend_tests_passed": 65,
+  "typecheck": "PASS",
+  "build": "PASS",
+  "browser_plan_b_selected_after_reload": true,
+  "historical_misroute_regression": true,
+  "frontend_test_files_passed": 12,
+  "latest_comparison_navigation": "Older comparison cards can reveal the current result without editing conditions."
+}

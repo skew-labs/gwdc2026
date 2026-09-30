@@ -46,6 +46,10 @@ The new native route was checked with live market reads and an unsigned node-bui
 
 [Full verification and invariants](AUTOMATIC_PLANNING.md) · [Machine-readable result](../artifacts/automatic_planning/verification.json) · [Recorded backend result](../evidence/verification/native-summary.json).
 
+## Conversation routing regression — September 30, 01:45 UTC
+
+The subsequent 65-test frontend run, production build and isolated live calculation verify recovery of omitted conversation context, previously misrouted results, option-status questions and selection after reload. See [routing recovery](AUTOMATIC_PLANNING.md#conversation-routing-recovery--september-30-0145-utc). The previous test counts above remain records of their respective runs.
+
 ## Accounting comparisons
 
 | Measure | Meaning | Captured JustLend cycle |

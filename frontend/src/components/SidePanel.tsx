@@ -278,16 +278,27 @@ export function Portfolio({ m }: { m: Machine }) {
   return (
     <div className="portfolio-space">
       <PortfolioChart workspace={w} />
-      {w.network === "nile" && w.positions.some(position => position.product === "justlend.v1.jTRX" && Number(position.current_value?.value) > 0) && (
-        <section className="companion-card withdrawal-entry" aria-label="Withdraw your investment">
-          <div className="eyebrow">JustLend</div>
-          <h3>Back to your wallet</h3>
-          <p>Review the amount and current fee before you withdraw.</p>
-          <Button onClick={m.withdrawToWallet} disabled={!!m.busy || !m.session.data?.authenticated}>
-            Withdraw to wallet
-          </Button>
-        </section>
-      )}
+      {w.network === "nile" &&
+        w.positions.some(
+          (position) =>
+            position.product === "justlend.v1.jTRX" &&
+            Number(position.current_value?.value) > 0,
+        ) && (
+          <section
+            className="companion-card withdrawal-entry"
+            aria-label="Withdraw your investment"
+          >
+            <div className="eyebrow">JustLend</div>
+            <h3>Back to your wallet</h3>
+            <p>Review the amount and current fee before you withdraw.</p>
+            <Button
+              onClick={m.withdrawToWallet}
+              disabled={!!m.busy || !m.session.data?.authenticated}
+            >
+              Withdraw to wallet
+            </Button>
+          </section>
+        )}
       <StakePositionCard m={m} />
       <PortfolioReviewCard m={m} />
       <ProductCatalogCard m={m} />
@@ -354,15 +365,25 @@ export function Portfolio({ m }: { m: Machine }) {
         </summary>
         {p ? (
           <>
-            {p.status === "INCOMPLETE" && <p className="quiet-note">Income attribution needs reconciliation.</p>}
-            <Row label="Original net forecast · full horizon">{money(p.expected_return)}</Row>
+            {p.status === "INCOMPLETE" && (
+              <p className="quiet-note">
+                Income attribution needs reconciliation.
+              </p>
+            )}
+            <Row label="Original net forecast · full horizon">
+              {money(p.expected_return)}
+            </Row>
             <Row label="Actual minus expected">{money(p.variance ?? null)}</Row>
-            <Row label="Accrued position income · before fees">{money(p.accrued)}</Row>
-            <Row label="Realized position income · before fees">{money(p.realized)}</Row>
+            <Row label="Accrued position income · before fees">
+              {money(p.accrued)}
+            </Row>
+            <Row label="Realized position income · before fees">
+              {money(p.realized)}
+            </Row>
             <Row label="Fees already paid">{money(p.fees)}</Row>
             <p className="caption">
-              Observed {date(p.as_of)}. Variance includes fee savings; it is
-              not additional yield.
+              Observed {date(p.as_of)}. Variance includes fee savings; it is not
+              additional yield.
             </p>
             <details>
               <summary>Accounting & original forecast</summary>
@@ -370,11 +391,26 @@ export function Portfolio({ m }: { m: Machine }) {
               <Row label="Price P&L">{money(p.price_pnl)}</Row>
               <Row label="Debt costs">{money(p.debt_cost)}</Row>
               <Row label="Net deposits">{money(p.net_deposits)}</Row>
-              {p.open_cost_basis && <Row label="Remaining principal basis">{money(p.open_cost_basis)}</Row>}
-              {p.withdrawn && <Row label="Withdrawn proceeds">{money(p.withdrawn)}</Row>}
-              {p.period_start && <p className="caption">Since {date(p.period_start)}</p>}
-              {p.basis?.map((note) => <p className="caption" key={note}>{note}</p>)}
-              <p className="caption">Deposits are capital flows. Unmeasured returns are shown as unavailable.</p>
+              {p.open_cost_basis && (
+                <Row label="Remaining principal basis">
+                  {money(p.open_cost_basis)}
+                </Row>
+              )}
+              {p.withdrawn && (
+                <Row label="Withdrawn proceeds">{money(p.withdrawn)}</Row>
+              )}
+              {p.period_start && (
+                <p className="caption">Since {date(p.period_start)}</p>
+              )}
+              {p.basis?.map((note) => (
+                <p className="caption" key={note}>
+                  {note}
+                </p>
+              ))}
+              <p className="caption">
+                Deposits are capital flows. Unmeasured returns are shown as
+                unavailable.
+              </p>
             </details>
           </>
         ) : (
@@ -532,7 +568,10 @@ export function SidePanel({
   const setEditingMandate = (editing: boolean) => {
     const next = new URLSearchParams(params);
     if (editing) next.set("edit", "conditions");
-    else next.delete("edit");
+    else {
+      next.delete("edit");
+      next.delete("strategy");
+    }
     setParams(next);
   };
   return (
@@ -576,7 +615,8 @@ export function SidePanel({
                   </Button>
                 </div>
                 <MandateEditor
-                  key={w?.mandate?.hash || "new"}
+                  key={(w?.mandate?.hash || "new") + params.get("strategy")}
+                  nativeAlternative={params.get("strategy") === "native-review"}
                   m={m}
                   onSaved={() => setEditingMandate(false)}
                 />
