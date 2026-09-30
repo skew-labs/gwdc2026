@@ -215,7 +215,28 @@ async function finance(
     },
     body: payload === undefined ? undefined : JSON.stringify(payload),
   });
-  const result = await r.json();
+  let result;
+  try {
+    result = await r.json();
+    if (!result || typeof result !== "object" || Array.isArray(result))
+      throw new Error("Invalid finance response envelope");
+  } catch {
+    // Upstream exceptions may return plain text. Do not expose database traces
+    // or misclassify a parser failure as an unexplained gateway error.
+    console.error(
+      JSON.stringify({
+        event: "invalid_finance_response",
+        path: path.split("?")[0],
+        method,
+        status: r.status,
+      }),
+    );
+    throw new HttpError(
+      502,
+      "FINANCE_RESPONSE_INVALID",
+      "The financial service could not return a valid result. Refresh the current status before retrying this request.",
+    );
+  }
   if (!r.ok)
     throw new HttpError(
       r.status,

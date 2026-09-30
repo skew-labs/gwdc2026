@@ -163,3 +163,5 @@ GitHub Actions runs these offline product checks and the frontend build. The cur
 `frontend/` is the current application. `web/` is an older reference client. Internal `machine` routes and storage identifiers remain for compatibility with the public **faat** brand. [`docs/history/`](docs/history) preserves prior design and implementation records; [the documentation index](docs/README.md) identifies the current entry points.
 
 This repository publishes project source and reviewed evidence. Credentials, private customer databases, signing material, dependency caches and pitch-deck binaries are excluded. Verification scope is documented; a passing test suite is not a claim of zero bugs, guaranteed yield or completed mainnet deployment.
+
+The latest native metadata fix is validated against actual PostgreSQL JSONB as well as live Nile reads. See [PostgreSQL recovery evidence](evidence/verification/native-postgres-metadata.json) and the [verification scope](docs/VERIFICATION.md). CI includes a PostgreSQL 16 metadata roundtrip regression.

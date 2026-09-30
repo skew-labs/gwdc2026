@@ -1,0 +1,28 @@
+{
+  "started_at": "2026-09-30T02:16:19.605925+00:00",
+  "production_customer_mutations": 0,
+  "approvals": 0,
+  "broadcasts": 0,
+  "original_live_jsonb_failure_reproduced": true,
+  "jsonb_roundtrip_original_metadata_preserved": true,
+  "existing_limits_comparison": "INFEASIBLE",
+  "permissive_test_policy_comparison": {
+    "status": "READY",
+    "eligible": 25,
+    "plans": 2,
+    "risk_limits": "Isolated test permits full-capital loss; user conditions unchanged."
+  },
+  "native_execution_review": "FreezeBalanceV2Contract",
+  "reconnect_and_replay": true,
+  "completed_at": "2026-09-30T02:16:38.142210+00:00",
+  "status": "PASS",
+  "native_regression_tests_passed": 28,
+  "gateway_regression_tests_passed": 7,
+  "deployment": {
+    "deployed_at": "2026-09-30T02:17:07.563900+00:00",
+    "verified_files": 2,
+    "health": "ok",
+    "old_hashed_assets_retained": true
+  },
+  "metadata_rule": "Encode only NUL or unpaired-surrogate witness URL strings as tagged JSON string values before evidence hashing. Original values are recoverable. Addresses, votes and fees are unchanged."
+}
