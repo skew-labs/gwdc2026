@@ -527,6 +527,115 @@ it("upstream plain-text errors stay actionable and the same request can recover"
   ).toBe(200);
 });
 
+it("a completed comparison retires older planning alerts without hiding current failures or changing audit records", async () => {
+  const { c, a } = await authenticatedAgent();
+  const rawError = `Unexpected token 'I', "Internal S"... is not valid JSON`;
+  await stop();
+  let audit = new DatabaseSync(join(dir, "test.sqlite"));
+  const { workspace } = audit
+    .prepare("SELECT workspace FROM agents WHERE id=?")
+    .get(a.id) as { workspace: string };
+  const { address: wallet } = audit
+    .prepare("SELECT address FROM wallets WHERE workspace=?")
+    .get(workspace) as { address: string };
+  function seed(
+    id: string,
+    scope: string,
+    network: string,
+    status: string,
+    planning: boolean,
+    policy: string,
+  ) {
+    const at = new Date().toISOString();
+    audit
+      .prepare(
+        "INSERT INTO jobs(id,workspace,agent,network,message_id,status,error,created,updated) VALUES(?,?,?,?,?,?,?,?,?)",
+      )
+      .run(
+        id,
+        scope,
+        a.id,
+        network,
+        "",
+        status,
+        status === "FAILED" ? rawError : null,
+        at,
+        at,
+      );
+    if (planning)
+      audit
+        .prepare(
+          "INSERT INTO plan_jobs(job_id,wallet,confirmation_path,payload,confirmed_hash) VALUES(?,?,?,?,?)",
+        )
+        .run(id, wallet, "/v1/mandates/test-draft/confirm", "{}", policy);
+  }
+  seed("historical-plan", workspace, "nile", "FAILED", true, "older-policy");
+  seed("historical-chat", workspace, "nile", "FAILED", false, "");
+  seed(
+    "foreign-success",
+    "another-workspace",
+    "nile",
+    "SUCCEEDED",
+    true,
+    "older-policy",
+  );
+  seed(
+    "other-network-success",
+    workspace,
+    "mainnet",
+    "SUCCEEDED",
+    true,
+    "older-policy",
+  );
+  audit.close();
+  await start();
+  let w = (await call(c, `/v1/workspace?network=nile&agent_id=${a.id}`)).body;
+  expect(w.jobs.find((j: any) => j.id === "historical-plan").error).toContain(
+    "Refresh the current status",
+  );
+  expect(JSON.stringify(w.jobs)).not.toContain("Unexpected token");
+
+  await call(c, "/v1/mandates/test-draft/confirm", "POST", {
+    hash: "draft-hash",
+    version: 1,
+    network: "nile",
+    agent_id: a.id,
+  });
+  w = await waitJob(c, a.id);
+  expect(w.comparison.plans).toHaveLength(2);
+  for (const path of [
+    `/v1/workspace?network=nile&agent_id=${a.id}`,
+    "/v1/workspace?network=nile",
+  ]) {
+    const current = (await call(c, path)).body;
+    expect(current.jobs.some((j: any) => j.id === "historical-plan")).toBe(
+      false,
+    );
+  }
+  expect(w.jobs.some((j: any) => j.id === "historical-chat")).toBe(true);
+  const usage = (await call(c, "/v1/usage")).body;
+  expect(usage.find((j: any) => j.id === "historical-plan").status).toBe(
+    "FAILED",
+  );
+  expect(JSON.stringify(usage)).not.toContain("Unexpected token");
+
+  await stop();
+  audit = new DatabaseSync(join(dir, "test.sqlite"));
+  expect(
+    audit.prepare("SELECT error FROM jobs WHERE id='historical-plan'").get()!
+      .error,
+  ).toBe(rawError);
+  seed("current-failure", workspace, "nile", "FAILED", true, w.mandate.hash);
+  audit.close();
+  await start();
+  w = (await call(c, `/v1/workspace?network=nile&agent_id=${a.id}`)).body;
+  expect(w.jobs[0].id).toBe("current-failure");
+  expect(w.jobs[0].status).toBe("FAILED");
+  expect(w.jobs[0].error).toContain("Refresh the current status");
+  expect(w.approval).toBeNull();
+  expect(w.execution).toBeNull();
+}, 15000);
+
 it("nullable or failed condition extraction keeps the financial workspace and returns an editable card without USDD diversion", async () => {
   const { c, a } = await authenticatedAgent();
   for (const mode of ["rejected", "transport"]) {

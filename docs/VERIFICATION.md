@@ -84,3 +84,9 @@ Unsafe witness URL strings now use a tagged, reversible JSON-string encoding bef
 Verification reproduced the original error against PostgreSQL 16 with the current live response, then persisted and reread the encoded original metadata. A separate authenticated test scope completed draft → confirmation → comparison → native execution review → repository reconnect: restrictive 2 TRX limits returned INFEASIBLE; an explicit test policy with 300 TRX spending/loss limits returned two plans from 25 eligible allocations. No customer conditions, transaction approvals or broadcasts were changed by this test. Native regression tests: 28 passed. Gateway regression tests: 7 passed; TypeScript passed.
 
 CI now starts PostgreSQL 16 and exercises the actual JSONB boundary in `test_stake_postgres`, so this regression is no longer covered only by SQLite fixtures. [Live persistence evidence](../evidence/verification/native-postgres-metadata.json).
+
+## Superseded planning errors (2026-09-30)
+
+A recovered calculation could coexist with a persisted parser error from an older plan job. The workspace now retires an older failed planning alert only when a later successful planning job and the current comparison agree with the confirmed policy in the same workspace, wallet and network. Current failures and failed chat jobs remain visible. Historical database records are unchanged; API error text is made readable.
+
+The gateway regression covers recovery, retained current failures, scope separation and unchanged raw audit records. Production read-only verification confirmed the recovered job is successful and the older alert is absent. Frontend: 71 tests passed; TypeScript and production build passed; deployed HTTPS assets matched the build. See [verification evidence](../evidence/verification/current-job-errors.json).
