@@ -9,7 +9,11 @@ import {
 import type { Machine } from "../api/useMachine";
 import { Badge, Button, Row } from "./ui";
 import { expired, money } from "../lib/format";
-const productName = (id: string) => ({ "tron.native.stake": "Native Stake & voting", "justlend.v1.jTRX": "JustLend TRX" }[id] || id);
+const productName = (id: string) =>
+  ({
+    "tron.native.stake": "Native Stake & voting",
+    "justlend.v1.jTRX": "JustLend TRX",
+  })[id] || id;
 export function MandateCard({
   m,
   edit,
@@ -24,6 +28,17 @@ export function MandateCard({
   const mandate = m.workspace.data?.mandate;
   if (!mandate) return null;
   const c = mandate.constraints;
+  const calculating = m.workspace.data?.jobs.some(
+    (j) =>
+      ["QUEUED", "RUNNING"].includes(j.status) &&
+      j.label.includes("calculating two plans"),
+  );
+  const latestJob = m.workspace.data?.jobs[0];
+  const retryCalculation =
+    latestJob?.status === "FAILED" &&
+    latestJob.label.includes("calculating two plans")
+      ? latestJob
+      : null;
   const limits = mandate.terms?.limits as
     Record<string, { asset: string; amount: string }> | undefined;
   return (
@@ -66,6 +81,17 @@ export function MandateCard({
             <span style={{ width: `${c.min_cash_bps / 100}%` }} />
           </div>
         </div>
+        <Row label="Allowed products">
+          {c.allowed_protocols.join(", ") || "None selected"}
+        </Row>
+        {c.capital.symbol === "TRX" &&
+          m.network === "nile" &&
+          !c.allowed_protocols.includes("TRON Native") && (
+            <p className="quiet-note">
+              Native staking is not enabled in these conditions. Enable Stake
+              2.0 and voting in Edit conditions if you want it considered.
+            </p>
+          )}
         <Row label="Borrowing">
           {c.allow_debt ? "Permitted within debt limits" : "Not permitted"}
         </Row>
@@ -73,7 +99,8 @@ export function MandateCard({
         {c.allow_debt && (
           <p className="quiet-note">
             Review USDD strategies in Portfolio. Each step needs current
-            liquidity, a positive return after costs and a separate wallet signature.
+            liquidity, a positive return after costs and a separate wallet
+            signature.
           </p>
         )}
         <details
@@ -128,18 +155,31 @@ export function MandateCard({
             onClick={async () => {
               if (await m.confirmAndCompare(mandate)) onCompared?.();
             }}
-            disabled={!!m.busy || mandate.missing_fields.length > 0}
+            disabled={
+              !!m.busy || calculating || mandate.missing_fields.length > 0
+            }
           >
-            Confirm & compare <Check size={16} />
+            {calculating ? "Calculating plans…" : "Confirm & compare"}{" "}
+            <Check size={16} />
           </Button>
         ) : (
           <Button
             onClick={async () => {
-              if (await m.compare()) onCompared?.();
+              if (
+                await (retryCalculation
+                  ? m.retryPlanning(retryCalculation.id)
+                  : m.compare())
+              )
+                onCompared?.();
             }}
-            disabled={!!m.busy}
+            disabled={!!m.busy || calculating}
           >
-            Compare plans <ArrowUpRight size={16} />
+            {calculating
+              ? "Calculating plans…"
+              : retryCalculation
+                ? "Retry calculation"
+                : "Refresh plan comparison"}{" "}
+            <ArrowUpRight size={16} />
           </Button>
         )}
       </div>
@@ -180,7 +220,43 @@ export function PlanCards({
             {comparison.reason ||
               "Two distinct plans could not be found within your conditions."}
           </p>
-          {comparison.candidate_count !== undefined && <p className="caption">{comparison.candidate_count} allocations checked · {comparison.eligible_candidates ?? 0} eligible after costs and limits.</p>}
+          {comparison.candidate_count !== undefined && (
+            <p className="caption">
+              {comparison.candidate_count} allocations checked ·{" "}
+              {comparison.eligible_candidates ?? 0} eligible after costs and
+              limits.
+            </p>
+          )}
+          {comparison.exclusion_histogram &&
+            Object.keys(comparison.exclusion_histogram).length > 0 && (
+              <details open>
+                <summary>What ruled out the candidates</summary>
+                {Object.entries(comparison.exclusion_histogram).map(
+                  ([code, count]) => (
+                    <Row
+                      key={code}
+                      label={
+                        (
+                          {
+                            DAILY_LOSS_LIMIT: "Daily loss limit",
+                            STRESS_LOSS_LIMIT: "Stress loss limit",
+                            NET_BENEFIT_NOT_POSITIVE:
+                              "Income does not cover all costs",
+                            CUMULATIVE_AMOUNT_LIMIT: "Total investment limit",
+                            SINGLE_AMOUNT_LIMIT: "Single investment limit",
+                            FEE_LIMIT: "Cost budget",
+                            IMMEDIATE_CASH_SHORTFALL:
+                              "Cash reserve requirement",
+                          } as Record<string, string>
+                        )[code] || code.toLowerCase().replaceAll("_", " ")
+                      }
+                    >
+                      {count} candidates
+                    </Row>
+                  ),
+                )}
+              </details>
+            )}
           <p className="muted">
             Your limits have been preserved. Review your conditions to request
             another comparison.
@@ -230,7 +306,9 @@ export function PlanCards({
                 className="allocation-bar"
                 role="img"
                 aria-label={p.allocations
-                  .map((x) => `${productName(x.product)}: ${x.share_bps / 100}%`)
+                  .map(
+                    (x) => `${productName(x.product)}: ${x.share_bps / 100}%`,
+                  )
                   .join(", ")}
               >
                 {p.allocations.map((x) => (
@@ -244,7 +322,9 @@ export function PlanCards({
               {p.allocations.map((x) => (
                 <Row
                   key={x.product}
-                  label={x.kind === "CASH" ? "Wallet cash" : productName(x.product)}
+                  label={
+                    x.kind === "CASH" ? "Wallet cash" : productName(x.product)
+                  }
                 >
                   {money(x.amount)}
                 </Row>
@@ -318,14 +398,24 @@ export function PlanCards({
           )}
         </div>
       </section>
-      <div className="inline-note">
-        <Info size={14} />
-        <span>USDD Vault · {comparison.usdd_vault.reason}</span>
-      </div>
+      {m.workspace.data?.mandate?.constraints.allow_debt && (
+        <div className="inline-note">
+          <Info size={14} />
+          <span>USDD Vault · {comparison.usdd_vault.reason}</span>
+        </div>
+      )}
       <details className="calculation-note">
         <summary>Calculation & sources</summary>
         <p>{comparison.search_scope}</p>
-        {comparison.candidate_count !== undefined && <p>{comparison.candidate_count} allocations checked; {comparison.eligible_candidates ?? 0} eligible. Costs, cash, protocol exposure and loss limits are tested before selecting two alternatives.</p>}
+        <p>USDD route availability: {comparison.usdd_vault.reason}</p>
+        {comparison.candidate_count !== undefined && (
+          <p>
+            {comparison.candidate_count} allocations checked;{" "}
+            {comparison.eligible_candidates ?? 0} eligible. Costs, cash,
+            protocol exposure and loss limits are tested before selecting two
+            alternatives.
+          </p>
+        )}
         <p>
           Math: {comparison.math_version} · Adapter:{" "}
           {comparison.adapter_version}

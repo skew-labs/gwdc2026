@@ -75,8 +75,15 @@ export function MandateEditor({
   const [justlend, setJustlend] = useState(
     initial(t ? (t.protocol_caps_bps.justlend ?? 0) / 100 : undefined),
   );
-  const [nativeStake, setNativeStake] = useState(Boolean(t?.allowed_actions?.includes("STAKE") && t?.allowed_actions?.includes("VOTE")));
-  const [nativeCap, setNativeCap] = useState(String((t?.protocol_caps_bps["tron-native"] || 10000)/100));
+  const [nativeStake, setNativeStake] = useState(
+    Boolean(
+      t?.allowed_actions?.includes("STAKE") &&
+      t?.allowed_actions?.includes("VOTE"),
+    ),
+  );
+  const [nativeCap, setNativeCap] = useState(
+    String((t?.protocol_caps_bps["tron-native"] || 10000) / 100),
+  );
   const [vault, setVault] = useState(
     initial(t ? (t.protocol_caps_bps.usdd ?? 0) / 100 : undefined),
   );
@@ -167,6 +174,17 @@ export function MandateEditor({
       </span>
     </label>
   );
+  const retainedCap = Math.min(
+    Number(limits.single_amount),
+    Number(limits.cumulative_amount),
+  );
+  const budgetAfterCash = Number(capital) * (1 - Number(cash) / 100);
+  const limitedByOldCaps = Boolean(
+    limits.single_amount &&
+    limits.cumulative_amount &&
+    Number(capital) > 0 &&
+    retainedCap < budgetAfterCash,
+  );
   return (
     <form
       className="mandate-form"
@@ -178,13 +196,23 @@ export function MandateEditor({
             throw new Error("Capital must be greater than zero.");
           if (!risk || !debt)
             throw new Error("Choose a risk profile and borrowing permission.");
-          if (nativeStake && (asset !== "TRX" || m.network !== "nile" || percent(nativeCap)<=0)) throw new Error("Native Stake requires Nile TRX and a positive allocation limit.");
+          if (
+            nativeStake &&
+            (asset !== "TRX" || m.network !== "nile" || percent(nativeCap) <= 0)
+          )
+            throw new Error(
+              "Native Stake requires Nile TRX and a positive allocation limit.",
+            );
           toUnits(fee, 6);
           Object.values(limits).forEach((v) => toUnits(v, 6));
           if (!["USDT", "USDD", "TRX"].includes(asset))
             throw new Error("Choose a supported capital asset.");
           const constraints = Constraints.parse({
-            capital: { value: capital, symbol: asset, decimals: asset === "USDD" ? 18 : 6 },
+            capital: {
+              value: capital,
+              symbol: asset,
+              decimals: asset === "USDD" ? 18 : 6,
+            },
             horizon_days: Number(days),
             min_cash_bps: percent(cash),
             max_trx_exposure_bps: percent(trx),
@@ -296,7 +324,8 @@ export function MandateEditor({
       }}
     >
       <p className="quiet-note">
-        Save a draft, then review and confirm it before comparing plans.
+        Save your conditions for review. Confirm once to automatically calculate
+        and receive two eligible options in this conversation.
       </p>
       {intent && (
         <Alert>
@@ -314,15 +343,61 @@ export function MandateEditor({
         </select>
       </label>
       <p className="caption">
-        On Nile, TRX can use JustLend supply or Native Stake with voting. Native Stake requires the separate permission below; returns and costs stay in TRX.
+        On Nile, TRX can use JustLend supply or Native Stake with voting. Native
+        Stake requires the separate permission below; returns and costs stay in
+        TRX.
       </p>
-      {asset === "TRX" && m.network === "nile" && <fieldset>
-        <legend>Native staking</legend>
-        <label className="check-label"><input type="checkbox" checked={nativeStake} onChange={e=>setNativeStake(e.target.checked)} />Allow Stake 2.0 and representative voting</label>
-        <p className="caption">Compare voting income after full entry and exit costs. TRX becomes locked until the chain unstaking delay ends. Stake and vote each require a wallet signature. Energy rental income is excluded.</p>
-        {nativeStake && numeric("Maximum Native Stake allocation",nativeCap,setNativeCap,"%",100)}
-      </fieldset>}
+      {asset === "TRX" && m.network === "nile" && (
+        <fieldset>
+          <legend>Native staking</legend>
+          <label className="check-label">
+            <input
+              type="checkbox"
+              checked={nativeStake}
+              onChange={(e) => setNativeStake(e.target.checked)}
+            />
+            Allow Stake 2.0 and representative voting
+          </label>
+          <p className="caption">
+            Compare voting income after full entry and exit costs. TRX becomes
+            locked until the chain unstaking delay ends. Stake and vote each
+            require a wallet signature. Energy rental income is excluded.
+          </p>
+          {nativeStake &&
+            numeric(
+              "Maximum Native Stake allocation",
+              nativeCap,
+              setNativeCap,
+              "%",
+              100,
+            )}
+        </fieldset>
+      )}
       {numeric("Starting capital", capital, setCapital, asset)}
+      {limitedByOldCaps && (
+        <Alert>
+          Your spending limits currently allow at most {retainedCap} {asset} to
+          be invested, even with a {capital} {asset} budget. Review Spending &
+          loss limits below.
+          <Button
+            type="button"
+            secondary
+            onClick={() =>
+              setLimits({
+                ...limits,
+                single_amount: capital,
+                cumulative_amount: capital,
+              })
+            }
+          >
+            Use {capital} {asset} as spending limits
+          </Button>
+          <span className="caption">
+            This updates the draft only. Loss limits and borrowing permission
+            stay as shown.
+          </span>
+        </Alert>
+      )}
       {numeric("Time horizon", days, setDays, "days", 365)}
       <label>
         Risk profile
@@ -369,7 +444,7 @@ export function MandateEditor({
       </details>
       <details
         className="companion-disclosure"
-        open={!Object.values(limits).every(Boolean) || !fee}
+        open={limitedByOldCaps || !Object.values(limits).every(Boolean) || !fee}
       >
         <summary>
           Spending & loss limits<span>Fees & exposure</span>
@@ -476,13 +551,21 @@ export function MandateEditor({
         open={Object.values(planning).some((v) => !v)}
       >
         <summary>Planning costs & risk assumptions</summary>
+        {Number(planning.daily_loss_bps) === 10000 && (
+          <p className="warning-text">
+            Your retained daily loss scenario is 100%. This can rule out most
+            allocations under a small loss limit. Review the scenario and the
+            loss limits together.
+          </p>
+        )}
         <fieldset>
           <legend className="sr-only">Planning assumptions</legend>
           <p className="muted">
-            These estimates are applied to each product in the comparison. They
-            are not live execution quotes. Incentive proceeds are excluded. The
-            transaction review will require fresh verified fees and funding
-            routes.
+            Loss assumptions are stress scenarios, not predicted returns.
+            JustLend uses the costs entered below. Native Stake uses current
+            chain Bandwidth prices for all entry and exit steps instead.
+            Execution still requires a fresh fee review. Incentive proceeds are
+            excluded.
           </p>
           {Object.entries({
             entry_cost: "Entry cost per product",
@@ -508,7 +591,8 @@ export function MandateEditor({
       </details>
       {numeric("Policy validity", hours, setHours, "hours", 168)}
       <p className="muted">
-        Permitted actions: hold, supply, redeem, claim rewards, repay and release repaid collateral
+        Permitted actions: hold, supply, redeem, claim rewards, repay and
+        release repaid collateral
         {nativeStake ? ", stake, vote and request unstaking" : ""}
         {debt === "true"
           ? ", open a vault, mint USDD and borrow within the debt limit"
