@@ -21,6 +21,8 @@ import {
   type Role,
 } from "../src/api/contracts";
 import { openStore } from "./store";
+import { workspaceJobs } from "./job-view";
+import { readableServiceError } from "../src/lib/errors";
 import { kilnStream, type ChatMessage } from "./kiln";
 import {
   financialReply,
@@ -787,40 +789,22 @@ const server = createServer(async (req, res) => {
               )?.body || "[]",
             ),
           }));
-        base.jobs = (
-          db
-            .prepare(
-              "SELECT * FROM jobs WHERE workspace=? AND agent=? AND network=? ORDER BY rowid DESC LIMIT 5",
-            )
-            .all(s.workspace, agent.id, network) as JobRow[]
-        ).map((j) => ({
-          id: j.id,
-          status: j.status,
-          label: db
-            .prepare("SELECT job_id FROM plan_jobs WHERE job_id=?")
-            .get(j.id)
-            ? "Checking conditions and calculating two plans"
-            : j.status === "RUNNING"
-              ? "Writing a response"
-              : "Message processing",
-          error: j.error,
-        })) as Workspace["jobs"];
       }
-      if (!agent) {
-        const planning = db
-          .prepare(
-            "SELECT j.* FROM jobs j JOIN plan_jobs p ON p.job_id=j.id WHERE j.workspace=? AND j.network=? AND p.wallet=? ORDER BY j.rowid DESC LIMIT 5",
-          )
-          .all(s.workspace, network, s.wallet || "") as JobRow[];
-        base.jobs.push(
-          ...planning.map((j) => ({
-            id: j.id,
-            status: j.status as Workspace["jobs"][number]["status"],
-            label: "Checking conditions and calculating two plans",
-            error: j.error,
-          })),
-        );
-      }
+      const currentComparisonHash =
+        base.mandate?.status === "CONFIRMED" &&
+        base.comparison?.mandate_hash === base.mandate.hash
+          ? base.mandate.hash
+          : null;
+      const currentJobs = workspaceJobs(
+        db,
+        s.workspace,
+        s.wallet,
+        network,
+        agent?.id || null,
+        currentComparisonHash,
+      );
+      if (agent) base.jobs = currentJobs;
+      else base.jobs.push(...currentJobs);
       if (
         agent &&
         base.comparison &&
@@ -867,7 +851,14 @@ const server = createServer(async (req, res) => {
         .prepare(
           "SELECT id,agent,network,status,model,input_tokens,output_tokens,latency_ms,created,error FROM jobs WHERE workspace=? ORDER BY rowid DESC LIMIT 100",
         )
-        .all(s.workspace);
+        .all(s.workspace)
+        .map((job) => ({
+          ...job,
+          error:
+            typeof job.error === "string"
+              ? readableServiceError(job.error)
+              : null,
+        }));
     } else if (path === "/v1/auth/challenge" && method === "POST") {
       const b = z
         .object({ address: z.string(), network: Network, domain: z.string() })
