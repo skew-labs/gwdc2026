@@ -23,6 +23,12 @@ That tiny integration test produced **0 TRX income before fees and −15.3463 TR
 
 Nile is a test network. These transactions establish an integration path, not future yield or mainnet economics. [Exact scope and remaining gaps](docs/VERIFICATION.md).
 
+## Conditions → automatic comparison
+
+**Confirm & compare** persists a server-side planning task. It confirms only the exact reviewed draft, reads current network inputs, calculates two eligible allocations and publishes Plan A / Plan B in the originating conversation. No additional chat prompt is required. Closing the page or restarting the gateway does not lose a running calculation.
+
+A recommendation is not transaction approval. If fewer than two allocations satisfy the policy, cash requirements and full costs, the agent returns the exclusion reasons. It never fills the second slot with an invalid plan. Old spending limits remain visible when the investment budget changes. [Automatic planning invariants and verification](docs/AUTOMATIC_PLANNING.md).
+
 ## Native staking extension
 
 Nile now has a second executable product family: **Stake 2.0 → representative voting → rewards → unstake → withdraw**. It reuses the constraint engine and durable financial ledger, with exact native protobuf validation and a separate wallet signature for each step. Existing conditions require explicit Native Stake and voting permission before this route is considered.

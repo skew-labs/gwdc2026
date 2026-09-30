@@ -197,7 +197,9 @@ async function finance(
     signal: AbortSignal.timeout(
       path.includes("agent-intent")
         ? 65000
-        : /portfolio-reviews|usdd-reviews|usdd-workflows|stake-workflows|approvals|executions/.test(path)
+        : /portfolio-reviews|usdd-reviews|usdd-workflows|stake-workflows|approvals|executions/.test(
+              path,
+            )
           ? 90000
           : /observations|plan-comparisons|execution-graphs/.test(path)
             ? 50000
@@ -221,6 +223,142 @@ async function finance(
         "The financial service could not complete the request.",
     );
   return result;
+}
+type PlanningRow = {
+  job_id: string;
+  wallet: string;
+  confirmation_path: string;
+  payload: string;
+  confirmed_hash: string | null;
+};
+function recordCard(
+  job: JobRow,
+  text: string,
+  cards: Workspace["messages"][number]["cards"],
+) {
+  if (!job.agent) return;
+  const id = "planning-result-" + job.id;
+  db.exec("BEGIN IMMEDIATE");
+  try {
+    db.prepare("INSERT OR REPLACE INTO messages VALUES(?,?,?,?,?,?,?)").run(
+      id,
+      job.workspace,
+      job.agent,
+      job.network,
+      "agent",
+      text,
+      stamp(),
+    );
+    db.prepare("INSERT OR REPLACE INTO message_cards VALUES(?,?)").run(
+      id,
+      JSON.stringify(cards),
+    );
+    db.exec("COMMIT");
+  } catch (error) {
+    db.exec("ROLLBACK");
+    throw error;
+  }
+}
+async function processPlanning(
+  job: JobRow,
+  task: PlanningRow,
+  signal: AbortSignal,
+) {
+  const payload = JSON.parse(task.payload);
+  const s: SessionRow = {
+    id: "planning-worker",
+    workspace: job.workspace,
+    csrf: "",
+    wallet: task.wallet,
+    expires: 0,
+  };
+  if (
+    !db
+      .prepare("SELECT address FROM wallets WHERE workspace=? AND address=?")
+      .get(job.workspace, task.wallet)
+  )
+    throw new Error(
+      "The verified wallet changed. Review your conditions again.",
+    );
+  if (job.agent) ownedAgent(job.agent, s);
+  const checkActive = () => {
+    if (
+      signal.aborted ||
+      (
+        db.prepare("SELECT status FROM jobs WHERE id=?").get(job.id) as {
+          status: string;
+        }
+      )?.status !== "RUNNING"
+    )
+      throw new Error(
+        "Plan calculation was stopped. Your wallet has not signed a transaction.",
+      );
+  };
+  checkActive();
+  // This is the user's explicit Confirm & compare request, persisted before execution.
+  // A restarted worker reuses the same confirmation key; it never confirms new terms.
+  if (!task.confirmed_hash) {
+    await finance(
+      task.confirmation_path,
+      s,
+      "POST",
+      payload,
+      job.id + "-confirm",
+    );
+  }
+  let w = Workspace.parse(
+    await finance(`/v1/workspace?network=${job.network}`, s),
+  );
+  const mandateId = decodeURIComponent(task.confirmation_path.split("/")[3]);
+  if (
+    w.network !== job.network ||
+    w.mandate?.id !== mandateId ||
+    w.mandate.status !== "CONFIRMED" ||
+    (task.confirmed_hash && w.mandate.hash !== task.confirmed_hash) ||
+    (!task.confirmed_hash && w.mandate.version !== payload.version + 1)
+  )
+    throw new Error(
+      "The conditions changed while calculating. Review the latest conditions again.",
+    );
+  const policyHash = w.mandate.hash;
+  db.prepare("UPDATE plan_jobs SET confirmed_hash=? WHERE job_id=?").run(
+    policyHash,
+    job.id,
+  );
+  checkActive();
+  await finance(
+    "/v1/plan-comparisons",
+    s,
+    "POST",
+    {
+      network: job.network,
+      mandate_id: mandateId,
+      mandate_hash: policyHash,
+    },
+    job.id + "-compare",
+  );
+  checkActive();
+  w = Workspace.parse(await finance(`/v1/workspace?network=${job.network}`, s));
+  if (
+    w.network !== job.network ||
+    w.mandate?.hash !== policyHash ||
+    w.comparison?.mandate_hash !== policyHash
+  )
+    throw new Error(
+      "The comparison no longer matches your conditions. Review the latest conditions again.",
+    );
+  const comparison = w.comparison;
+  const ready = comparison.status === "READY" && comparison.plans.length >= 2;
+  recordCard(
+    job,
+    ready
+      ? "Your conditions are confirmed. Here are two calculated options using current network data, your limits and projected costs. Choose a plan to review; wallet approval comes later."
+      : `${comparison.reason || "Fewer than two investments meet your conditions after costs."} Review the blockers below and edit your conditions if you want to try again. No transaction has been approved.`,
+    [{ kind: "plans", target_id: comparison.id }],
+  );
+  db.prepare(
+    "UPDATE jobs SET status='SUCCEEDED',model='verified allocation engine',updated=? WHERE id=? AND status='RUNNING'",
+  ).run(stamp(), job.id);
 }
 const server = createServer(async (req, res) => {
   const requestId = randomUUID();
@@ -545,6 +683,29 @@ const server = createServer(async (req, res) => {
         "UPDATE jobs SET status='FAILED',error='Response stopped by you.',updated=? WHERE id=? AND status IN ('RUNNING','QUEUED')",
       ).run(stamp(), id);
       result = ack();
+    } else if (/^\/v1\/jobs\/[^/]+\/retry$/.test(path) && method === "POST") {
+      const id = path.split("/")[3];
+      const task = db
+        .prepare(
+          "SELECT j.*,p.wallet FROM jobs j JOIN plan_jobs p ON p.job_id=j.id WHERE j.id=? AND j.workspace=?",
+        )
+        .get(id, s.workspace) as (JobRow & { wallet: string }) | undefined;
+      if (
+        !task ||
+        !s.wallet ||
+        task.wallet !== s.wallet ||
+        task.network !== payload.network
+      )
+        throw new HttpError(
+          404,
+          "JOB_NOT_FOUND",
+          "This calculation was not found for your wallet and network.",
+        );
+      if (task.agent) ownedAgent(task.agent, s);
+      db.prepare(
+        "UPDATE jobs SET status='QUEUED',error=NULL,updated=? WHERE id=? AND status='FAILED'",
+      ).run(stamp(), id);
+      result = ack(id);
     } else if (path === "/v1/workspace" && method === "GET") {
       const network = Network.parse(url.searchParams.get("network"));
       const agentId = url.searchParams.get("agent_id");
@@ -613,12 +774,30 @@ const server = createServer(async (req, res) => {
         ).map((j) => ({
           id: j.id,
           status: j.status,
-          label:
-            j.status === "RUNNING"
+          label: db
+            .prepare("SELECT job_id FROM plan_jobs WHERE job_id=?")
+            .get(j.id)
+            ? "Checking conditions and calculating two plans"
+            : j.status === "RUNNING"
               ? "Writing a response"
               : "Message processing",
           error: j.error,
         })) as Workspace["jobs"];
+      }
+      if (!agent) {
+        const planning = db
+          .prepare(
+            "SELECT j.* FROM jobs j JOIN plan_jobs p ON p.job_id=j.id WHERE j.workspace=? AND j.network=? AND p.wallet=? ORDER BY j.rowid DESC LIMIT 5",
+          )
+          .all(s.workspace, network, s.wallet || "") as JobRow[];
+        base.jobs.push(
+          ...planning.map((j) => ({
+            id: j.id,
+            status: j.status as Workspace["jobs"][number]["status"],
+            label: "Checking conditions and calculating two plans",
+            error: j.error,
+          })),
+        );
       }
       base.revision = Date.now();
       result = Workspace.parse(base);
@@ -726,6 +905,93 @@ const server = createServer(async (req, res) => {
         `machine_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${production ? "; Secure" : ""}`,
       );
       result = ack();
+    } else if (
+      /^\/v1\/mandates\/[^/]+\/confirm$/.test(path) &&
+      method === "POST"
+    ) {
+      if (!financial)
+        throw new HttpError(
+          503,
+          "FINANCE_NOT_CONNECTED",
+          "Connect the financial service before confirming conditions.",
+        );
+      if (!s.wallet)
+        throw new HttpError(
+          401,
+          "WALLET_REQUIRED",
+          "Connect and verify your wallet first.",
+        );
+      const input = z
+        .object({
+          hash: z.string().min(1),
+          version: z.number().int().positive(),
+          network: Network,
+          agent_id: z.string().optional(),
+        })
+        .parse(payload);
+      const agent = input.agent_id
+        ? ownedAgent(input.agent_id, s)
+        : (db
+            .prepare(
+              "SELECT * FROM agents WHERE workspace=? AND archived=0 ORDER BY created LIMIT 1",
+            )
+            .get(s.workspace) as AgentRow | undefined);
+      const jobId =
+        "plan-" +
+        hash(
+          JSON.stringify([
+            s.workspace,
+            s.wallet,
+            input.network,
+            path,
+            input.hash,
+            input.version,
+            agent?.id || "",
+          ]),
+        );
+      const existing = db
+        .prepare("SELECT status FROM jobs WHERE id=?")
+        .get(jobId) as { status: string } | undefined;
+      db.exec("BEGIN IMMEDIATE");
+      try {
+        if (!existing) {
+          const created = stamp();
+          db.prepare(
+            "INSERT INTO jobs(id,workspace,agent,network,message_id,status,created,updated,model) VALUES(?,?,?,?,?,?,?,?,?)",
+          ).run(
+            jobId,
+            s.workspace,
+            agent?.id || "",
+            input.network,
+            "",
+            "QUEUED",
+            created,
+            created,
+            "verified allocation engine",
+          );
+          db.prepare(
+            "INSERT INTO plan_jobs(job_id,wallet,confirmation_path,payload) VALUES(?,?,?,?)",
+          ).run(
+            jobId,
+            s.wallet,
+            path,
+            JSON.stringify({
+              hash: input.hash,
+              version: input.version,
+              network: input.network,
+            }),
+          );
+        } else if (existing.status === "FAILED") {
+          db.prepare(
+            "UPDATE jobs SET status='QUEUED',error=NULL,updated=? WHERE id=?",
+          ).run(stamp(), jobId);
+        }
+        db.exec("COMMIT");
+      } catch (error) {
+        db.exec("ROLLBACK");
+        throw error;
+      }
+      result = ack(jobId);
     } else if (path.startsWith("/v1/")) {
       const allowed =
         /^\/v1\/(funding|observations|usdd-reviews|usdd-workflows|stake-workflows|portfolio-reviews|portfolio-adjustments|notifications|mandates|plan-comparisons|execution-graphs|approvals|executions|positions|performance|routines|evidence)(\/[^?]*)?$/.test(
@@ -863,6 +1129,27 @@ const timer = setInterval(async () => {
     db.prepare(
       "UPDATE jobs SET status='RUNNING',updated=? WHERE id=? AND status='QUEUED'",
     ).run(stamp(), job.id);
+    const planning = db
+      .prepare("SELECT * FROM plan_jobs WHERE job_id=?")
+      .get(job.id) as PlanningRow | undefined;
+    if (planning) {
+      try {
+        await processPlanning(job, planning, controller.signal);
+      } catch (error) {
+        const saved = db
+          .prepare("SELECT confirmed_hash FROM plan_jobs WHERE job_id=?")
+          .get(job.id) as { confirmed_hash: string | null };
+        recordCard(
+          job,
+          `I could not finish the plan comparison. ${error instanceof HttpError ? error.message : "Open your conditions and retry the calculation."} No wallet transaction was approved or sent.`,
+          saved.confirmed_hash
+            ? [{ kind: "mandate", target_id: saved.confirmed_hash }]
+            : [{ kind: "conditions", target_id: "new" }],
+        );
+        throw error;
+      }
+      return;
+    }
     const a = db
       .prepare("SELECT * FROM agents WHERE id=? AND archived=0")
       .get(job.agent) as AgentRow | undefined;
@@ -888,52 +1175,71 @@ const timer = setInterval(async () => {
     let financialWorkspace: Workspace | undefined;
     let financialContext =
       "Financial service is not connected. No balances, market observations, mandate or transactions are available.";
+    let financialIssue: string | null = null;
+    const latest =
+      history.filter((m) => m.author === "user").at(-1)?.text || "";
     if (financial) {
       const wallet = db
         .prepare("SELECT address FROM wallets WHERE workspace=? LIMIT 1")
         .get(job.workspace) as { address: string } | undefined;
-      try {
-        const workerSession: SessionRow = {
-          id: "worker",
-          workspace: job.workspace,
-          csrf: "",
-          wallet: wallet?.address || null,
-          expires: 0,
-        };
-        if (workerSession.wallet) {
-          const userMessage = history
-            .filter((m) => m.author === "user")
-            .at(-1)?.text;
-          if (userMessage && !portfolioOnlyRequest(userMessage)) {
-            const intent = await finance(
-              "/v1/agent-intent",
-              workerSession,
-              "POST",
-              {
-                message: userMessage,
-                network: job.network,
-                agent_id: job.agent,
-                message_id: job.message_id,
-              },
-              job.id,
-            );
-            intentContext = JSON.stringify(intent);
-            intentResult = z
-              .object({
-                intent: z.string().optional(),
-                status: z.string(),
-                patch: z.record(z.string(), z.unknown()),
-                pending_proposal: z.boolean().optional(),
-              })
-              .parse(intent);
-          }
+      const workerSession: SessionRow = {
+        id: "worker",
+        workspace: job.workspace,
+        csrf: "",
+        wallet: wallet?.address || null,
+        expires: 0,
+      };
+      const report = (operation: string, error: unknown) => {
+        console.error(
+          JSON.stringify({
+            event: "financial_operation_failed",
+            operation,
+            job_id: job.id,
+            code:
+              error instanceof HttpError
+                ? error.code
+                : error instanceof z.ZodError
+                  ? "RESPONSE_SCHEMA_INVALID"
+                  : "REQUEST_FAILED",
+          }),
+        );
+      };
+      if (workerSession.wallet && latest && !portfolioOnlyRequest(latest)) {
+        try {
+          const intent = await finance(
+            "/v1/agent-intent",
+            workerSession,
+            "POST",
+            {
+              message: latest,
+              network: job.network,
+              agent_id: job.agent,
+              message_id: job.message_id,
+            },
+            job.id,
+          );
+          intentResult = z
+            .object({
+              intent: z.string().nullable().optional(),
+              status: z.string(),
+              patch: z.record(z.string(), z.unknown()),
+              pending_proposal: z.boolean().optional(),
+            })
+            .parse(intent);
+          intentContext = JSON.stringify(intent);
+        } catch (error) {
+          report("extract_conditions", error);
+          intentResult = {
+            intent: null,
+            status: "MODEL_UNAVAILABLE",
+            patch: {},
+          };
+          intentContext =
+            "Condition extraction was unavailable. Existing financial data may still be available.";
         }
-        if (
-          workerSession.wallet &&
-          portfolioRequest(
-            history.filter((m) => m.author === "user").at(-1)?.text || "",
-          )
-        ) {
+      }
+      if (workerSession.wallet && portfolioRequest(latest)) {
+        try {
           await finance(
             "/v1/portfolio-reviews",
             workerSession,
@@ -941,22 +1247,33 @@ const timer = setInterval(async () => {
             { network: job.network },
             job.id + "-portfolio-review",
           );
+        } catch (error) {
+          report("review_portfolio", error);
+          financialIssue =
+            "I could not refresh the portfolio review. The last recorded values may be out of date. Open Portfolio and retry Check now.";
         }
-        if (workerSession.wallet && leverageRequest(history.filter(m => m.author === "user").at(-1)?.text || "")) {
-          await finance("/v1/usdd-reviews", workerSession, "POST", { network: job.network }, job.id + "-usdd-review");
+      }
+      if (workerSession.wallet && leverageRequest(latest)) {
+        try {
+          await finance(
+            "/v1/usdd-reviews",
+            workerSession,
+            "POST",
+            { network: job.network },
+            job.id + "-usdd-review",
+          );
+        } catch (error) {
+          report("review_usdd", error);
+          financialIssue =
+            "I could not refresh the USDD route assessment. Retry the review in Portfolio.";
         }
+      }
+      try {
         let w = Workspace.parse(
-          await finance(`/v1/workspace?network=${job.network}`, {
-            id: "worker",
-            workspace: job.workspace,
-            csrf: "",
-            wallet: wallet?.address || null,
-            expires: 0,
-          }),
+          await finance(`/v1/workspace?network=${job.network}`, workerSession),
         );
         if (w.network !== job.network) throw new Error("Network mismatch");
-        const latest =
-          history.filter((x) => x.author === "user").at(-1)?.text || "";
+        financialWorkspace = w;
         if (
           workerSession.wallet &&
           comparisonRequest(latest) &&
@@ -964,29 +1281,34 @@ const timer = setInterval(async () => {
           !w.intent &&
           w.mandate?.status === "CONFIRMED"
         ) {
-          await finance(
-            "/v1/plan-comparisons",
-            workerSession,
-            "POST",
-            {
-              network: job.network,
-              mandate_id: w.mandate.id,
-              mandate_hash: w.mandate.hash,
-            },
-            job.id + "-compare",
-          );
-          w = Workspace.parse(
+          try {
             await finance(
-              `/v1/workspace?network=${job.network}`,
+              "/v1/plan-comparisons",
               workerSession,
-            ),
-          );
+              "POST",
+              {
+                network: job.network,
+                mandate_id: w.mandate.id,
+                mandate_hash: w.mandate.hash,
+              },
+              job.id + "-compare",
+            );
+            w = Workspace.parse(
+              await finance(
+                `/v1/workspace?network=${job.network}`,
+                workerSession,
+              ),
+            );
+            if (w.network !== job.network) throw new Error("Network mismatch");
+            financialWorkspace = w;
+          } catch (error) {
+            report("compare_plans", error);
+            financialIssue =
+              "I could not finish the plan comparison. Your conditions are saved. Open your conditions to retry the calculation.";
+          }
         }
-        financialWorkspace = w;
         financialContext = JSON.stringify({
           network: w.network,
-          usdd_review: w.usdd_review,
-          usdd_workflow: w.usdd_workflow,
           balances: w.balances,
           mandate: w.mandate,
           pending_draft: w.intent,
@@ -998,14 +1320,20 @@ const timer = setInterval(async () => {
           snapshots: w.snapshots,
           routines: w.routines,
           portfolio_review: w.portfolio_review,
-          stake_position: w.stake_position, stake_workflow: w.stake_workflow, product_catalog: w.product_catalog,
+          stake_position: w.stake_position,
+          stake_workflow: w.stake_workflow,
+          product_catalog: w.product_catalog,
+          ...(leverageRequest(latest)
+            ? { usdd_review: w.usdd_review, usdd_workflow: w.usdd_workflow }
+            : {}),
         }).slice(0, 40000);
-      } catch {
-        financialContext =
-          "The financial service is currently unavailable. Do not imply access to current financial data.";
+      } catch (error) {
+        report("read_workspace", error);
+        financialIssue =
+          "I could not read your financial workspace right now. Retry shortly. No new plan or transaction has been authorized.";
       }
     }
-    const prompt = `You are ${a.name}, a ${a.role} role in faat (Finance AI Agent Tron), a TRON asset management service. ${rolePrompt[a.role]} Reply in English, concisely and conversationally. Answer the current question directly; do not repeat a mandate or a questionnaire on unrelated messages. Never invent balances, returns, allocations, fees, transaction hashes, completed actions or monitoring. Never call proposed edits confirmed. High risk or a generic yes never permits borrowing; only explicit borrowing consent with bounded debt can propose it. Do not suggest an 80/20 allocation unless it exists in the calculated comparison. Distinguish recorded actual fees from planning assumptions. Ask at most two missing questions and use already known fields. The validated extraction is ${intentContext || "not available"}. Interactive conditions, calculated Plan A/Plan B and transaction cards are shown in this conversation when relevant. Use only supplied service facts, checking network and timestamps. Native Stake 2.0 plus representative voting is available on Nile only with explicit STAKE/VOTE permission and a positive native protocol cap; separate stake and vote signatures are needed. Rewards use current chain reward parameters, representative commission, vote weights and network maintenance interval, not fixed APY. Rental income is excluded. Native stake rewards, fees and forecast are a separate measured ledger, never substitute old jTRX performance zeros for native positions. Product catalog describes capability, not current quote eligibility. Mixed native/lending automatic reallocation is not enabled. Live transaction support also includes Nile native TRX supply and exact-share redemption from a fresh Watch review, and a separate mainnet USDD workflow in Portfolio. A recorded original forecast, expected net to date, actual accrued and realized income, paid fees and variance are supplied by receipt-backed performance accounting; do not replace unavailable values with estimates. USDD workflow code supports TRX Vault issuance, supply, bounded borrow-resupply cycles, rewards and repayment/recovery, each with a fresh review, exact wallet signature and solidified receipt. Mainnet USDD end-to-end execution has not been proven with this user wallet; never claim it has. It currently requires an isolated first Vault and empty USDD lending position. Nile Vault USDD and configured JustLend USDD are incompatible tokens, so this route is blocked on Nile. Only report an actual workflow, transaction or rate from the supplied service state; ask users to open Portfolio for live USDD strategy review. Token identity, minimum debt and live base-rate spread can block a route. Mainnet also charges Energy and Bandwidth. Recursive leverage increases income only when incremental revenue exceeds borrowing interest, entry/unwind fees and losses; never imply infinite or guaranteed APY. Do not imply these routes are available because policy allows borrowing. New investment plans must have positive projected net income after costs; keeping cash is a valid outcome. This conversation cannot grant trade authority. No automatic authorization or spending. No reasoning traces. Agent preferences: ${JSON.stringify(a.instructions)}. Financial context: ${financialContext}`;
+    const prompt = `You are ${a.name}, a ${a.role} role in faat (Finance AI Agent Tron), a TRON asset management service. ${rolePrompt[a.role]} Reply in English, concisely and conversationally. Answer the current question directly; do not repeat a mandate or a questionnaire on unrelated messages. Never invent balances, returns, allocations, fees, transaction hashes, completed actions or monitoring. Never call proposed edits confirmed. High risk or a generic yes never permits borrowing; only explicit borrowing consent with bounded debt can propose it. Do not suggest an 80/20 allocation unless it exists in the calculated comparison. Distinguish recorded actual fees from planning assumptions. Ask at most two missing questions and use already known fields. The validated extraction is ${intentContext || "not available"}. Interactive conditions, calculated Plan A/Plan B and transaction cards are shown in this conversation when relevant. Use only supplied service facts, checking network and timestamps. Native Stake 2.0 plus representative voting is available on Nile only with explicit STAKE/VOTE permission and a positive native protocol cap; separate stake and vote signatures are needed. Rewards use current chain reward parameters, representative commission, vote weights and network maintenance interval, not fixed APY. Rental income is excluded. Native stake rewards, fees and forecast are a separate measured ledger, never substitute old jTRX performance zeros for native positions. Product catalog describes capability, not current quote eligibility. Mixed native/lending automatic reallocation is not enabled. Live transaction support also includes Nile native TRX supply and exact-share redemption from a fresh Watch review, and a separate mainnet USDD workflow in Portfolio. A recorded original forecast, expected net to date, actual accrued and realized income, paid fees and variance are supplied by receipt-backed performance accounting; do not replace unavailable values with estimates. ${leverageRequest(latest) ? "For the requested USDD route, use only the supplied fresh assessment. Nile Vault USDD and configured JustLend USDD have different token identities; do not offer incompatible execution. Mainnet USDD execution is not proven with this wallet. Leverage requires positive incremental return after interest, fees and losses, and explicit debt limits." : "Do not introduce USDD, Vault or borrowing workflows when the user is setting unleveraged TRX conditions."} Do not imply these routes are available because policy allows borrowing. New investment plans must have positive projected net income after costs; keeping cash is a valid outcome. This conversation cannot grant trade authority. No automatic authorization or spending. No reasoning traces. Agent preferences: ${JSON.stringify(a.instructions)}. Financial context: ${financialContext}`;
     const messages: ChatMessage[] = [
       { role: "system", content: prompt },
       ...history
@@ -1028,13 +1356,15 @@ const timer = setInterval(async () => {
     );
     let text = "",
       last = 0;
-    const grounded = financialWorkspace
-      ? financialReply(
-          financialWorkspace,
-          intentResult,
-          history.filter((x) => x.author === "user").at(-1)?.text || "",
-        )
-      : null;
+    const grounded = financialIssue
+      ? { text: financialIssue, cards: [] }
+      : financialWorkspace
+        ? financialReply(
+            financialWorkspace,
+            intentResult,
+            history.filter((x) => x.author === "user").at(-1)?.text || "",
+          )
+        : null;
     if (grounded) {
       text = grounded.text;
       db.prepare("INSERT INTO message_cards VALUES(?,?)").run(

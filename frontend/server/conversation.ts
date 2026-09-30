@@ -1,7 +1,7 @@
 import type { Workspace, MessageCard } from "../src/api/contracts";
 
 type IntentResult = {
-  intent?: string;
+  intent?: string | null;
   status?: string;
   patch?: Record<string, unknown>;
   reason_codes?: string[];

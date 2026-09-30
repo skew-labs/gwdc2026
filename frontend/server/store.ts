@@ -12,9 +12,14 @@ export function openStore(file: string) {
  CREATE INDEX IF NOT EXISTS message_scope ON messages(workspace,agent,network,created);
  CREATE TABLE IF NOT EXISTS message_cards(message_id TEXT PRIMARY KEY REFERENCES messages(id),body TEXT NOT NULL);
  CREATE TABLE IF NOT EXISTS jobs(id TEXT PRIMARY KEY,workspace TEXT NOT NULL,agent TEXT NOT NULL,network TEXT NOT NULL,message_id TEXT NOT NULL,status TEXT NOT NULL,error TEXT,created TEXT NOT NULL,updated TEXT NOT NULL,model TEXT,input_tokens INTEGER,output_tokens INTEGER,latency_ms INTEGER);
+ CREATE TABLE IF NOT EXISTS plan_jobs(job_id TEXT PRIMARY KEY REFERENCES jobs(id),wallet TEXT NOT NULL,confirmation_path TEXT NOT NULL,payload TEXT NOT NULL,confirmed_hash TEXT);
  CREATE TABLE IF NOT EXISTS challenges(id TEXT PRIMARY KEY,session TEXT NOT NULL,address TEXT NOT NULL,network TEXT NOT NULL,message TEXT NOT NULL,expires INTEGER NOT NULL,used INTEGER DEFAULT 0);
  CREATE TABLE IF NOT EXISTS idempotency(scope TEXT PRIMARY KEY,fingerprint TEXT NOT NULL,response TEXT NOT NULL,created INTEGER NOT NULL);
  `);
+  // Financial planning is idempotent and resumes after restart. Chat streams cannot.
+  db.prepare(
+    "UPDATE jobs SET status='QUEUED',error=NULL WHERE status='RUNNING' AND id IN (SELECT job_id FROM plan_jobs)",
+  ).run();
   db.prepare(
     "UPDATE jobs SET status='FAILED',error='Service restarted during generation. Send another message to continue.' WHERE status='RUNNING'",
   ).run();

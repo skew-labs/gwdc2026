@@ -283,13 +283,7 @@ export function useMachine(agentId?: string) {
     );
   }
   async function confirm(m: Mandate) {
-    return run("Confirming mandate", () =>
-      mutate(`/v1/mandates/${encodeURIComponent(m.id)}/confirm`, {
-        hash: m.hash,
-        version: m.version,
-        network,
-      }),
-    );
+    return confirmAndCompare(m);
   }
   async function compare() {
     const m = workspace.data?.mandate;
@@ -320,27 +314,11 @@ export function useMachine(agentId?: string) {
     });
   }
   async function confirmAndCompare(m: Mandate) {
-    return run("Confirming conditions and comparing plans", async () => {
-      await request(
-        "POST",
-        `/v1/mandates/${encodeURIComponent(m.id)}/confirm`,
-        Ack,
-        { hash: m.hash, version: m.version, network },
-      );
-      const fresh = await request(
-        "GET",
-        `/v1/workspace?network=${network}`,
-        Workspace,
-      );
-      if (fresh.mandate?.id !== m.id || fresh.mandate.status !== "CONFIRMED")
-        throw new Error("The conditions changed. Review them again.");
-      await mutate("/v1/plan-comparisons", {
-        mandate_id: fresh.mandate.id,
-        mandate_hash: fresh.mandate.hash,
-        network,
-        agent_id: agentId,
-      });
-    });
+    return run("Queuing your plan comparison", () =>
+      mutate(`/v1/mandates/${encodeURIComponent(m.id)}/confirm`, {
+        hash: m.hash, version: m.version, network, agent_id: agentId,
+      }),
+    );
   }
   async function consent(g: Graph) {
     return run("Recording your approval", () =>
@@ -606,6 +584,8 @@ export function useMachine(agentId?: string) {
     saveMandate,
     confirm,
     confirmAndCompare,
+    retryPlanning: (id: string) => run("Retrying plan calculation", () =>
+      mutate(`/v1/jobs/${encodeURIComponent(id)}/retry`, {network})),
     compare,
     review,
     consent,
