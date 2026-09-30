@@ -724,6 +724,9 @@ class StakeExecution:
 
     def project_workflow(self, state):
         wf = state.get("stake_workflow")
+        current_graph = (
+            wf["steps"][wf["cursor"]].get("graph", {}) if wf else {}
+        )
         state["workspace"]["stake_workflow"] = (
             None
             if not wf
@@ -731,8 +734,18 @@ class StakeExecution:
                 "id": wf["id"],
                 "status": wf["status"],
                 "cursor": wf["cursor"],
+                "plan_hash": wf["plan"]["hash"],
+                "mandate_hash": wf["policy_hash"],
+                "account": current_graph.get("account"),
+                "network": current_graph.get("network"),
                 "steps": [
-                    {"action": s["action"], "status": s["status"]} for s in wf["steps"]
+                    {
+                        "action": s["action"], "status": s["status"],
+                        "graph_id": s.get("graph", {}).get("id"),
+                        "graph_hash": s.get("graph", {}).get("hash"),
+                        "step_id": (s.get("graph", {}).get("steps") or [{}])[0].get("id"),
+                        "expires_at": s.get("expires_at"),
+                    } for s in wf["steps"]
                 ],
                 "amount": money(int(wf["amount_sun"])),
                 "representative": wf["representative"]["address_base58"],

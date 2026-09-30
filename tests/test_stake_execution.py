@@ -254,6 +254,29 @@ class StakeTests(unittest.TestCase):
             "signed_transaction": tx,
         }, p
 
+    def test_workspace_upgrades_native_bindings_without_renewing_or_writing(self):
+        graph = self.reviewed()
+        self.prepared(graph)
+        version, saved = self.b.load(self.ctx)
+        # Simulate the old display projection already stored in a user workspace.
+        saved["workspace"]["stake_workflow"] = {"id": "old-projection"}
+        self.b.commit(self.ctx, version, saved)
+        before = self.b.load(self.ctx)
+        self.now = "2026-09-29T13:00:00+00:00"
+        w = self.b.workspace(self.ctx)
+        wf = w["stake_workflow"]
+        self.assertEqual(wf["plan_hash"], graph["plan_hash"])
+        self.assertEqual(wf["mandate_hash"], graph["mandate_hash"])
+        self.assertEqual(wf["account"], graph["account"])
+        self.assertEqual(wf["network"], graph["network"])
+        self.assertEqual(wf["steps"][0]["graph_id"], graph["id"])
+        self.assertEqual(wf["steps"][0]["graph_hash"], graph["hash"])
+        self.assertEqual(wf["steps"][0]["step_id"], graph["steps"][0]["id"])
+        self.assertEqual(wf["steps"][0]["expires_at"], graph["expires_at"])
+        self.assertEqual(w["approval"], before[1]["workspace"]["approval"])
+        self.assertEqual(self.b.load(self.ctx), before)
+        self.assertEqual(self.broadcasts, 0)
+
     def proof(self, fee=250000, status="SUCCESS"):
         return {
             "status": status,

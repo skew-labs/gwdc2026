@@ -91,6 +91,11 @@ class MachineBridge:
     def workspace(self, context):
         _, state = self.load(context)
         w = state["workspace"]
+        # Rebuild display bindings from durable native records, including older
+        # workspaces. Reading does not renew a review or change its approval.
+        self.stake.project_workflow(state)
+        from .stake_comparison import project_evidence
+        project_evidence(state)
         from .product_catalog import catalog
         w['product_catalog']=catalog(context.network)
         from .portfolio_review import active_mandate, withdrawal_policy

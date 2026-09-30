@@ -479,7 +479,13 @@ export const UsddWorkflow = z.object({
 });
 export const StakeWorkflow = z.object({
   id: z.string(), status: z.string(), cursor: z.number(), amount: Amount,
-  representative: z.string(), steps: z.array(z.object({action:z.string(),status:z.string()})),
+  plan_hash: z.string().optional(), mandate_hash: z.string().optional(),
+  account: z.string().nullable().optional(), network: Network.nullable().optional(),
+  representative: z.string(), steps: z.array(z.object({
+    action:z.string(),status:z.string(),
+    graph_id:z.string().nullable().optional(),graph_hash:z.string().nullable().optional(),
+    step_id:z.string().nullable().optional(),expires_at:z.string().nullable().optional(),
+  })),
   forecast: z.object({gross:Decimal, net:Decimal, fees:Decimal, horizon_seconds:z.number()}),
 });
 export const StakePosition = z.object({
