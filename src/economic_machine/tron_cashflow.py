@@ -279,8 +279,8 @@ def calculate_tron_cashflows(record, snapshot, assumptions, *, assembler, at):
     asset, capital, _ = single_asset_budget(mandate)
     if asset not in {'USDT', 'TRX'}:
         raise MachineError('cashflow base must be USDT or TRX')
-    if asset == 'TRX' and any(q.get('product_id') != 'justlend.v1.jTRX' or q.get('prices_base') != {'TRX':'1'} for q in quotes):
-        raise MachineError('TRX base is restricted to native jTRX without conversion')
+    if asset == 'TRX' and any(q.get('product_id') not in {'justlend.v1.jTRX', 'tron.native.stake'} or q.get('prices_base') != {'TRX':'1'} for q in quotes):
+        raise MachineError('TRX base is restricted to supported TRX-denominated products without conversion')
     results, seen = [], set()
     for quote in quotes:
         require_keys(quote, QUOTE_KEYS, 'TRON cashflow quote')

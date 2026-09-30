@@ -23,6 +23,12 @@ That tiny integration test produced **0 TRX income before fees and −15.3463 TR
 
 Nile is a test network. These transactions establish an integration path, not future yield or mainnet economics. [Exact scope and remaining gaps](docs/VERIFICATION.md).
 
+## Native staking extension
+
+Nile now has a second executable product family: **Stake 2.0 → representative voting → rewards → unstake → withdraw**. It reuses the constraint engine and durable financial ledger, with exact native protobuf validation and a separate wallet signature for each step. Existing conditions require explicit Native Stake and voting permission before this route is considered.
+
+A live 300 TRX / 365 day / 20% cash calculation found 25 eligible allocations after reserving the complete native lifecycle cost. The interface presents two computed plans and tracks forecast versus accrued/claimed rewards and actual fees. These are variable testnet projections. The new route has live read/unsigned-transaction validation and synthetic lifecycle tests; its first real user-signed native cycle remains outstanding. It does not imply completed mainnet USDD looping or a joint optimizer across every product. [Calculation, costs, evidence and limitations](docs/NATIVE_STAKING.md).
+
 ## The product loop
 
 1. **Explain the objective.** Chat captures capital, base asset, horizon, immediate cash, withdrawals and risk constraints. Missing terms remain missing. General risk appetite does not authorize debt.
@@ -74,6 +80,7 @@ The gateway's chat store and the finance ledger are separate. The financial serv
 | Arithmetic, constraints and plans | [`values.py`](src/economic_machine/values.py), [`mandate.py`](src/economic_machine/mandate.py), [`plan_compiler.py`](src/economic_machine/plan_compiler.py) |
 | Graph, approval and signed bytes | [`tx_graph.py`](src/economic_machine/tx_graph.py), [`approval.py`](src/economic_machine/approval.py), [`signed_tx_validation.py`](src/economic_machine/signed_tx_validation.py) |
 | Native TRX supply, redemption and recovery | [`native_execution.py`](src/finance_service/native_execution.py), [`native_adjustments.py`](src/finance_service/native_adjustments.py), [`native_recovery.py`](src/finance_service/native_recovery.py) |
+| Native Stake 2.0, voting, rewards and recovery | [`stake_market.py`](src/finance_service/stake_market.py), [`stake_comparison.py`](src/finance_service/stake_comparison.py), [`stake_execution.py`](src/finance_service/stake_execution.py), [`stake_receipt.py`](src/finance_service/stake_receipt.py) |
 | USDD collateral, issuance, looping and unwind | [`usdd_workflow.py`](src/economic_machine/usdd_workflow.py), [`usdd_execution.py`](src/finance_service/usdd_execution.py), [`usdd_review.py`](src/finance_service/usdd_review.py) |
 | Watch, costs and portfolio decisions | [`machine_worker.py`](src/finance_service/machine_worker.py), [`portfolio_review.py`](src/finance_service/portfolio_review.py), [`rebalance_gate.py`](src/finance_service/rebalance_gate.py) |
 | Expected versus actual performance | [`native_performance.py`](src/finance_service/native_performance.py), [`performance.py`](src/economic_machine/performance.py) |
@@ -116,7 +123,8 @@ Run the product regressions from the repository root:
 PYTHONPATH=src:tests python -m unittest \
   test_native_execution test_native_adjustments test_native_performance \
   test_performance_periods test_wallet_encoding test_machine_worker \
-  test_usdd_workflow test_usdd_execution test_usdd_comparison
+  test_usdd_workflow test_usdd_execution test_usdd_comparison \
+  test_stake_execution test_stake_observations test_stake_watch
 cd frontend
 pnpm test
 pnpm build
@@ -124,7 +132,7 @@ pnpm build
 
 Tests with synthetic receipts demonstrate rejection/recovery logic; they do not constitute a live mainnet transaction. PostgreSQL resilience drills and research training have additional environment requirements. [Verification guide](docs/VERIFICATION.md).
 
-GitHub Actions runs these offline product checks and the frontend build. The extended check passed **549 backend tests and 52 frontend tests**, with **48 backend tests skipped** because their dedicated PostgreSQL environment or pinned compiler was unavailable; exact commands and results are in [`evidence/verification/`](evidence/verification). Re-read the two demonstrated Nile receipts with `python scripts/verify_nile_receipts.py --refresh`, or omit `--refresh` to validate the checked-in captures without a network request. This script never signs or broadcasts.
+GitHub Actions runs these offline product checks and the frontend build. The current extended check passed **576 backend tests and 57 frontend tests**, with **48 backend tests skipped** because their dedicated PostgreSQL environment or pinned compiler was unavailable; exact commands and results are in [`evidence/verification/native-summary.json`](evidence/verification/native-summary.json), alongside the earlier publication evidence. Re-read the two demonstrated Nile receipts with `python scripts/verify_nile_receipts.py --refresh`, or omit `--refresh` to validate the checked-in captures without a network request. This script never signs or broadcasts.
 
 ## Data and research
 

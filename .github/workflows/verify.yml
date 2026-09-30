@@ -27,6 +27,7 @@ jobs:
           test_native_execution test_native_adjustments test_native_performance
           test_performance_periods test_wallet_encoding test_machine_worker
           test_usdd_workflow test_usdd_execution test_usdd_comparison
+          test_stake_execution test_stake_observations test_stake_watch
       - name: Validate captured Nile receipts without broadcasting
         run: python scripts/verify_nile_receipts.py
 

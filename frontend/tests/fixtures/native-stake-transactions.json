@@ -1,0 +1,122 @@
+{
+  "STAKE": {
+    "visible": false,
+    "txID": "182a801439d7e6d8175ff0be8fe150e1736db951c93da21013f056344783332a",
+    "raw_data_hex": "0a0201232208121212121212121240e0c8a8e88e345a5b083612570a34747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e467265657a6542616c616e63655632436f6e7472616374121f0a1541343434343434343434343434343434343434343410808c8d9e0218017080f4a4e88e34",
+    "raw_data": {
+      "ref_block_bytes": "0123",
+      "ref_block_hash": "1212121212121212",
+      "expiration": 1790683260000,
+      "timestamp": 1790683200000,
+      "contract": [
+        {
+          "type": "FreezeBalanceV2Contract",
+          "parameter": {
+            "type_url": "type.googleapis.com/protocol.FreezeBalanceV2Contract",
+            "value": {
+              "owner_address": "413434343434343434343434343434343434343434",
+              "frozen_balance": 600000000,
+              "resource": "ENERGY"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "VOTE": {
+    "visible": false,
+    "txID": "bd0e8c82d0d7efe99edc23df8352655c06f591b57d484a6683dacefe28ee401f",
+    "raw_data_hex": "0a0201232208121212121212121240e0c8a8e88e345a6b080412670a30747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e566f74655769746e657373436f6e747261637412330a15413434343434343434343434343434343434343434121a0a1541121212121212121212121212121212121212121210d8047080f4a4e88e34",
+    "raw_data": {
+      "ref_block_bytes": "0123",
+      "ref_block_hash": "1212121212121212",
+      "expiration": 1790683260000,
+      "timestamp": 1790683200000,
+      "contract": [
+        {
+          "type": "VoteWitnessContract",
+          "parameter": {
+            "type_url": "type.googleapis.com/protocol.VoteWitnessContract",
+            "value": {
+              "owner_address": "413434343434343434343434343434343434343434",
+              "votes": [
+                {
+                  "vote_address": "411212121212121212121212121212121212121212",
+                  "vote_count": 600
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "UNSTAKE": {
+    "visible": false,
+    "txID": "d644bf0fbfad1aaa378e3d3031d97eb5dcf9fa9ee68a373445894b5f26af81f7",
+    "raw_data_hex": "0a0201232208121212121212121240e0c8a8e88e345a5d083712590a36747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e556e667265657a6542616c616e63655632436f6e7472616374121f0a1541343434343434343434343434343434343434343410808c8d9e0218017080f4a4e88e34",
+    "raw_data": {
+      "ref_block_bytes": "0123",
+      "ref_block_hash": "1212121212121212",
+      "expiration": 1790683260000,
+      "timestamp": 1790683200000,
+      "contract": [
+        {
+          "type": "UnfreezeBalanceV2Contract",
+          "parameter": {
+            "type_url": "type.googleapis.com/protocol.UnfreezeBalanceV2Contract",
+            "value": {
+              "owner_address": "413434343434343434343434343434343434343434",
+              "unfreeze_balance": 600000000,
+              "resource": "ENERGY"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "WITHDRAW": {
+    "visible": false,
+    "txID": "5249bb21c4009edcaab71b77af75b6833847a1aa1136102d01f15963299311ac",
+    "raw_data_hex": "0a0201232208121212121212121240e0c8a8e88e345a5a083812560a3b747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5769746864726177457870697265556e667265657a65436f6e747261637412170a154134343434343434343434343434343434343434347080f4a4e88e34",
+    "raw_data": {
+      "ref_block_bytes": "0123",
+      "ref_block_hash": "1212121212121212",
+      "expiration": 1790683260000,
+      "timestamp": 1790683200000,
+      "contract": [
+        {
+          "type": "WithdrawExpireUnfreezeContract",
+          "parameter": {
+            "type_url": "type.googleapis.com/protocol.WithdrawExpireUnfreezeContract",
+            "value": {
+              "owner_address": "413434343434343434343434343434343434343434"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "CLAIM": {
+    "visible": false,
+    "txID": "3032cbc324b684090575908c559fea3538b43201ea0e949d6b33032c8b6d5d1b",
+    "raw_data_hex": "0a0201232208121212121212121240e0c8a8e88e345a53080d124f0a34747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e576974686472617742616c616e6365436f6e747261637412170a154134343434343434343434343434343434343434347080f4a4e88e34",
+    "raw_data": {
+      "ref_block_bytes": "0123",
+      "ref_block_hash": "1212121212121212",
+      "expiration": 1790683260000,
+      "timestamp": 1790683200000,
+      "contract": [
+        {
+          "type": "WithdrawBalanceContract",
+          "parameter": {
+            "type_url": "type.googleapis.com/protocol.WithdrawBalanceContract",
+            "value": {
+              "owner_address": "413434343434343434343434343434343434343434"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

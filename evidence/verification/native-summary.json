@@ -1,0 +1,27 @@
+{
+  "schema": "faat-native-verification-v1",
+  "verified_at": "2026-09-30",
+  "backend": {
+    "discovered": 624,
+    "passed": 576,
+    "skipped": 48,
+    "failures": 0,
+    "command": "PYTHONPATH=src:tests python -m unittest discover -s tests",
+    "environment": "OpenSSL 3; dedicated PostgreSQL test DSNs and pinned compiler absent"
+  },
+  "frontend": {
+    "passed": 57,
+    "files": 11,
+    "typecheck": "PASS",
+    "build": "PASS"
+  },
+  "native": {
+    "http_dispatch": "PASS (synthetic authenticated gateway, approval, preflight and lock)",
+    "wallet_serializer": "PASS (five synthetic native contract fixtures and one live unsigned node transaction)",
+    "live_signed_native_transactions": 0,
+    "broadcasts_performed_in_this_release": 0,
+    "ui": "Actual components with live calculation capture and synthetic approval callbacks; no signature or server mutation",
+    "source_evidence": "native-market-summary.json"
+  },
+  "scope": "Nile native staking/voting/claim/unstake/withdraw plus existing jTRX; no completed joint multi-product optimizer, sTRX, Energy rental or mainnet USDD live cycle claimed."
+}

@@ -58,7 +58,7 @@ def _principal_for(snapshot, template, capital, weight):
     if price <= 0:
         raise MachineError("plan template price must be positive")
     target = capital * Decimal(weight) / 10000
-    atom = Decimal(1).scaleb(-decimals)
+    atom = Decimal(1) if template["product_id"] == "tron.native.stake" else Decimal(1).scaleb(-decimals)
     amount = (target / price).quantize(atom, rounding=ROUND_FLOOR)
     if amount <= 0:
         raise MachineError("grid leg is below one underlying token atom")
@@ -225,7 +225,12 @@ def _evaluate_candidate(record, snapshot, assembler, request, book, weights, sce
         if weight > book[name]["max_bps"]:
             reasons.append("PRODUCT:" + name + ":MAXIMUM_EXCEEDED")
             continue
-        principal = _principal_for(snapshot, book[name], capital, weight)
+        try:
+            principal = _principal_for(snapshot, book[name], capital, weight)
+        except MachineError as exc:
+            if str(exc) != "grid leg is below one underlying token atom":raise
+            reasons.append("PRODUCT:" + name + ":BELOW_ONE_ATOM")
+            continue
         quote = _rescale_quote(snapshot, book[name], principal)
         active.append(quote)
     if not active:

@@ -1,0 +1,145 @@
+{
+  "hash_algorithm": "sha256",
+  "files": [
+    {
+      "path": "frontend/server/index.ts",
+      "sha256": "716735f30a97cb01f32201568ce85545d8dc1d80868afa7d92a2895b8e593d72"
+    },
+    {
+      "path": "frontend/src/api/contracts.ts",
+      "sha256": "1aa1b6b9d73e6a665b50c25472f713917854d27bc86a80a63be48b445d6fbab2"
+    },
+    {
+      "path": "frontend/src/api/useMachine.ts",
+      "sha256": "1bbd7b801b467a89344a518eee49c9c1061f16794bf6c6370ee5f3ba499e7792"
+    },
+    {
+      "path": "frontend/src/components/BalancePerformance.tsx",
+      "sha256": "ee7be8a98632149175e6473d072e56bd0d6de582d25f764c1578476d842459f8"
+    },
+    {
+      "path": "frontend/src/components/ExecutionCard.tsx",
+      "sha256": "81f2dc689942263cb034e1c45c1059afa9f1c020a1c1f4b27b2c0aa58b680b15"
+    },
+    {
+      "path": "frontend/src/components/MandateEditor.tsx",
+      "sha256": "63b51a68ac9e5e9159c99190da0e3bf06eb01396f845f6a432534b6e03d81f8a"
+    },
+    {
+      "path": "frontend/src/components/NativeStakeReview.tsx",
+      "sha256": "9041d37f723039a483c3e80cdb4173adae9da1bc077ad0a373b35cc824001a47"
+    },
+    {
+      "path": "frontend/src/components/PlanCards.tsx",
+      "sha256": "7bdaa5281748b44c1576765180f9583ec527c4ca43bf48a6b8b94d3f41409a4c"
+    },
+    {
+      "path": "frontend/src/components/PortfolioReview.tsx",
+      "sha256": "a1122e15d2633b292b1e81524ac109da4d2965d16605a3f8b88a1e7b480b84ad"
+    },
+    {
+      "path": "frontend/src/components/SidePanel.tsx",
+      "sha256": "b64bad88ca2708bfeb406a09c4be3285f16b3835041f4f216579fe4ecdd66945"
+    },
+    {
+      "path": "frontend/src/components/StakePositionCard.tsx",
+      "sha256": "3d91c6a163db4d5400bb750072208260b3de735f8f40963f4d28c2186954c238"
+    },
+    {
+      "path": "frontend/src/lib/submission.ts",
+      "sha256": "182fc91efbfff2cc464803664f03ca7a3f74482f541f036fb23962b7695fefc5"
+    },
+    {
+      "path": "frontend/src/lib/wallet.ts",
+      "sha256": "e205e7c461d339057e226b59d8f70c96bb50d7edd732061858fd769c886c7d98"
+    },
+    {
+      "path": "frontend/tests/balance-performance.test.tsx",
+      "sha256": "987273a3d10862c6bb91118c3f582523140a137a8c8d2bdfbf6b5dc203619df1"
+    },
+    {
+      "path": "frontend/tests/fixtures/native-stake-transactions.json",
+      "sha256": "8b00ea82f92b98e307f15c74aecd25e04642daa7d1bdb0f07a62d34e8461f8d7"
+    },
+    {
+      "path": "frontend/tests/mandate-editor.test.tsx",
+      "sha256": "979378bc4c7d8b60ceeb5b303347dcf2b88185fce2254818a3ab8b39a3e49892"
+    },
+    {
+      "path": "frontend/tests/stake-wallet.test.ts",
+      "sha256": "5eeb6c76df928bdb3124395fbbef52476bfc412ec0dbdbefb9ec2dd4db8f42e2"
+    },
+    {
+      "path": "frontend/tests/submission.test.ts",
+      "sha256": "9d007374978e872b8282f4c68ad21ac2f3438ce8b50413bf72580ad8c036367f"
+    },
+    {
+      "path": "src/economic_machine/mandate.py",
+      "sha256": "955bc868a865b22120f1a700ef7deb3d96905617942b37715713abd342065992"
+    },
+    {
+      "path": "src/economic_machine/plan_compiler.py",
+      "sha256": "3071ca216d6383c2246e02ac28c55fc4ad47638e1566fbe2b40f68da0d11d273"
+    },
+    {
+      "path": "src/economic_machine/tron_cashflow.py",
+      "sha256": "0039b2bf40bee05196281be65ee261d9c3ca3441de3bee402096843930fedf0d"
+    },
+    {
+      "path": "src/finance_service/machine_bridge.py",
+      "sha256": "255ac55dbf841476913c841f327dbaa4e3607977b633177f80f8d54e7d8c7d4a"
+    },
+    {
+      "path": "src/finance_service/machine_worker.py",
+      "sha256": "f3012bd6e1d4a53be21e63f97f14f8e4c0838f0b766319d30dcfadb02ee0c027"
+    },
+    {
+      "path": "src/finance_service/native_performance.py",
+      "sha256": "487709ecdd157e375fff756b4ea12f029f2307d3582b41297510b039bda12f6f"
+    },
+    {
+      "path": "src/finance_service/portfolio_review.py",
+      "sha256": "a81b1a453f7f338649191787c949394c861992fb3fe63c5827457ca654a4c7f8"
+    },
+    {
+      "path": "src/finance_service/product_catalog.py",
+      "sha256": "76d7fc64af925b3396ca53f0f1e596af531414c662f75b8740ec90c5a3b2347d"
+    },
+    {
+      "path": "src/finance_service/stake_codec.py",
+      "sha256": "6f13ee90b2bed6eb7f5087a597ba8bf8ce050c80be0ab380c5a7dcd958e0bcaa"
+    },
+    {
+      "path": "src/finance_service/stake_comparison.py",
+      "sha256": "271a82f80b7ead4153bf5f02c6fe57135432ffe50127bb16f1f6be4556cb54f8"
+    },
+    {
+      "path": "src/finance_service/stake_execution.py",
+      "sha256": "308348b026f605234e78a3d896cb32e2dcf398d37353c87b316ca30735e51734"
+    },
+    {
+      "path": "src/finance_service/stake_market.py",
+      "sha256": "101a6a4c8748f539f474484c2404d09c8afc40f54ba5153003ac54ec558f36ce"
+    },
+    {
+      "path": "src/finance_service/stake_receipt.py",
+      "sha256": "abd13d1d1e6eacc99aea7f1d5eecc25c2fedb4f2a5e6d9d6d916150456a314a4"
+    },
+    {
+      "path": "src/finance_service/stake_watch.py",
+      "sha256": "9398ef5143437936057f4c2bf976843d54706201346f0c3c7a989c548976fc30"
+    },
+    {
+      "path": "tests/test_stake_execution.py",
+      "sha256": "0461ed958c04487e2488f31561195775189bf4e67269b3ea7c7d21846ca503f7"
+    },
+    {
+      "path": "tests/test_stake_observations.py",
+      "sha256": "9948bffa542e2f9cf27bf002c1c4cf2e78c0cdfa04a6ce31f0e7317fd19f5c32"
+    },
+    {
+      "path": "tests/test_stake_watch.py",
+      "sha256": "30f4e43d1480a9fdfa0b3c5d66a8a7570f0237be3e61574cbd61cb2b68212333"
+    }
+  ]
+}

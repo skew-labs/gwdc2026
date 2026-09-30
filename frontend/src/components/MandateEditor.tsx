@@ -6,6 +6,7 @@ import { toUnits } from "../lib/format";
 
 type Money = { asset: string; amount: string };
 type Terms = {
+  allowed_actions?: string[];
   risk_profile: string;
   capital: Money[];
   horizon_seconds: number;
@@ -74,6 +75,8 @@ export function MandateEditor({
   const [justlend, setJustlend] = useState(
     initial(t ? (t.protocol_caps_bps.justlend ?? 0) / 100 : undefined),
   );
+  const [nativeStake, setNativeStake] = useState(Boolean(t?.allowed_actions?.includes("STAKE") && t?.allowed_actions?.includes("VOTE")));
+  const [nativeCap, setNativeCap] = useState(String((t?.protocol_caps_bps["tron-native"] || 10000)/100));
   const [vault, setVault] = useState(
     initial(t ? (t.protocol_caps_bps.usdd ?? 0) / 100 : undefined),
   );
@@ -175,6 +178,7 @@ export function MandateEditor({
             throw new Error("Capital must be greater than zero.");
           if (!risk || !debt)
             throw new Error("Choose a risk profile and borrowing permission.");
+          if (nativeStake && (asset !== "TRX" || m.network !== "nile" || percent(nativeCap)<=0)) throw new Error("Native Stake requires Nile TRX and a positive allocation limit.");
           toUnits(fee, 6);
           Object.values(limits).forEach((v) => toUnits(v, 6));
           if (!["USDT", "USDD", "TRX"].includes(asset))
@@ -188,6 +192,7 @@ export function MandateEditor({
             allowed_protocols: [
               ...(Number(justlend) > 0 ? ["JustLend"] : []),
               ...(Number(vault) > 0 ? ["USDD"] : []),
+              ...(nativeStake ? ["TRON Native"] : []),
             ],
             max_fee: { value: fee, symbol: "TRX", decimals: 6 },
           });
@@ -215,6 +220,7 @@ export function MandateEditor({
             protocol_caps_bps: {
               justlend: percent(justlend),
               usdd: percent(vault),
+              "tron-native": nativeStake ? percent(nativeCap) : 0,
             },
             borrowing: {
               consent: constraints.allow_debt,
@@ -242,6 +248,7 @@ export function MandateEditor({
               "CLAIM",
               "REPAY",
               "WITHDRAW_COLLATERAL",
+              ...(nativeStake ? ["STAKE", "UNSTAKE", "VOTE"] : []),
               ...(constraints.allow_debt
                 ? ["OPEN_VAULT", "MINT_USDD", "BORROW"]
                 : []),
@@ -307,9 +314,14 @@ export function MandateEditor({
         </select>
       </label>
       <p className="caption">
-        On Nile, TRX capital uses native JustLend supply and wallet cash.
-        Amounts and returns stay in TRX; no swap is required.
+        On Nile, TRX can use JustLend supply or Native Stake with voting. Native Stake requires the separate permission below; returns and costs stay in TRX.
       </p>
+      {asset === "TRX" && m.network === "nile" && <fieldset>
+        <legend>Native staking</legend>
+        <label className="check-label"><input type="checkbox" checked={nativeStake} onChange={e=>setNativeStake(e.target.checked)} />Allow Stake 2.0 and representative voting</label>
+        <p className="caption">Compare voting income after full entry and exit costs. TRX becomes locked until the chain unstaking delay ends. Stake and vote each require a wallet signature. Energy rental income is excluded.</p>
+        {nativeStake && numeric("Maximum Native Stake allocation",nativeCap,setNativeCap,"%",100)}
+      </fieldset>}
       {numeric("Starting capital", capital, setCapital, asset)}
       {numeric("Time horizon", days, setDays, "days", 365)}
       <label>
@@ -497,6 +509,7 @@ export function MandateEditor({
       {numeric("Policy validity", hours, setHours, "hours", 168)}
       <p className="muted">
         Permitted actions: hold, supply, redeem, claim rewards, repay and release repaid collateral
+        {nativeStake ? ", stake, vote and request unstaking" : ""}
         {debt === "true"
           ? ", open a vault, mint USDD and borrow within the debt limit"
           : ""}

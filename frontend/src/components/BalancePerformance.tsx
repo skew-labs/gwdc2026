@@ -2,6 +2,15 @@ import type { Workspace } from "../api/contracts";
 import { date, decimal, money } from "../lib/format";
 
 export function BalancePerformance({ workspace: w, symbol }: { workspace: Workspace; symbol: string }) {
+  const n=w.stake_position;
+  if (symbol === "TRX" && n && (n.status !== "CLOSED" || !w.positions?.some(p=>p.product==="justlend.v1.jTRX"))) return <section className="balance-performance" aria-label="Expected versus actual native performance">
+    <div className="section-heading"><h4>Expected vs. actual</h4><span className="caption">Native Stake</span></div>
+    <div className="balance-return"><span>Net return on staked capital</span><strong>{n.net_return_pct == null ? "Not measured" : `${decimal(n.net_return_pct,2)}%`}</strong></div>
+    <table className="performance-comparison"><thead><tr><th>After fees</th><th>Expected to date</th><th>Actual</th></tr></thead><tbody><tr><th>Net income</th><td>{money(n.forecast_to_date)}</td><td>{money(n.net_income)}</td></tr></tbody></table>
+    <div className="income-split"><div><span>Accrued rewards</span><strong>{money(n.accrued)}</strong></div><div><span>Claimed rewards</span><strong>{money(n.realized)}</strong></div></div>
+    <p className="caption">{money(n.fees)} actual fees · {money(n.forecast_net)} original full-horizon forecast</p>
+    <details className="chart-basis"><summary>How this is measured</summary><p>{n.basis} Expected to date prorates the original gross forecast from voting, then deducts the originally reserved fees for completed actions. Net return divides actual net income by {money(n.amount)} staked. This is not annual APY.</p><p>Observed {date(n.as_of)}</p></details>
+  </section>;
   const p = w.performance;
   const matching = p?.network === w.network && (p.supplied_capital || p.net_income || p.accrued)?.symbol === symbol;
   if (!p || !matching) return <div className="balance-performance"><h4>Expected vs. actual</h4><p className="caption">Performance will appear here after a verified investment in {symbol}.</p></div>;

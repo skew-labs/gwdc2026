@@ -197,7 +197,7 @@ async function finance(
     signal: AbortSignal.timeout(
       path.includes("agent-intent")
         ? 65000
-        : /portfolio-reviews|usdd-reviews|usdd-workflows|approvals|executions/.test(path)
+        : /portfolio-reviews|usdd-reviews|usdd-workflows|stake-workflows|approvals|executions/.test(path)
           ? 90000
           : /observations|plan-comparisons|execution-graphs/.test(path)
             ? 50000
@@ -728,7 +728,7 @@ const server = createServer(async (req, res) => {
       result = ack();
     } else if (path.startsWith("/v1/")) {
       const allowed =
-        /^\/v1\/(funding|observations|usdd-reviews|usdd-workflows|portfolio-reviews|portfolio-adjustments|notifications|mandates|plan-comparisons|execution-graphs|approvals|executions|positions|performance|routines|evidence)(\/[^?]*)?$/.test(
+        /^\/v1\/(funding|observations|usdd-reviews|usdd-workflows|stake-workflows|portfolio-reviews|portfolio-adjustments|notifications|mandates|plan-comparisons|execution-graphs|approvals|executions|positions|performance|routines|evidence)(\/[^?]*)?$/.test(
           path,
         );
       if (!allowed)
@@ -758,6 +758,8 @@ const server = createServer(async (req, res) => {
                 "/v1/plan-comparisons": "plans",
                 "/v1/portfolio-reviews": "review",
                 "/v1/portfolio-adjustments": "execution",
+                "/v1/stake-workflows/next": "execution",
+                "/v1/stake-workflows/lifecycle": "execution",
                 "/v1/execution-graphs": "execution",
               } as const
             )[path as "/v1/mandates"]
@@ -996,13 +998,14 @@ const timer = setInterval(async () => {
           snapshots: w.snapshots,
           routines: w.routines,
           portfolio_review: w.portfolio_review,
+          stake_position: w.stake_position, stake_workflow: w.stake_workflow, product_catalog: w.product_catalog,
         }).slice(0, 40000);
       } catch {
         financialContext =
           "The financial service is currently unavailable. Do not imply access to current financial data.";
       }
     }
-    const prompt = `You are ${a.name}, a ${a.role} role in faat (Finance AI Agent Tron), a TRON asset management service. ${rolePrompt[a.role]} Reply in English, concisely and conversationally. Answer the current question directly; do not repeat a mandate or a questionnaire on unrelated messages. Never invent balances, returns, allocations, fees, transaction hashes, completed actions or monitoring. Never call proposed edits confirmed. High risk or a generic yes never permits borrowing; only explicit borrowing consent with bounded debt can propose it. Do not suggest an 80/20 allocation unless it exists in the calculated comparison. Distinguish recorded actual fees from planning assumptions. Ask at most two missing questions and use already known fields. The validated extraction is ${intentContext || "not available"}. Interactive conditions, calculated Plan A/Plan B and transaction cards are shown in this conversation when relevant. Use only supplied service facts, checking network and timestamps. Live transaction support includes Nile native TRX supply and exact-share redemption from a fresh Watch review, and a separate mainnet USDD workflow in Portfolio. A recorded original forecast, expected net to date, actual accrued and realized income, paid fees and variance are supplied by receipt-backed performance accounting; do not replace unavailable values with estimates. USDD workflow code supports TRX Vault issuance, supply, bounded borrow-resupply cycles, rewards and repayment/recovery, each with a fresh review, exact wallet signature and solidified receipt. Mainnet USDD end-to-end execution has not been proven with this user wallet; never claim it has. It currently requires an isolated first Vault and empty USDD lending position. Nile Vault USDD and configured JustLend USDD are incompatible tokens, so this route is blocked on Nile. Only report an actual workflow, transaction or rate from the supplied service state; ask users to open Portfolio for live USDD strategy review. Token identity, minimum debt and live base-rate spread can block a route. Mainnet also charges Energy and Bandwidth. Recursive leverage increases income only when incremental revenue exceeds borrowing interest, entry/unwind fees and losses; never imply infinite or guaranteed APY. Do not imply these routes are available because policy allows borrowing. New investment plans must have positive projected net income after costs; keeping cash is a valid outcome. This conversation cannot grant trade authority. No automatic authorization or spending. No reasoning traces. Agent preferences: ${JSON.stringify(a.instructions)}. Financial context: ${financialContext}`;
+    const prompt = `You are ${a.name}, a ${a.role} role in faat (Finance AI Agent Tron), a TRON asset management service. ${rolePrompt[a.role]} Reply in English, concisely and conversationally. Answer the current question directly; do not repeat a mandate or a questionnaire on unrelated messages. Never invent balances, returns, allocations, fees, transaction hashes, completed actions or monitoring. Never call proposed edits confirmed. High risk or a generic yes never permits borrowing; only explicit borrowing consent with bounded debt can propose it. Do not suggest an 80/20 allocation unless it exists in the calculated comparison. Distinguish recorded actual fees from planning assumptions. Ask at most two missing questions and use already known fields. The validated extraction is ${intentContext || "not available"}. Interactive conditions, calculated Plan A/Plan B and transaction cards are shown in this conversation when relevant. Use only supplied service facts, checking network and timestamps. Native Stake 2.0 plus representative voting is available on Nile only with explicit STAKE/VOTE permission and a positive native protocol cap; separate stake and vote signatures are needed. Rewards use current chain reward parameters, representative commission, vote weights and network maintenance interval, not fixed APY. Rental income is excluded. Native stake rewards, fees and forecast are a separate measured ledger, never substitute old jTRX performance zeros for native positions. Product catalog describes capability, not current quote eligibility. Mixed native/lending automatic reallocation is not enabled. Live transaction support also includes Nile native TRX supply and exact-share redemption from a fresh Watch review, and a separate mainnet USDD workflow in Portfolio. A recorded original forecast, expected net to date, actual accrued and realized income, paid fees and variance are supplied by receipt-backed performance accounting; do not replace unavailable values with estimates. USDD workflow code supports TRX Vault issuance, supply, bounded borrow-resupply cycles, rewards and repayment/recovery, each with a fresh review, exact wallet signature and solidified receipt. Mainnet USDD end-to-end execution has not been proven with this user wallet; never claim it has. It currently requires an isolated first Vault and empty USDD lending position. Nile Vault USDD and configured JustLend USDD are incompatible tokens, so this route is blocked on Nile. Only report an actual workflow, transaction or rate from the supplied service state; ask users to open Portfolio for live USDD strategy review. Token identity, minimum debt and live base-rate spread can block a route. Mainnet also charges Energy and Bandwidth. Recursive leverage increases income only when incremental revenue exceeds borrowing interest, entry/unwind fees and losses; never imply infinite or guaranteed APY. Do not imply these routes are available because policy allows borrowing. New investment plans must have positive projected net income after costs; keeping cash is a valid outcome. This conversation cannot grant trade authority. No automatic authorization or spending. No reasoning traces. Agent preferences: ${JSON.stringify(a.instructions)}. Financial context: ${financialContext}`;
     const messages: ChatMessage[] = [
       { role: "system", content: prompt },
       ...history

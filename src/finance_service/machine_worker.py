@@ -78,6 +78,10 @@ def main():
                     bridge.native.reconcile(ctx)
                 except Exception as exc:
                     print('Native reconciliation pending:', type(exc).__name__, str(exc), flush=True)
+            wf=state.get('stake_workflow')
+            if wf and wf['steps'][wf['cursor']].get('submission') and wf['steps'][wf['cursor']]['status'] not in ('POSITION_RECONCILED','FAILED','DISPUTED'):
+                try:bridge.stake.reconcile(job_context({'scope':scope,'job_id':'stake-reconcile'},clock))
+                except Exception as exc:print('Staking reconciliation pending:',type(exc).__name__,str(exc),flush=True)
             for r in state['workspace']['routines']:
                 if r['enabled'] and r.get('next_due_at', at) <= at:
                     repository.enqueue_job(scope, role='WATCH',routine_id=r['id'],job_kind='MACHINE_DAILY_OBSERVATION',subject_id='current',dependency_hash=digest(r),payload={'routine_id':r['id']},not_before=at,expires_at=(datetime.now(UTC)+timedelta(minutes=10)).isoformat(),max_attempts=3,priority=20)
@@ -93,7 +97,7 @@ def recover_expired_requests(bridge, scope, state):
             continue
         try:
             ctx = job_context({'scope': scope, 'job_id': 'prepared-recovery'}, bridge.clock)
-            bridge.native.reconcile(ctx, {'txid': txid, 'graph_id': request['graph_id'], 'step_id': request['step_id']})
+            (bridge.stake if request.get('adapter')=='STAKE' else bridge.native).reconcile(ctx, {'txid': txid, 'graph_id': request['graph_id'], 'step_id': request['step_id']})
         except Exception as exc:
             # Failure, visibility or an insufficient solidified head retains
             # the lock. Never cancel solely on elapsed wall-clock time.

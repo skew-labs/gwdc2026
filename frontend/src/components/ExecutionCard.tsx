@@ -3,6 +3,7 @@ import { Check, ExternalLink, LockKeyhole, ShieldCheck } from "lucide-react";
 import type { Machine } from "../api/useMachine";
 import { Alert, Badge, Button, Empty, Row, Status } from "./ui";
 import { decimal, expired, explorer, money, short } from "../lib/format";
+import { NativeStakeReview } from "./NativeStakeReview";
 import { WithdrawalReview } from "./WithdrawalReview";
 export function ExecutionCard({ m }: { m: Machine }) {
   const [acceptedHash, setAcceptedHash] = useState<string | null>(null);
@@ -17,12 +18,14 @@ export function ExecutionCard({ m }: { m: Machine }) {
       {m.error && <Alert tone="error">{m.error}</Alert>}
     </section>
   );
+  if (!g && w?.stake_workflow?.status === "REVIEW") return <section className="companion-card"><h3>Continue your native stake</h3><p>Refresh the current step from live wallet state.</p><Button disabled={!!m.busy} onClick={()=>m.stakeAction("next")}>Review current step</Button></section>;
   if (!g)
     return (
       <Empty icon={<ShieldCheck />} title="Execution review">
         Choose a plan to review the exact steps, spending limits and fees here.
       </Empty>
     );
+  if (g.review_kind === "NATIVE_STAKE") return <NativeStakeReview m={m} />;
   const accepted = acceptedHash === g.hash;
   if (g.review_kind === "ADJUSTMENT" && g.steps[0]?.action === "redeem(uint256)") return <WithdrawalReview m={m} />;
   const a = w.approval;
